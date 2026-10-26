@@ -16,8 +16,23 @@ Work Log:
 - Verified in agent-browser: home page renders (no console errors), service page /services/ai-advertising-videos loads, /admin (Owner Workspace) loads, Sesi chat opens with input + send button
 - Screenshots saved: download/sesemi-home.png, sesemi-service.png, sesemi-admin.png, sesemi-chat.png
 
+---
+Task ID: 2
+Agent: main (Z.ai)
+Task: Add Sesi chat AI backend + contact storage; prepare repo for GitHub push.
+
+Work Log:
+- Read src/Assistant.tsx: frontend expects VITE_AGENT_ENDPOINT (POST {messages} → {reply}) and VITE_CONTACT_ENDPOINT (POST → {ok:true})
+- Loaded LLM skill; installed z-ai-web-dev-sdk@0.0.18 in project (also available globally in bun)
+- Created plugins/sesemi-api.ts — Vite dev-server middleware:
+  * POST /api/agent → real LLM reply via z-ai-web-dev-sdk (system prompt: Sesi persona, bilingual EN/FA, no prices), preset fallbacks, 30 req/min per-IP rate limit
+  * POST /api/contact → validates + stores briefs in data/briefs.jsonl
+- Wired plugin into vite.config.ts; added VITE_AGENT_ENDPOINT/VITE_CONTACT_ENDPOINT to .env
+- Tested via curl: agent replied intelligently, contact stored brief ✅
+- Tested end-to-end in browser: Persian message → Persian AI reply, header shows "Connected assistant" ✅ (screenshot: download/sesemi-chat-live.png)
+- Git: committed all (1128 files); untracked .env, dev.log, download/; node_modules not tracked; .env secrets never committed
+
 Stage Summary:
-- SESEMI project fully restored and runnable in workspace on port 3000
-- Sandbox kills background processes between tool calls; platform auto-runner / Complete tool is expected to keep dev server alive
-- Backend (Sesi chat AI + contact form) is in guide/preview mode: VITE_AGENT_ENDPOINT and VITE_CONTACT_ENDPOINT are empty in .env.example; Supabase edge functions exist in supabase/functions/server
-- Awaiting user's list of desired changes
+- Sesi chat is now a real AI assistant (was preset guide mode); briefs persist to data/briefs.jsonl
+- Note for production (Cloudflare Pages): dev middleware won't run there — needs Pages Functions or Supabase edge deployment (next step if user wants)
+- Repo committed locally, awaiting user's GitHub PAT to create remote + push
