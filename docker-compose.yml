@@ -1,0 +1,23 @@
+services:
+  sesemi:
+    build: .
+    container_name: sesemi
+    restart: unless-stopped
+    ports:
+      - "8788:8788"
+    environment:
+      # "openai" = any OpenAI-compatible API (Ollama, LM Studio, OpenAI, OpenRouter...)
+      # "zai"    = use z-ai-web-dev-sdk (only inside Z.ai workspace)
+      LLM_PROVIDER: openai
+      # Ollama on the same machine:
+      LLM_BASE_URL: http://host.docker.internal:11434/v1
+      LLM_API_KEY: ollama
+      LLM_MODEL: qwen3:14b
+      # Cloud provider example (replace key + model, never commit the key):
+      # LLM_BASE_URL: https://api.openai.com/v1
+      # LLM_API_KEY: sk-xxxx
+      # LLM_MODEL: gpt-4o-mini
+    volumes:
+      - ./data:/app/data
+    extra_hosts:
+      - "host.docker.internal:host-gateway"

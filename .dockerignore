@@ -1,0 +1,14 @@
+node_modules
+dist
+data
+download
+upload
+.git
+.gitignore
+.env*
+!.env.example
+dev.log
+worklog.md
+skills
+*.log
+.claude-replay.*
