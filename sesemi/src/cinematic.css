@@ -1,0 +1,335 @@
+/* SESEMI public-site tokens. Existing service, form and navigation primitives
+   consume the same palette; the private workspace keeps its own layout. */
+.english.cinematic {
+  --bg: #050a16;
+  --surface: #0d192b;
+  --fg: #f3f6ff;
+  --muted: #94a3bc;
+  --line: #20324b;
+  --blue: #48b9ff;
+  --electric: #087cff;
+  --cyan: #61e7ff;
+  --violet: #8b5cff;
+  --purple: #bd70ff;
+  --secondary: #081225;
+  --space: 8px;
+  --radius: 12px;
+  --body-size: 14px;
+  --label-size: 10px;
+  --section-space: 112px;
+  color: var(--fg);
+  background: var(--bg);
+}
+.cinematic .site-arrival,.cinematic .ambient-cursor { display:none }
+.english.cinematic .container { max-width:1360px;width:calc(100% - 128px) }
+.english.cinematic .header { height:92px;background:var(--bg);border-bottom:1px solid color-mix(in srgb,var(--line) 65%,transparent);z-index:30 }
+.english.cinematic .brand { gap:10px }
+.english.cinematic .brand-symbol { width:36px;height:44px;object-fit:contain }
+.english.cinematic .brand>span { font-family:var(--display);font-size:24px;letter-spacing:2.4px;font-weight:600 }
+.english.cinematic .brand-dot { display:none }
+.english.cinematic .nav { font-size:13px;gap:32px;color:var(--muted) }
+.english.cinematic .nav a:hover { color:var(--fg) }
+.english.cinematic .nav-actions { gap:20px }
+.english.cinematic .button { font-size:13px;min-height:50px;border-radius:6px;padding:15px 22px;font-weight:550;box-shadow:none;gap:24px }
+.english.cinematic .button:not(.secondary) { background:var(--blue);border-color:var(--blue);color:var(--bg) }
+.english.cinematic .button:hover { transform:translateY(-2px);filter:brightness(1.08) }
+.english.cinematic .button.secondary { background:transparent;color:var(--fg);border-color:var(--line) }
+.english.cinematic .button.secondary:hover { border-color:var(--blue);background:color-mix(in srgb,var(--blue) 5%,transparent) }
+.english.cinematic .button.small { min-height:42px;padding:10px 18px;font-size:12px }
+.english.cinematic .theme-button { width:32px;height:40px;display:grid;place-items:center }
+.english.cinematic .hero { min-height:746px;display:block;position:relative;padding:0;width:100%;max-width:none;isolation:isolate;background:#050a16;overflow:hidden }
+.english.cinematic .hero-layout { min-height:746px;position:relative;display:grid;grid-template-columns:1.05fr 1fr;align-items:center;padding-bottom:86px;padding-top:32px }
+.english.cinematic .hero-copy { padding:0;position:relative;z-index:3;max-width:720px }
+.english.cinematic .eyebrow { font-size:var(--label-size);letter-spacing:2px;font-weight:500 }
+.english.cinematic .hero .eyebrow { color:#a4b9d0;font-size:9px;letter-spacing:2.4px }
+.english.cinematic .hero .live-dot { width:5px;height:5px;box-shadow:0 0 12px var(--blue) }
+.english.cinematic .hero h1 { font-size:clamp(58px,5.15vw,82px);line-height:1.06;letter-spacing:-3.6px;font-weight:500;margin:30px 0 26px;max-width:690px;color:#f3f6ff }
+.english.cinematic .hero h1>span:not(.motion-word) { color:var(--blue) }
+.english.cinematic .hero .motion-word { white-space:pre;transition:color .3s;translate:none!important }
+.english.cinematic .hero-description { color:#a3b1c7;font-size:15px;line-height:1.9;max-width:490px;margin-bottom:32px }
+.english.cinematic .ownership { font-size:10px;line-height:1.8;color:#7f92ac;margin-top:26px }
+.english.cinematic .hero-buttons { gap:12px;flex-wrap:wrap }
+.cinematic-scene { position:absolute;left:34%;width:66%;top:0;height:100%;z-index:0;pointer-events:none;mask-image:linear-gradient(90deg,transparent,black 20%) }
+.cinematic-scene canvas { display:block;width:100%;height:100%;position:absolute;inset:0 }
+.scene-fallback { position:absolute;inset:0;display:grid;place-items:center;overflow:hidden;background:radial-gradient(ellipse at 56% 48%,#102752 0,transparent 60%) }
+.scene-fallback img { width:min(64%,440px);height:auto;position:relative;filter:drop-shadow(0 24px 48px #087cff33) }
+.fallback-horizon { position:absolute;inset:55% -10% 0;background:linear-gradient(170deg,#0a162a,#091c36 38%,#030914);clip-path:polygon(0 28%,12% 7%,23% 23%,36% 15%,49% 33%,64% 14%,73% 22%,87% 0,100% 16%,100% 100%,0 100%) }
+.cinematic-scene[data-scene=ready] .scene-fallback { opacity:0;transition:opacity .5s }
+.cinematic-scene[data-scene=fallback] canvas { visibility:hidden }
+.hero-vignette { position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(90deg,#050a16 0%,#050a16 28%,#050a16cf 37%,#050a1660 49%,transparent 65%),linear-gradient(0deg,#050a16 0%,transparent 24%,transparent 90%,#050a16 100%) }
+.english.cinematic .scene-caption { position:absolute;right:0;bottom:108px;display:flex;flex-direction:column;align-items:flex-end;gap:8px;z-index:2;font:8px/1.5 'DM Sans',sans-serif;letter-spacing:1.7px;color:#7b8fae;pointer-events:none }
+.scene-caption-index { color:#b6c9df }
+.english.cinematic .hero-bottom { position:absolute;inset:auto 0 27px;z-index:4;display:flex;align-items:center;gap:24px;padding-top:22px;border-top:1px solid #20324b70;font-size:8px;letter-spacing:1.5px;color:#8495ae }
+.english.cinematic .scroll-cue { font-size:11px;color:#b9c9dd;gap:12px }
+.english.cinematic .scroll-cue>span { display:grid;place-items:center;width:30px;height:30px;border:1px solid #20324b;border-radius:50%;font-size:15px }
+.hero-bottom>span { display:flex;align-items:center;gap:12px }
+.hero-bottom i { width:3px;height:3px;border-radius:50%;background:#48b9ff }
+.hero-bottom .pointer-note { font-size:7px;letter-spacing:1.4px }
+.english.cinematic .tech-strip { background:var(--bg);padding-top:26px;border-color:var(--line) }
+.english.cinematic .toolkit-label { font-size:9px;letter-spacing:2px;margin-bottom:26px }
+.english.cinematic .tech-name { font-size:23px;color:#a8b6ca;gap:10px }
+.english.cinematic .tech-name.ai-tool { color:#c5d0e1 }
+.english.cinematic .tech-name svg { width:17px }
+.english.cinematic .tech-disclaimer { color:var(--muted);font-size:9px;padding:22px 24px;text-align:center }
+.english.cinematic .section { padding-block:var(--section-space) }
+.english.cinematic .section-heading { margin-bottom:48px;gap:48px }
+.english.cinematic .section-kicker { font-size:9px;margin-bottom:20px;letter-spacing:2px }
+.english.cinematic h2 { font-size:clamp(34px,3.2vw,48px);font-weight:400;line-height:1.13;letter-spacing:-1.9px }
+.english.cinematic h2 span { color:var(--muted) }
+.english.cinematic .section-heading>p { font-size:var(--body-size);line-height:1.9;max-width:410px;color:var(--muted) }
+.english.cinematic .services-grid { gap:16px }
+.english.cinematic .service-card { padding:32px 30px 24px;border-radius:var(--radius);background:var(--secondary);border:1px solid var(--line);transition:background .3s,border-color .3s,transform .3s }
+.english.cinematic .service-card.featured { background:linear-gradient(145deg,#10233a,var(--secondary) 70%);border-color:#2b4764 }
+.english.cinematic .service-card.film-card { background:linear-gradient(145deg,#191d39,var(--secondary) 70%);border-color:#393451 }
+.english.cinematic .service-card:hover { border-color:var(--blue);transform:translateY(-4px);background:var(--surface) }
+.english.cinematic .service-top { margin-bottom:32px }
+.english.cinematic .service-icon { border:1px solid var(--line);border-radius:10px;width:48px;height:48px;color:var(--blue);background:var(--surface) }
+.english.cinematic .film-card .service-icon { color:#b8a2f5 }
+.english.cinematic .card-number { color:var(--muted);font-size:10px }
+.english.cinematic .service-card h3 { font-size:22px;line-height:1.35;letter-spacing:-.65px;font-weight:500;margin-bottom:16px }
+.english.cinematic .service-card p { font-size:13px;line-height:1.85;min-height:76px;max-width:none;color:var(--muted) }
+.english.cinematic .service-bottom { margin-top:30px;padding-top:20px;border-color:var(--line) }
+.english.cinematic .service-bottom>span:first-child { font-size:9px;letter-spacing:1px;color:var(--muted) }
+.english.cinematic .round-arrow { width:32px;height:32px;background:none;border:1px solid var(--line);color:var(--blue) }
+.english.cinematic .creative-banner { grid-template-columns:1.15fr 1fr;border-radius:var(--radius);background:var(--secondary);border-color:var(--line) }
+.english.cinematic .film-frame { min-height:490px;background:radial-gradient(ellipse at 60% 30%,#14244d,transparent 65%),#050a16;border-color:var(--line);align-items:flex-end;justify-content:flex-start;padding:44px }
+.english.cinematic .film-type { font:400 48px/1.04 var(--display);letter-spacing:-2px;mix-blend-mode:normal;color:var(--fg) }
+.english.cinematic .film-type em { font:italic 72px/1.05 Georgia,serif;letter-spacing:-3px;color:#b4d7f8 }
+.lab-star { position:absolute;height:340px;width:340px;object-fit:contain;top:12px;right:18px;transform:rotate(18deg);filter:drop-shadow(0 24px 34px #087cff44) }
+.lab-rings { position:absolute;bottom:-140px;right:-50px;width:480px;height:480px;border:1px solid #48b9ff26;border-radius:50%;box-shadow:0 0 0 45px #48b9ff06,0 0 0 90px #48b9ff04;transform:rotateX(65deg) }
+.english.cinematic .frame-time,.english.cinematic .frame-corner { color:#a2b4cc;font-size:8px;letter-spacing:1.5px }
+.english.cinematic .creative-copy { padding:48px }
+.english.cinematic .creative-copy h2 { font-size:38px }
+.english.cinematic .creative-copy p { font-size:14px;line-height:1.9;margin:24px 0 }
+.english.cinematic .creative-copy small { color:var(--muted);font-size:10px;line-height:1.7;margin-top:20px }
+.english.cinematic .steps { gap:36px }
+.english.cinematic .step-track { margin-bottom:28px }
+.english.cinematic .step-track>span { width:44px;height:44px;background:var(--secondary);border:1px solid var(--line);font:13px var(--display);color:var(--blue);border-radius:50% }
+.english.cinematic .step-track>div { background:var(--line) }
+.english.cinematic .step h3 { font-size:23px;font-weight:400;margin-bottom:16px }
+.english.cinematic .step p { font-size:13px;line-height:1.9;color:var(--muted) }
+.english.cinematic .step-english { font-size:9px;letter-spacing:1.6px;color:var(--muted);margin-top:24px }
+.english.cinematic .about-section { border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:var(--secondary) }
+.english.cinematic .about-copy { padding:48px }
+.english.cinematic .about-copy h2 { font-size:42px;line-height:1.12;margin-bottom:24px }
+.english.cinematic .about-copy>p { font-size:14px;line-height:1.9;color:var(--muted) }
+.english.cinematic .about-art { min-height:570px;background:radial-gradient(ellipse at 25% 30%,#12334e55,transparent 70%),var(--bg);padding:64px 40px 32px;border-color:var(--line) }
+.english.cinematic .code-window { background:var(--secondary);border-color:var(--line);box-shadow:0 30px 80px #0004;transform:rotate(-3deg) }
+.english.cinematic .code-window pre { font-size:12px;line-height:2.2 }
+.english.cinematic .window-dots span { font-size:10px }
+.english.cinematic .about-top-label { font-size:8px;color:var(--muted);letter-spacing:1.8px }
+.english.cinematic .about-seal>span { font-size:12px;line-height:1.8 }
+.english.cinematic .values { gap:22px;margin-top:28px }
+.english.cinematic .values h3 { font-size:13px;font-weight:500;margin-bottom:6px }
+.english.cinematic .values p { font-size:12px;line-height:1.75;color:var(--muted) }
+.english.cinematic .faq-section { grid-template-columns:1fr 1.15fr;gap:88px;padding-bottom:0 }
+.english.cinematic .faq-list summary { padding-block:25px;font-size:14px;line-height:1.7;gap:24px }
+.english.cinematic .faq-list details { border-color:var(--line) }
+.english.cinematic .faq-list details p { font-size:13px;line-height:1.9;padding-bottom:24px;color:var(--muted) }
+.english.cinematic .contact-section,.english.cinematic .quick-page { padding-block:var(--section-space);gap:88px }
+.english.cinematic .contact-copy h2 { font-size:46px;line-height:1.15 }
+.english.cinematic .contact-copy>p { font-size:14px;line-height:1.9 }
+.english.cinematic .contact-form-wrap { padding:36px;background:var(--secondary);border:1px solid var(--line);border-radius:var(--radius) }
+.english.cinematic .form-title h2 { font-size:26px }
+.english.cinematic .form-title>span { font-size:8px;color:var(--muted) }
+.english.cinematic label { font-size:12px;color:var(--fg) }
+.english.cinematic input,.english.cinematic textarea,.english.cinematic select { background:var(--bg);border-color:var(--line);color:var(--fg);font-size:14px;padding:13px 14px;min-height:46px;border-radius:6px }
+.english.cinematic input::placeholder,.english.cinematic textarea::placeholder { color:var(--muted);opacity:.8 }
+.english.cinematic .consent-check { font-size:11px;line-height:1.8;gap:10px }
+.english.cinematic .consent-check input { min-height:0;width:14px;height:14px;margin-top:4px;padding:0 }
+.english.cinematic .privacy { font-size:10px;line-height:1.8;color:var(--muted) }
+.english.cinematic .optional { font-size:10px;color:var(--muted) }
+.english.cinematic .submit { font-size:13px }
+.english.cinematic .success p { font-size:14px;line-height:1.8 }
+.english.cinematic .contact-summary { white-space:pre-wrap;overflow-wrap:anywhere }
+.english.cinematic footer { background:var(--bg);border-top:1px solid var(--line) }
+.english.cinematic .footer-main { padding-block:40px }
+.english.cinematic .footer-main p,.english.cinematic .footer-links,.english.cinematic .footer-chat { font-size:12px;color:var(--muted) }
+.english.cinematic .footer-bottom { font-size:10px;color:var(--muted);padding-block:24px;border-color:var(--line) }
+.english.cinematic .detail-heading>p { font-size:16px;line-height:1.85 }
+.english.cinematic .detail-heading h1 { font-size:clamp(42px,5vw,72px) }
+.english.cinematic .detail-block p,.english.cinematic .deliverable-row { font-size:14px;line-height:1.9 }
+.english.cinematic .mini-process p,.english.cinematic .service-fit p { font-size:13px }
+.english.cinematic .scope-note { font-size:11px }
+.english.cinematic .privacy-page section p { font-size:14px;line-height:1.9 }
+.english.cinematic .consent-panel h2 { font-size:24px }
+.english.cinematic .consent-panel p { font-size:12px }
+.english.cinematic .assistant-launcher { border-color:var(--line);box-shadow:0 10px 40px #0004;background:var(--surface);color:var(--fg) }
+.english.cinematic .assistant-launcher small { font-size:9px }
+.english.cinematic .assistant-panel { background:var(--secondary);border-color:var(--line) }
+.english.cinematic .chat-bubble { font-size:13px;line-height:1.8 }
+.english.cinematic .chat-composer>input { font-size:13px;min-height:36px;background:transparent }
+.english.cinematic .chat-suggestions>button { font-size:10px }
+.english.cinematic .chat-mode-note,.english.cinematic .chat-bottom { font-size:10px }
+.english.cinematic :is(a,button,input,textarea,select,summary):focus-visible { outline:2px solid var(--cyan);outline-offset:5px }
+.english.cinematic :is(section,[id]) { scroll-margin-top:32px }
+.english.cinematic .motion-word { translate:none!important }
+.english.cinematic .reveal { transition-duration:.65s }
+
+/* Light UI is intentional; the cinematic stage keeps its authored dark lighting. */
+.english.cinematic.light { --bg:#edf3fa;--secondary:#f7faff;--surface:#fff;--fg:#14253e;--muted:#50647f;--line:#c8d7e8;--blue:#0768b1;--cyan:#087cff }
+.english.cinematic.light .hero { --blue:#48b9ff }
+.english.cinematic.light .hero .hero-buttons .secondary { border-color:#42617e;color:#f3f6ff }
+.english.cinematic.light .hero .button:not(.secondary) { color:#050a16 }
+.english.cinematic.light .service-card,.english.cinematic.light .service-card.featured,.english.cinematic.light .service-card.film-card { background:var(--secondary) }
+.english.cinematic.light .tech-strip,.english.cinematic.light .creative-banner,.english.cinematic.light .contact-form-wrap { background:var(--secondary) }
+.english.cinematic.light .tech-name,.english.cinematic.light .tech-name.ai-tool { color:var(--muted) }
+.english.cinematic.light .film-type { color:#f3f6ff }
+.english.cinematic.light .about-art { background:var(--bg) }
+.english.cinematic.light input,.english.cinematic.light select,.english.cinematic.light textarea { background:var(--surface);color:var(--fg) }
+
+@media (min-width:1600px) {
+  .english.cinematic .hero,.english.cinematic .hero-layout { min-height:820px }
+  .english.cinematic .hero h1 { font-size:86px }
+}
+@media (max-width:1150px) {
+  .english.cinematic .container { width:calc(100% - 80px) }
+  .english.cinematic .nav { gap:20px;font-size:12px }
+  .english.cinematic .nav-actions { gap:12px }
+  .english.cinematic .hero,.english.cinematic .hero-layout { min-height:690px }
+  .english.cinematic .hero-layout { grid-template-columns:1.15fr 1fr }
+  .english.cinematic .hero h1 { font-size:62px;letter-spacing:-3px }
+  .english.cinematic .hero-description { font-size:14px }
+  .english.cinematic .hero .eyebrow { font-size:8px;letter-spacing:1.6px }
+  .english.cinematic .service-card { padding:26px 24px 22px }
+  .english.cinematic .service-card h3 { font-size:20px }
+  .english.cinematic .creative-copy { padding:32px }
+  .english.cinematic .creative-copy h2 { font-size:34px }
+  .english.cinematic .about-copy { padding:32px }
+  .english.cinematic .about-copy h2 { font-size:36px }
+  .english.cinematic .about-art { padding-inline:24px }
+  .english.cinematic .code-window pre { font-size:10px }
+  .english.cinematic .contact-section,.english.cinematic .quick-page { gap:48px }
+  .english.cinematic .contact-copy h2 { font-size:38px }
+  .hero-bottom .pointer-note { display:none }
+}
+@media (max-width:850px) {
+  .english.cinematic { --section-space:80px }
+  .english.cinematic .header { height:80px }
+  .english.cinematic .nav { display:none }
+  .english.cinematic .nav.open { display:flex;position:absolute;left:0;right:0;top:79px;padding:32px 40px;background:var(--secondary);border-bottom:1px solid var(--line);flex-direction:column;gap:24px;font-size:15px }
+  .english.cinematic .menu-button { display:block;width:36px;height:40px }
+  .english.cinematic .hero,.english.cinematic .hero-layout { min-height:650px }
+  .english.cinematic .hero h1 { font-size:54px;letter-spacing:-2.6px }
+  .english.cinematic .hero-description { font-size:13px }
+  .english.cinematic .hero-description br { display:none }
+  .english.cinematic .hero-buttons .button { font-size:12px;padding:13px 16px;gap:12px }
+  .cinematic-scene { left:36%;width:72% }
+  .hero-vignette { background:linear-gradient(90deg,#050a16 0%,#050a16e8 28%,#050a1666 52%,transparent 75%),linear-gradient(0deg,#050a16,transparent 25%) }
+  .english.cinematic .hero .eyebrow { max-width:270px;line-height:1.8 }
+  .english.cinematic .scene-caption { font-size:7px;letter-spacing:1px;bottom:95px }
+  .english.cinematic .hero-bottom>span { font-size:7px }
+  .english.cinematic .services-grid { grid-template-columns:repeat(2,1fr) }
+  .english.cinematic .section-heading>p { font-size:13px;max-width:290px }
+  .english.cinematic .creative-banner { grid-template-columns:1fr }
+  .english.cinematic .film-frame { min-height:430px;border-right:0;border-bottom:1px solid var(--line) }
+  .lab-star { right:10%;height:380px;width:380px;top:0 }
+  .english.cinematic .creative-copy { padding:40px }
+  .english.cinematic .steps { grid-template-columns:1fr 1fr;gap:40px }
+  .english.cinematic .about-section { display:flex;flex-direction:column-reverse }
+  .english.cinematic .about-copy { padding:40px }
+  .english.cinematic .about-art { min-height:380px;padding:60px 40px 32px }
+  .english.cinematic .code-window { max-width:480px }
+  .english.cinematic .code-window pre { font-size:12px }
+  .english.cinematic .faq-section { gap:40px;grid-template-columns:1fr 1.3fr }
+  .english.cinematic .contact-section,.english.cinematic .quick-page { gap:32px }
+  .english.cinematic .contact-form-wrap { padding:28px }
+  .english.cinematic .contact-copy h2 { font-size:34px }
+  .english.cinematic .footer-links { display:none }
+}
+@media (max-width:600px) {
+  .english.cinematic { --section-space:64px }
+  .english.cinematic .container { width:calc(100% - 40px) }
+  .english.cinematic .header { height:74px }
+  .english.cinematic .brand>span { font-size:21px;letter-spacing:1.6px }
+  .english.cinematic .brand-symbol { width:29px;height:36px }
+  .english.cinematic .nav-wrap { gap:12px }
+  .english.cinematic .nav-actions { gap:8px }
+  .english.cinematic .button.small { font-size:10px;padding:9px 12px;gap:10px;min-height:36px }
+  .english.cinematic .theme-button { display:none }
+  .english.cinematic .nav.open { top:73px;padding:28px 24px }
+  .english.cinematic .hero { min-height:850px }
+  .english.cinematic .hero-layout { display:block;min-height:850px;padding-top:48px;padding-bottom:60px }
+  .english.cinematic .hero-copy { max-width:100% }
+  .english.cinematic .hero .eyebrow { max-width:none;font-size:7px;letter-spacing:1.5px }
+  .english.cinematic .hero h1 { font-size:clamp(42px,10.5vw,63px);letter-spacing:-2px;line-height:1.06;margin:23px 0 20px;max-width:460px }
+  .english.cinematic .hero h1>span:not(.motion-word) { display:inline-block;max-width:6.6em }
+  .english.cinematic .hero-description { font-size:13px;line-height:1.85;max-width:380px;margin-bottom:24px }
+  .english.cinematic .hero-buttons { flex-wrap:nowrap;gap:10px }
+  .english.cinematic .hero-buttons .button { font-size:11px;min-height:46px;padding:13px 15px;gap:12px }
+  .english.cinematic .ownership { font-size:9px;margin-top:20px }
+  .cinematic-scene { top:390px;left:-5%;width:110%;height:430px;mask-image:linear-gradient(0deg,transparent,black 15%,black 88%,transparent) }
+  .hero-vignette { background:linear-gradient(0deg,#050a16 0%,transparent 14%,transparent 41%,#050a16 57%); }
+  .english.cinematic .scene-caption { bottom:78px;font-size:6px;right:0;letter-spacing:1px }
+  .scene-caption>span:last-child { display:none }
+  .english.cinematic .hero-bottom { bottom:18px;padding-top:14px;gap:12px }
+  .english.cinematic .scroll-cue { font-size:10px;gap:8px }
+  .english.cinematic .hero-bottom>span { font-size:6px;letter-spacing:.7px;gap:7px }
+  .english.cinematic .toolkit-label { font-size:8px;margin-bottom:24px }
+  .english.cinematic .tech-name { font-size:20px }
+  .english.cinematic .tech-disclaimer { font-size:8px;line-height:1.7;padding:20px }
+  .english.cinematic .section-heading { display:block;margin-bottom:32px }
+  .english.cinematic .section-heading>p { margin-top:20px;max-width:none;font-size:13px }
+  .english.cinematic h2 { font-size:36px;letter-spacing:-1.4px }
+  .english.cinematic .section-kicker { font-size:8px;margin-bottom:18px;letter-spacing:1.6px }
+  .english.cinematic .services-grid { grid-template-columns:1fr;gap:12px }
+  .english.cinematic .service-card { padding:28px 26px 24px }
+  .english.cinematic .service-top { margin-bottom:24px }
+  .english.cinematic .service-card h3 { font-size:23px }
+  .english.cinematic .service-card p { min-height:0;font-size:13px;line-height:1.85 }
+  .english.cinematic .service-bottom { margin-top:26px }
+  .english.cinematic .film-frame { min-height:380px;padding:28px }
+  .lab-star { height:290px;width:290px;right:-4px;top:15px }
+  .english.cinematic .film-type { font-size:40px }
+  .english.cinematic .film-type em { font-size:58px }
+  .english.cinematic .frame-time,.english.cinematic .frame-corner { font-size:6px;letter-spacing:1px }
+  .english.cinematic .creative-copy { padding:32px 26px }
+  .english.cinematic .creative-copy h2 { font-size:32px }
+  .english.cinematic .creative-copy p { font-size:13px }
+  .english.cinematic .creative-copy .button { font-size:11px;gap:12px;padding-inline:14px }
+  .english.cinematic .steps { gap:36px 24px }
+  .english.cinematic .step h3 { font-size:22px }
+  .english.cinematic .step p { font-size:12px }
+  .english.cinematic .step-english { font-size:7px;letter-spacing:1px }
+  .english.cinematic .about-copy { padding:32px 26px }
+  .english.cinematic .about-copy h2 { font-size:36px }
+  .english.cinematic .about-copy>p { font-size:13px }
+  .english.cinematic .about-art { padding:58px 24px 28px;min-height:360px }
+  .english.cinematic .about-top-label { font-size:6px;letter-spacing:1px }
+  .english.cinematic .code-window pre { font-size:9px;line-height:2.2;padding:22px 14px }
+  .english.cinematic .window-dots span { font-size:7px }
+  .english.cinematic .about-seal>span { font-size:11px }
+  .english.cinematic .faq-section { display:grid;grid-template-columns:1fr;gap:20px;padding-bottom:0 }
+  .english.cinematic .faq-list summary { font-size:13px;padding-block:22px }
+  .english.cinematic .faq-list details p { font-size:13px }
+  .english.cinematic .contact-section,.english.cinematic .quick-page { display:block }
+  .english.cinematic .contact-copy h2 { font-size:36px }
+  .english.cinematic .contact-copy>p { font-size:13px }
+  .english.cinematic .contact-form-wrap { padding:28px 22px }
+  .english.cinematic .form-row { display:block }
+  .english.cinematic .form-title h2 { font-size:24px }
+  .english.cinematic input,.english.cinematic select,.english.cinematic textarea { font-size:16px }
+  .english.cinematic .consent-check { font-size:11px }
+  .english.cinematic .footer-main { padding-block:32px }
+  .english.cinematic .footer-main p { font-size:11px }
+  .english.cinematic .footer-chat { font-size:11px }
+  .english.cinematic .footer-bottom { padding-block:24px 100px;font-size:9px;line-height:1.8 }
+  .english.cinematic .footer-legal { font-size:10px }
+  .english.cinematic .assistant-launcher { padding:4px 9px 4px 5px }
+  .english.cinematic .assistant-launcher .mascot { width:40px;height:44px }
+}
+@media (max-width:359px) {
+  .english.cinematic .container { width:calc(100% - 32px) }
+  .english.cinematic .hero h1 { font-size:40px;letter-spacing:-1.8px }
+  .english.cinematic .hero-buttons .button { font-size:10px;padding-inline:12px;gap:8px }
+  .english.cinematic .hero .eyebrow { font-size:6px }
+  .english.cinematic .button.small { padding-inline:10px }
+  .english.cinematic .brand>span { font-size:19px }
+}
+@media (prefers-reduced-motion:reduce) {
+  html { scroll-behavior:auto!important }
+  .english.cinematic { scroll-behavior:auto }
+  .english.cinematic *, .english.cinematic *::before, .english.cinematic *::after { animation:none!important;transition:none!important;translate:none!important;scroll-behavior:auto!important }
+  .english.cinematic .reveal { opacity:1;transform:none }
+  .hero-bottom .pointer-note { display:none }
+}

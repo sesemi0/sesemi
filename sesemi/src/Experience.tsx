@@ -1,0 +1,14 @@
+import services from './services.json';
+import { Icon } from './Visuals';
+
+export default function ServicePage({ service }: { service: typeof services[number] }) {
+  const next = services[(services.indexOf(service) + 1) % services.length];
+  return <article className="container detail-page">
+    <nav className="breadcrumbs" aria-label="Breadcrumb"><a href="/">Studio</a><span>/</span><a href="/#services">Services</a><span>/</span><span>{service.short}</span></nav>
+    <div className="detail-heading"><div className="eyebrow">{service.category}</div><h1>{service.title}<span className="title-period">.</span></h1><p>{service.description}</p><a className="button" href={`/start?service=${service.slug}`}>Let’s make it happen <Icon /></a></div>
+    <div className={`service-visual ${service.icon === 'video' || service.icon === 'edit' ? 'film-visual' : ''}`} aria-hidden="true"><div className="visual-orbit" /><div className="visual-orbit second" /><div className="visual-core">{service.symbol}</div><span>{service.category}</span><div className="visual-corner">SESEMI / CREATIVE POSSIBILITIES</div></div>
+    <div className="detail-columns"><section className="detail-block"><span className="eyebrow">01 / THE APPROACH</span><h2>First the idea.<br /><span>Then the right tools.</span></h2><p>{service.intro}</p><p>Clear creative direction, considered decisions and regular feedback keep the work moving in the right direction.</p><div className="service-fit"><strong>A good fit for</strong><p>{service.fit}</p></div></section><section className="detail-block deliverables"><span className="eyebrow">02 / WHAT WE CAN CREATE</span><h2>Considered from<br /><span>start to finish.</span></h2>{service.deliverables.map((d, i) => <div className="deliverable-row" key={d}><span>0{i + 1}</span><strong>{d}</strong><Icon size={16} /></div>)}<small className="scope-note">Final deliverables and revisions are agreed in your project scope.</small></section></div>
+    <section className="detail-block detail-workflow"><div className="eyebrow">03 / A CLEAR WAY FORWARD</div><h2>Good collaboration.<br /><span>Better outcomes.</span></h2><div className="mini-process">{[['Discover', 'Align on your brand, audience and goals.'], ['Shape', 'Review the creative direction together.'], ['Create', 'Develop the work with useful checkpoints.'], ['Deliver', 'Receive the agreed assets and handover.']].map(([t, p], i) => <div key={t}><span>0{i + 1}</span><h3>{t}</h3><p>{p}</p></div>)}</div></section>
+    <section className="detail-cta"><span className="live-dot" /><h2>Your next idea.<br /><span>Let’s give it a direction.</span></h2><a className="button" href={`/start?service=${service.slug}`}>Start a simple brief <Icon /></a><a className="quiet-link" href={`/services/${next.slug}`}>Next: {next.short} →</a></section>
+  </article>;
+}

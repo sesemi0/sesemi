@@ -1,0 +1,11 @@
+{
+  "title": "SESEMI",
+  "description": "Delivers a fully professional, creatively designed website tailored to client specifications, enhancing user engagement and brand presence.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}

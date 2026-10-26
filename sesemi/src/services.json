@@ -1,0 +1,80 @@
+[
+  {
+    "slug": "web-design",
+    "icon": "code",
+    "title": "Web design & development",
+    "short": "Web design",
+    "description": "Distinctive, responsive websites that turn your brand into a clear, effortless digital experience.",
+    "category": "DIGITAL EXPERIENCES",
+    "symbol": "</>",
+    "intro": "A good website does more than look impressive. It explains your value, makes the next step obvious, and works beautifully on every screen. We bring strategy, interface design and development together.",
+    "deliverables": ["Discovery and website structure", "Custom responsive UI and development", "Accessible interactions and on-page SEO", "Launch-ready files and handover"],
+    "fit": "Brand websites, landing pages, portfolios and business websites.",
+    "keywords": "custom website design, responsive web development, brand website"
+  },
+  {
+    "slug": "ai-advertising-videos",
+    "icon": "video",
+    "title": "AI advertising films",
+    "short": "AI advertising films",
+    "description": "From a bold concept to a cinematic brand teaser. AI-powered visuals, human-led storytelling.",
+    "category": "BRAND IN MOTION",
+    "symbol": "PLAY",
+    "intro": "Give your brand a story worth watching. We develop the concept, visual direction and AI-generated scenes, then shape them into a cohesive advertising teaser built for your audience and channel.",
+    "deliverables": ["Creative concept and storyboard", "AI-generated scenes and visual direction", "Editing, sound direction and titles", "Channel-ready aspect ratios and exports"],
+    "fit": "Brand launches, product teasers, social campaigns and short advertising films.",
+    "keywords": "AI advertising video, brand teaser production, AI commercial video"
+  },
+  {
+    "slug": "ui-ux-design",
+    "icon": "design",
+    "title": "UI/UX & product design",
+    "short": "UI/UX design",
+    "description": "Thoughtful interfaces, intuitive journeys and design systems that make complex ideas feel simple.",
+    "category": "DESIGNED FOR PEOPLE",
+    "symbol": "Aa",
+    "intro": "We start with what people need to do, not what a screen should look like. Clear information, useful prototypes and a consistent visual language create products that feel natural from the first interaction.",
+    "deliverables": ["User flows and information architecture", "Wireframes and interactive prototypes", "High-fidelity interface design", "Reusable components and developer handoff"],
+    "fit": "New digital products, website redesigns and interfaces that need a clearer user journey.",
+    "keywords": "UI UX design, product interface design, interactive prototyping"
+  },
+  {
+    "slug": "ai-video-editing",
+    "icon": "edit",
+    "title": "AI-assisted video editing",
+    "short": "AI video editing",
+    "description": "Sharper stories, stronger pacing and polished edits. Turn existing footage into scroll-stopping content.",
+    "category": "EVERY FRAME MATTERS",
+    "symbol": "CUT",
+    "intro": "Make more of the footage and ideas you already have. We combine editorial judgment with AI-assisted tools for clean cuts, visual enhancement and consistent, platform-ready content.",
+    "deliverables": ["Editorial structure and pacing", "AI-assisted cleanup and enhancement", "Captions, transitions and branded graphics", "Short-form versions and final exports"],
+    "fit": "Social ads, promotional videos, product content and repurposing long-form footage.",
+    "keywords": "AI video editing, social media video editing, promotional video editing"
+  },
+  {
+    "slug": "brand-identity",
+    "icon": "brand",
+    "title": "Logo & visual identity",
+    "short": "Brand identity",
+    "description": "A recognizable logo and a coherent visual world. Built to feel like your brand, not a template.",
+    "category": "MAKE YOUR MARK",
+    "symbol": "S.",
+    "intro": "Your identity should be recognizable before a word is read. We explore your positioning and personality, then develop a focused logo direction and a consistent set of visual assets.",
+    "deliverables": ["Brand discovery and creative direction", "Logo concepts and refinement", "Color, typography and usage guidance", "Final vector and digital brand assets"],
+    "fit": "New businesses, brand refreshes and consistent identities across web and video.",
+    "keywords": "logo design, visual brand identity, brand design studio"
+  },
+  {
+    "slug": "prompt-engineering",
+    "icon": "ai",
+    "title": "Creative prompt engineering",
+    "short": "Prompt engineering",
+    "description": "Intentional prompts and repeatable AI workflows for consistent images, video and creative exploration.",
+    "category": "HUMAN DIRECTION. AI POSSIBILITIES.",
+    "symbol": "AI",
+    "intro": "Better creative output starts with clearer direction. We develop structured prompts, visual references and iteration workflows around your brand, so AI becomes a useful creative tool rather than a guessing game.",
+    "deliverables": ["Creative brief and model selection", "Structured prompt libraries", "Style consistency and iteration workflow", "Documentation and practical handover"],
+    "fit": "Brand teams, content creators and businesses developing AI-powered creative workflows.",
+    "keywords": "creative prompt engineering, AI image prompts, AI video workflow"
+  }
+]
