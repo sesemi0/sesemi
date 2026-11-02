@@ -1,0 +1,16 @@
+# Cloudflare Pages configuration — the SESEMI studio site + owner API.
+# docs: https://developers.cloudflare.com/pages/functions/wrangler-configuration/
+name = "sesemi"
+compatibility_date = "2026-10-01"
+pages_build_output_dir = "dist"
+
+# D1 database binding. After `wrangler d1 create sesemi`, paste the real
+# database_id here (DEPLOY-fa.md, step 3). Local dev uses an emulated DB.
+[[d1_databases]]
+binding = "DB"
+database_name = "sesemi"
+database_id = "c3e959a7-0cb0-4914-9f42-3bd910583d4a"
+
+# Workers AI — free daily allocation on the account, no API key needed.
+[ai]
+binding = "AI"

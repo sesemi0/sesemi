@@ -1,0 +1,184 @@
+/* SESEMI storyboard footer — stamped wordmark, seated sparkles, drifting
+   cosmic doodles. All delays come from the component's timeline. */
+.stellar-footer {
+  position: relative;
+  isolation: isolate;
+  overflow: clip;
+  background: linear-gradient(180deg, var(--bg, #050a16), #030810 88%);
+  border-top: 1px solid #1b2c46;
+  color: #eaf2ff;
+  font-family: 'DM Sans', sans-serif;
+  --sf-accent: #48b9ff;
+  --sf-violet: #8b5cff;
+}
+.stellar-footer *, .stellar-footer *::before, .stellar-footer *::after { box-sizing: border-box }
+.stellar-footer a { color: inherit; text-decoration: none }
+.stellar-footer button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer }
+.stellar-footer :focus-visible { outline: 2px solid var(--sf-accent); outline-offset: 4px; border-radius: 6px }
+.sf-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap }
+
+/* Top band: brand note + link columns */
+.sf-top {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+  gap: 28px clamp(28px, 6vw, 96px);
+  max-width: 1360px;
+  width: calc(100% - 96px);
+  margin: 0 auto;
+  padding-top: clamp(36px, 5vw, 64px);
+}
+.sf-brand-note p { margin: 14px 0 0; font-size: 13px; line-height: 1.85; color: #93a7c4; max-width: 42ch }
+.sf-brand { display: inline-flex; align-items: center; gap: 11px; font-family: 'Space Grotesk', sans-serif; font-size: 21px; font-weight: 700; letter-spacing: 2.5px }
+.sf-brand-mark { display: grid; place-items: center; width: 38px; height: 38px; border: 1px solid #2a4064; border-radius: 50%; color: var(--sf-accent); transition: transform .4s cubic-bezier(.3, 1.5, .5, 1), box-shadow .4s }
+.sf-brand:hover .sf-brand-mark { transform: rotate(40deg) scale(1.08); box-shadow: 0 0 22px #48b9ff33 }
+.sf-columns { display: grid; grid-template-columns: 1fr 1fr; gap: 24px }
+.sf-columns h3 { margin: 0 0 13px; font-size: 10px; font-weight: 600; letter-spacing: 2.2px; text-transform: uppercase; color: #6d84a6 }
+.sf-columns a { display: block; font-size: 13px; color: #a9bcd6; padding: 5px 0; position: relative; width: fit-content; transition: color .2s }
+.sf-columns a::after { content: ''; position: absolute; left: 0; bottom: 2px; height: 1px; width: 0; background: var(--sf-accent); transition: width .3s }
+.sf-columns a:hover { color: #eaf2ff }
+.sf-columns a:hover::after { width: 100% }
+
+/* The stage: stamped wordmark, seated sparkles, drawn ground line */
+.sf-world { position: relative; max-width: 1360px; width: calc(100% - 96px); margin: 0 auto; padding: clamp(48px, 7vw, 96px) 0 clamp(30px, 4vw, 52px) }
+.sf-stage { position: relative; max-width: 1080px; margin: 0 auto; padding-top: clamp(26px, 4vw, 48px) }
+.sf-word {
+  position: relative;
+  display: flex;
+  height: clamp(64px, 11.5vw, 158px);
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  font-size: clamp(64px, 11.5vw, 158px);
+  line-height: 1;
+  letter-spacing: .01em;
+  color: #edf4ff;
+  text-shadow: 0 0 34px #48b9ff26, 0 22px 60px #087cff1f;
+  user-select: none;
+}
+.sf-letter { position: relative; z-index: 2; flex: 1; text-align: center; transform-origin: 50% 78%; cursor: default }
+.sf-letter:hover { animation: sf-jiggle .55s cubic-bezier(.3, 1.5, .5, 1) }
+.sf-star {
+  position: absolute;
+  top: var(--seat-top, 0%);
+  left: var(--x);
+  width: var(--size);
+  height: var(--size);
+  margin-left: calc(var(--size) / -2);
+  color: var(--star);
+  z-index: 3;
+  filter: drop-shadow(0 0 9px currentColor);
+  transition: scale .25s cubic-bezier(.3, 1.5, .5, 1);
+}
+.sf-star svg { width: 100%; height: 100%; display: block }
+.sf-star:hover { scale: 1.18 }
+.sf-star.is-talking { animation: sf-hop .6s cubic-bezier(.3, .7, .4, 1) }
+.sf-top-seat { --seat-top: calc(0% - var(--size) * .38) }
+.sf-front-seat { --seat-top: calc(100% - var(--size) * .42); z-index: 4 }
+.sf-behind-seat { --seat-top: calc(0% - var(--size) * .66); z-index: 1 }
+
+.sf-bubbles { position: absolute; inset: 0; pointer-events: none; z-index: 5 }
+.sf-bubble {
+  position: absolute;
+  left: var(--x);
+  top: -34px;
+  transform: translateX(-50%);
+  background: #081528;
+  border: 1px solid #2f4d78;
+  color: #d7e7ff;
+  border-radius: 999px;
+  padding: 7px 13px;
+  font-size: 11.5px;
+  letter-spacing: .2px;
+  white-space: nowrap;
+  box-shadow: 0 10px 26px #00000066;
+  animation: sf-pop-in .3s cubic-bezier(.3, 1.5, .5, 1) both;
+}
+.sf-ground { display: block; width: 100%; height: 14px; margin-top: 8px; overflow: visible }
+.sf-ground-path { fill: none; stroke: #2a4a6e; stroke-width: 2; stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: 1 }
+
+/* Drifting cosmic doodles */
+.sf-doodles { position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 1 }
+.sf-doodle { position: absolute; left: 0; top: 0; pointer-events: auto; cursor: pointer; will-change: transform; opacity: 0 }
+
+/* Tagline and calls to action */
+.sf-tagline { position: relative; z-index: 3; margin: clamp(20px, 3vw, 34px) auto 0; text-align: center; font-size: clamp(15px, 1.8vw, 20px); line-height: 1.6; color: #b9c9df; max-width: 52ch }
+.sf-word-anim { display: inline-block; white-space: pre }
+.sf-actions { position: relative; z-index: 3; display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 12px; margin-top: 26px }
+.sf-ask { display: inline-flex; align-items: center; gap: 8px; min-height: 54px; padding: 14px 22px; border: 1px solid #2a4064; border-radius: 8px; font-size: 13px; color: #9fc6ea; transition: border-color .25s, color .25s, transform .25s }
+.sf-ask:hover { border-color: var(--sf-violet); color: #d9c8ff; transform: translateY(-2px) }
+
+/* Bottom bar */
+.sf-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 28px; max-width: 1360px; width: calc(100% - 96px); margin: 0 auto; padding: 20px 0 26px; border-top: 1px dashed #1e3252; font-size: 11.5px; color: #7488a8 }
+.sf-legal { display: flex; gap: 20px }
+.sf-legal a, .sf-legal button { color: #7488a8; transition: color .2s }
+.sf-legal a:hover, .sf-legal button:hover { color: var(--sf-accent) }
+.sf-top-button { margin-left: auto; display: inline-flex; align-items: center; gap: 6px; border: 1px solid #2a4064; border-radius: 999px; padding: 7px 14px; letter-spacing: .4px; transition: transform .25s, border-color .25s, color .25s }
+.sf-top-button:hover { transform: translateY(-2px); border-color: var(--sf-accent); color: #cfe4ff }
+
+/* The storyboard: everything waits off-stage until the footer is in view. */
+.stellar-footer[data-play='0'] .sf-letter,
+.stellar-footer[data-play='0'] .sf-star,
+.stellar-footer[data-play='0'] .sf-word-anim,
+.stellar-footer[data-play='0'] .sf-actions > *,
+.stellar-footer[data-play='0'] .sf-ground-path { opacity: 0 }
+.stellar-footer[data-play='1'] .sf-letter { animation: sf-stamp .6s cubic-bezier(.2, .8, .25, 1.12) var(--d) backwards }
+.stellar-footer[data-play='1'] .sf-ground-path { animation: sf-draw 1s cubic-bezier(.6, 0, .3, 1) 80ms both }
+.stellar-footer[data-play='1'] .sf-top-seat { animation: sf-plop .7s cubic-bezier(.3, .9, .4, 1) var(--d) backwards }
+.stellar-footer[data-play='1'] .sf-front-seat { animation: sf-rise .7s cubic-bezier(.3, 1.4, .5, 1) var(--d) backwards }
+.stellar-footer[data-play='1'] .sf-behind-seat { animation: sf-peek .8s cubic-bezier(.3, 1.4, .5, 1) var(--d) backwards }
+.stellar-footer[data-play='1'] .sf-word-anim { animation: sf-word-in .55s cubic-bezier(.2, .8, .3, 1) var(--d) backwards }
+.stellar-footer[data-play='1'] .sf-actions > * { animation: sf-pop-in .55s cubic-bezier(.3, 1.5, .5, 1) var(--d) backwards }
+
+@keyframes sf-stamp { 0% { opacity: 0; transform: translateY(-32%) scale(1.3) } 55% { opacity: 1; transform: translateY(2%) scale(.96, 1.05) } 100% { opacity: 1; transform: none } }
+@keyframes sf-draw { to { stroke-dashoffset: 0 } }
+@keyframes sf-plop { 0% { opacity: 0; transform: translateY(-120%) } 50% { opacity: 1; transform: translateY(0) scale(1.15, .82) } 70% { transform: translateY(-8%) scale(.97, 1.03) } 100% { opacity: 1; transform: none } }
+@keyframes sf-rise { 0% { opacity: 0; transform: translateY(40%) scale(.7, .4) } 55% { opacity: 1; transform: translateY(-6%) scale(1.06, .95) } 100% { opacity: 1; transform: none } }
+@keyframes sf-peek { 0% { opacity: 0; transform: translateY(75%) } 65% { opacity: 1; transform: translateY(-4%) } 100% { opacity: 1; transform: none } }
+@keyframes sf-word-in { from { opacity: 0; transform: translateY(.55em) } to { opacity: 1; transform: none } }
+@keyframes sf-pop-in { 0% { opacity: 0; transform: translateY(10px) scale(.7) } 100% { opacity: 1; transform: none } }
+@keyframes sf-fade-in { from { opacity: 0 } to { opacity: .9 } }
+@keyframes sf-jiggle { 0% { transform: none } 30% { transform: rotate(-3.5deg) scale(1.04, .96) } 60% { transform: rotate(2.5deg) translateY(-2%) } 100% { transform: none } }
+@keyframes sf-hop { 0% { transform: none } 20% { transform: scale(1.14, .84) } 50% { transform: translateY(-34%) scale(.95, 1.08) } 80% { transform: translateY(0) scale(1.06, .9) } 100% { transform: none } }
+
+@media (max-width: 860px) {
+  .sf-top { grid-template-columns: 1fr }
+  .stellar-footer .sf-world, .stellar-footer .sf-top, .stellar-footer .sf-bar { width: calc(100% - 40px) }
+}
+@media (max-width: 560px) {
+  .sf-columns { grid-template-columns: 1fr 1fr; gap: 18px }
+  .sf-actions .button { font-size: 12px; padding: 12px 16px; min-height: 46px }
+  .sf-top-button span, .sf-top-button { font-size: 10px }
+  .sf-bar { padding-bottom: 96px }
+}
+@media (prefers-reduced-motion: reduce) {
+  .stellar-footer *, .stellar-footer *::before, .stellar-footer *::after { animation: none !important; transition: none !important }
+  .stellar-footer[data-play='0'] .sf-letter, .stellar-footer[data-play='0'] .sf-star,
+  .stellar-footer[data-play='0'] .sf-word-anim, .stellar-footer[data-play='0'] .sf-actions > *,
+  .stellar-footer[data-play='0'] .sf-ground-path { opacity: 1 }
+  .stellar-footer .sf-ground-path { stroke-dashoffset: 0 }
+}
+
+/* Light theme: a soft, airy daylight edition of the storyboard — pale blue
+   wash, ink-blue wordmark, brand-colored sparkles at full strength. */
+.light .stellar-footer {
+  background: linear-gradient(180deg, #edf3fb, #e2ecf8 88%);
+  border-top-color: #cadcf0;
+  color: #14345e;
+  --sf-accent: #0e6fd8;
+  --sf-violet: #6a4bd8;
+}
+.light .stellar-footer .sf-brand-note p { color: #4a6589 }
+.light .stellar-footer .sf-brand { color: #0e2748 }
+.light .stellar-footer .sf-brand-mark { border-color: #a9c4e2 }
+.light .stellar-footer .sf-columns h3 { color: #5c7699 }
+.light .stellar-footer .sf-columns a { color: #3d5a80 }
+.light .stellar-footer .sf-columns a:hover { color: #0e2748 }
+.light .stellar-footer .sf-word {
+  color: #0e2748;
+  text-shadow: 0 0 34px #0e6fd81a, 0 22px 60px #0e6fd80f;
+}
+.light .stellar-footer .sf-ground-path { stroke: #8fb0d4 }
+.light .stellar-footer .sf-tagline { color: #33517a }
+.light .stellar-footer .sf-ask { color: #0e6fd8 }
+.light .stellar-footer .sf-bar { color: #54729a; border-top-color: #cadcf0 }
+.light .stellar-footer .sf-doodle svg { filter: brightness(.72) saturate(1.35) }
+.light .stellar-footer .sf-star { filter: drop-shadow(0 0 9px color-mix(in srgb, currentColor 55%, transparent)) brightness(.92) }

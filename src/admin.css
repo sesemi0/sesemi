@@ -1,0 +1,483 @@
+/* پنل مدیریت سسِمی — فارسی، راست‌چین، فونت وزیرمتن.
+   تمام چیدمان با ویژگی‌های منطقی (inline-start/end) نوشته شده تا با dir=rtl آینه شود. */
+
+.admin-app, .admin-auth, .admin-loading {
+  font-family: 'Vazirmatn', 'DM Sans Variable', sans-serif;
+  color: #dfe8f4;
+  background: #0b111c;
+  font-size: 13.5px;
+  --bg: #0b111c; --surface: #111b2a; --fg: #e4edf8; --muted: #7d8ca4;
+  --line: #223045; --blue: #69c2f4;
+  color-scheme: dark;
+}
+.admin-app *, .admin-auth * { box-sizing: border-box }
+.admin-app { min-height: 100vh; display: flex }
+.admin-loading { min-height: 100vh; display: grid; place-items: center; font-size: 14px }
+.admin-app h1, .admin-app h2, .admin-app h3, .admin-auth h1 {
+  font-family: 'Vazirmatn', 'DM Sans Variable', sans-serif;
+  font-weight: 600; letter-spacing: 0;
+}
+.admin-app .button, .admin-auth .button {
+  font-family: inherit; font-size: 12.5px; padding: 11px 18px; border-radius: 8px;
+  min-height: 41px; gap: 12px; box-shadow: none; translate: none;
+}
+.admin-app .button svg, .admin-auth .button svg { rotate: 180deg }
+.admin-app .button.secondary, .admin-auth .button.secondary { color: #c1d1e4; border-color: #2c3d54 }
+.admin-app .button:disabled, .admin-auth .button:disabled { opacity: .4; cursor: not-allowed; transform: none }
+
+/* ---------- سایدبار ---------- */
+.admin-sidebar {
+  width: 244px; flex-shrink: 0; position: fixed; inset-block: 0; inset-inline-start: 0;
+  background: #0b121e; border-inline-end: 1px solid #223045;
+  padding: 25px 19px; display: flex; flex-direction: column; z-index: 20;
+}
+.admin-sidebar > .brand { padding-inline: 6px; width: fit-content; gap: 6px }
+.admin-sidebar .brand > span { font-family: 'Space Grotesk Variable', sans-serif; font-size: 20px; letter-spacing: 2px }
+.admin-sidebar .brand-symbol { width: 31px; height: 39px }
+.workspace-label { display: flex; align-items: center; gap: 10px; padding: 14px 10px; border: 1px solid #25354a; border-radius: 9px; margin-block: 26px; background: #111c2b; font-size: 12px }
+.workspace-avatar { height: 32px; width: 32px; display: grid; place-items: center; border-radius: 7px; background: #23527233; color: #89c9f2; font: 600 15px 'Vazirmatn'; border: 1px solid #3d6c8a55 }
+.workspace-label small { display: block; font-size: 9.5px; color: #7289a6; margin-top: 4px }
+.workspace-label > svg { margin-inline-start: auto; color: #6e91ac }
+.sidebar-section { font-size: 10px; color: #516880; padding-inline-start: 12px; margin-bottom: 13px }
+.admin-sidebar nav { display: grid; gap: 6px }
+.admin-sidebar nav > button {
+  display: flex; align-items: center; gap: 12px; background: none; color: #8f9eb5;
+  border: 1px solid transparent; border-radius: 7px; text-align: start;
+  font-family: inherit; font-size: 12px; min-height: 43px; padding: 10px 12px;
+  transition: background .2s, color .2s;
+}
+.admin-sidebar nav > button:hover { background: #152337; color: #e1edff }
+.admin-sidebar nav > button.active { color: #a5d8fb; background: linear-gradient(-90deg, #254b713b, #1e3b5b22); border-color: #2c4c6d6e }
+.admin-sidebar nav > button > svg { color: #6d8ba6 }
+.admin-sidebar nav > button.active > svg { color: #7fc6f8 }
+.admin-sidebar nav small { margin-inline-start: auto; border-radius: 5px; min-width: 20px; text-align: center; padding: 3px 5px; background: #365b7b55; color: #9dcbef; font-size: 10px }
+.sidebar-bottom { margin-top: auto; padding-top: 35px }
+.studio-note { border: 1px solid #24374e; border-radius: 9px; background: radial-gradient(ellipse at top left, #1d4e7033, transparent), #101b2b; padding: 14px 13px }
+.studio-note > .live-dot { width: 4px; height: 4px; display: inline-block; margin-inline-end: 7px; background: #7ac8e4 }
+.studio-note strong { font-weight: 500; font-size: 11px }
+.studio-note p { font-size: 10.5px; line-height: 1.9; color: #778da6; margin: 10px 0 0 }
+.view-site, .sign-out { display: flex; justify-content: space-between; align-items: center; font-family: inherit; font-size: 11px; padding: 13px 11px; color: #8f9fb6; width: 100%; background: none; border: 0 }
+.view-site { margin-top: 16px }
+.view-site:hover, .sign-out:hover { color: #8bd4ff }
+.owner-profile { display: flex; gap: 10px; align-items: center; border-top: 1px solid #223045; padding-top: 20px; margin-top: 13px; font-size: 11px }
+.owner-profile small { display: block; font-size: 9px; color: #61748c; margin-top: 5px }
+
+/* ---------- بدنه ---------- */
+.admin-body { margin-inline-start: 244px; width: calc(100% - 244px); min-height: 100vh }
+.admin-topbar { height: 74px; border-bottom: 1px solid #223045; padding-inline: 36px; display: flex; align-items: center; justify-content: space-between; background: #0d1521 }
+.admin-topbar > div { display: flex; gap: 15px; align-items: center; font-size: 11px; color: #60758d }
+.admin-topbar strong { font-weight: 500; color: #b1c0d3 }
+.admin-topbar > div:last-child { gap: 20px }
+.mode-pill { border: 1px solid #315273; background: #19324d44; color: #91c3e4; display: flex; align-items: center; gap: 7px; font-size: 10px; border-radius: 5px; padding: 6px 10px }
+.mode-pill i { width: 4px; height: 4px; border-radius: 50%; background: #76c6ec }
+.mode-pill.live { border-color: #317060; color: #97dbbd; background: #244f3b33 }
+.mode-pill.live i { background: #77cba4 }
+.admin-icon-button { display: grid; place-items: center; color: #809cb8; rotate: 180deg }
+.demo-banner { min-height: 35px; display: flex; align-items: center; justify-content: space-between; gap: 20px; background: #19324d33; border-bottom: 1px solid #2c456333; padding: 9px 36px; font-size: 11px; color: #7794b3 }
+.demo-banner > span { display: flex; gap: 8px; align-items: center }
+.demo-banner > button { border: 0; background: none; color: #90c9f1; font-family: inherit; font-size: 11px; padding: 0; white-space: nowrap; cursor: pointer }
+.demo-banner > button > span { margin-inline-start: 8px }
+
+.admin-main { padding: 34px 36px 0; max-width: 1630px; margin: auto }
+.admin-page-heading { display: flex; align-items: center; justify-content: space-between; gap: 25px; margin-bottom: 29px }
+.admin-page-heading .eyebrow { font-size: 10px; letter-spacing: 0; color: #74a5ca; margin-bottom: 10px }
+.admin-page-heading h1 { font-size: 29px; line-height: 1.45; margin: 0; letter-spacing: 0; white-space: normal }
+.admin-page-heading p { font-size: 12px; color: #71849d; margin: 9px 0 0 }
+
+.admin-app input, .admin-app select, .admin-app textarea, .admin-auth input {
+  display: block; width: 100%; font-family: inherit; font-size: 12.5px; outline: none;
+  background: #0c1421; border: 1px solid #293b53; color: #c8d7e8; border-radius: 6px;
+  padding: 11px 12px; margin: 8px 0 18px; resize: vertical; transition: border-color .2s;
+}
+.admin-app input:focus, .admin-app select:focus, .admin-app textarea:focus, .admin-auth input:focus { border-color: #69b8e5 }
+.admin-app input::placeholder, .admin-app textarea::placeholder, .admin-auth input::placeholder { color: #586c86 }
+.admin-app label, .admin-auth label { font-size: 11.5px; color: #94a8c1; display: block; line-height: 1.8 }
+.admin-app select { appearance: auto; min-height: 39px }
+.admin-page-heading > select { width: 150px; margin: 0; padding: 10px; font-size: 11.5px; background: #111c2b; flex-shrink: 0 }
+
+/* ---------- کارت‌های آمار ---------- */
+.metric-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 23px }
+.metric-card { padding: 20px; border: 1px solid #26364c; border-radius: 10px; background: linear-gradient(135deg, #15223566, #101a29); overflow: hidden; position: relative }
+.metric-card:after { content: ''; position: absolute; inset-inline-end: -20px; bottom: -35px; border-radius: 50%; width: 100px; height: 100px; background: #347fc009; pointer-events: none }
+.metric-card > div { display: flex; align-items: center; justify-content: space-between; gap: 15px; font-size: 11.5px; color: #a0b3cc; min-height: 21px }
+.metric-card > div > svg { color: #6c9fc5; flex-shrink: 0 }
+.metric-card > strong { display: block; font: 600 33px/1.2 'Vazirmatn'; letter-spacing: 0; margin: 20px 0 12px; color: #e4f0fc }
+.metric-card > small { font-size: 10px; color: #657b96; line-height: 1.8; display: block }
+
+.admin-card { background: #101a29; border: 1px solid #26364c; border-radius: 10px; overflow: hidden }
+.admin-card-heading { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 23px 24px 17px }
+.admin-card h2 { font-size: 16px; letter-spacing: 0; line-height: 1.6; margin: 0 }
+.admin-card-heading p { font-size: 10.5px; color: #6e829d; line-height: 1.8; margin: 6px 0 0 }
+.admin-card-heading > svg { color: #618baa }
+.overview-middle { display: grid; grid-template-columns: 1.55fr 1fr; gap: 21px; margin-bottom: 23px }
+
+.chart-legend { display: flex; align-items: center; gap: 6px; font-size: 10px; color: #7c96b2 }
+.chart-legend i { width: 5px; height: 5px; border-radius: 50%; background: #69baf1 }
+.traffic-chart { height: 186px; display: flex; position: relative; margin: 14px 24px 0; padding-top: 5px }
+.chart-grid { width: 34px; flex-shrink: 0; display: flex; flex-direction: column; justify-content: space-between; padding-bottom: 15px; font-size: 9.5px; color: #506883 }
+.chart-bars { position: relative; width: 100%; display: flex; align-items: flex-end; gap: 4px; padding-bottom: 16px; background: repeating-linear-gradient(to top, transparent, transparent calc(50% - 1px), #25344b66 calc(50% - 1px), #25344b66 50%) }
+.chart-bar-col { flex: 1; height: 100%; display: flex; flex-direction: column; justify-content: flex-end; min-width: 2px }
+.chart-bar { background: linear-gradient(0deg, #306487aa, #69bdf1); border-radius: 3px 3px 0 0; min-height: 2px; transition: filter .2s; box-shadow: 0 0 10px #438cbd08 }
+.chart-bar:hover { filter: brightness(1.4) }
+.chart-bar-col:nth-child(4n) .chart-bar { background: linear-gradient(0deg, #315474aa, #519dd0) }
+.chart-bar-col > span { display: none }
+.chart-footer { display: flex; justify-content: space-between; font-size: 9.5px; color: #526e8a; margin: 0 25px 21px 53px }
+
+.pipeline-summary { padding-bottom: 18px }
+.pipeline-summary > .admin-card-heading { padding-bottom: 17px }
+.pipeline-summary > button { display: flex; align-items: center; gap: 12px; width: calc(100% - 48px); margin-inline: 24px; background: none; border: 0; padding: 11px 0; color: #7d9bb9; font-family: inherit; cursor: pointer }
+.pipeline-summary > button:hover { color: #b5e2ff }
+.pipeline-summary .status-badge { min-width: 104px; background: none; padding: 0; border: 0; font-size: 10.5px }
+.pipeline-meter { height: 4px; border-radius: 3px; flex: 1; background: #243349; overflow: hidden }
+.pipeline-meter i { display: block; height: 100%; border-radius: 3px; background: #5aa6d7 }
+.pipeline-summary > button strong { font: 500 11px 'Vazirmatn'; color: #a7c0d9; min-width: 12px; text-align: center }
+.pipeline-summary > button > span:last-child { font-size: 16px }
+.pipeline-summary > p { font-size: 10px; color: #526b85; text-align: center; line-height: 1.8; margin: 14px 18px 0 }
+
+.status-badge { display: inline-flex; gap: 6px; align-items: center; font-size: 10.5px; border-radius: 5px; border: 1px solid #3a516a55; background: #27446433; color: #8cbbdf; padding: 5px 8px; white-space: nowrap }
+.status-badge i { width: 4px; height: 4px; border-radius: 50%; background: currentColor }
+.status-badge.contacted, .status-badge.in-progress { color: #c4b4f4; border-color: #74649c44; background: #735ea21c }
+.status-badge.qualified, .status-badge.review { color: #dfbd7a; border-color: #9b784a44; background: #8f6a321c }
+.status-badge.won, .status-badge.delivered { color: #82cfb0; border-color: #4c9f7e44; background: #3a8b6a1c }
+.status-badge.lost { color: #9b9fad; border-color: #64708444; background: #5f70851c }
+
+.text-button { padding: 0; border: 0; background: none; color: #7db7df; font-family: inherit; font-size: 11.5px; cursor: pointer }
+.text-button:hover { color: #b2e1ff }
+
+/* ---------- جدول پیام‌ها ---------- */
+.table-scroll { overflow-x: auto }
+.leads-table { width: 100%; border-collapse: collapse; white-space: nowrap; text-align: start }
+.leads-table th { font-size: 10.5px; font-weight: 500; letter-spacing: 0; color: #5b7491; border-block: 1px solid #223047; padding: 12px 24px; background: #0e1826 }
+.leads-table td { font-size: 11.5px; color: #8da2bc; border-bottom: 1px solid #22304788; padding: 15px 24px }
+.leads-table tr:last-child td { border-bottom: 0 }
+.leads-table tbody tr { transition: background .2s }
+.leads-table tbody tr:hover { background: #1b2b413f }
+.contact-cell { display: flex; gap: 11px; align-items: center; text-align: start; border: 0; background: none; padding: 0; color: inherit; font-family: inherit; cursor: pointer }
+.contact-avatar { width: 32px; height: 32px; flex-shrink: 0; border-radius: 8px; display: grid; place-items: center; background: #1e3550; border: 1px solid #2e4a6a; color: #98bfdd; font: 500 11px 'Vazirmatn' }
+.contact-cell strong { font: 500 11.5px 'Vazirmatn'; color: #c5d7e9 }
+.contact-cell small { display: block; font-size: 10px; color: #617995; margin-top: 5px }
+.row-open { background: none; border: 0; padding: 0; color: #6e92b2; font-size: 18px; cursor: pointer }
+.recent-enquiries .admin-card-heading { padding-block: 23px }
+.admin-bottom-note { display: flex; justify-content: space-between; gap: 20px; border-top: 1px solid #22304788; padding: 22px 0; margin-top: 34px; color: #425b78; font-size: 10px }
+.enquiry-toolbar { display: flex; gap: 10px; align-items: center; margin-bottom: 15px }
+.admin-search { display: flex; gap: 8px; align-items: center; background: #101c2c; border: 1px solid #293b53; border-radius: 7px; padding: 0 12px; flex: 1; max-width: 350px; color: #617e9d }
+.admin-search input { margin: 0; border: 0; background: none; padding: 12px 0; font-size: 12px; min-width: 0 }
+.enquiry-toolbar > select { width: 140px; margin: 0; min-height: 41px; font-size: 11.5px }
+.layout-toggle { display: flex; padding: 3px; gap: 2px; background: #101a2a; border: 1px solid #293b53; border-radius: 7px }
+.layout-toggle > button { border: 0; background: none; color: #64809f; border-radius: 4px; font-family: inherit; font-size: 11px; padding: 8px 10px; cursor: pointer }
+.layout-toggle > button.active { background: #243b56; color: #bad8ef }
+.enquiry-toolbar .button { font-size: 11px; padding: 10px 14px; gap: 10px; white-space: nowrap; min-height: 41px }
+.results-count { font-size: 11px; color: #607c98; margin: 0 0 20px }
+.admin-empty { text-align: center; padding: 55px 25px; color: #6b86a3 }
+.admin-empty svg { color: #6eabc9; margin: auto }
+.admin-empty h3 { font-size: 20px; margin: 18px 0 8px; color: #b7cee5 }
+.admin-empty p { font-size: 12px; line-height: 1.9; margin-bottom: 20px }
+
+/* ---------- بورد کانبان ---------- */
+.kanban-board { display: flex; gap: 15px; overflow-x: auto; padding-bottom: 15px; align-items: flex-start }
+.kanban-column { flex: 1; min-width: 200px; background: #0e1826; border: 1px solid #23364d; border-radius: 9px; padding: 12px; min-height: 340px }
+.kanban-column > header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 14px; margin-bottom: 12px; border-bottom: 1px solid #23364d }
+.kanban-column > header > span:last-child { font-size: 10.5px; color: #7494b3 }
+.kanban-lead { display: flex; flex-direction: column; gap: 12px; width: 100%; text-align: start; border: 1px solid #2c405b; border-radius: 7px; background: #142135; padding: 15px; margin-bottom: 10px; color: #c0d5e8; font-family: inherit; transition: border-color .2s, transform .2s; cursor: pointer }
+.kanban-lead:hover { border-color: #628db2; transform: translateY(-2px) }
+.kanban-brand { font-size: 10px; color: #79a7c9 }
+.kanban-lead > strong { font-size: 13px; font-weight: 600 }
+.kanban-lead > span:not(.kanban-brand) { font-size: 10.5px; color: #7d9ab5 }
+.kanban-lead > small { border-top: 1px solid #293f59; padding-top: 12px; width: 100%; font-size: 10px; color: #5a7a99; display: flex; justify-content: space-between }
+.kanban-empty { font-size: 11px; color: #4c6681; line-height: 1.9; text-align: center; padding: 25px 7px }
+
+/* ---------- پروژه‌ها ---------- */
+.project-stage-tabs { display: flex; gap: 20px; border-bottom: 1px solid #26374f; margin-bottom: 25px; overflow-x: auto }
+.project-stage-tabs > button { font-family: inherit; font-size: 11.5px; padding: 0 0 14px; background: none; border: 0; border-bottom: 2px solid transparent; white-space: nowrap; color: #7189a6; cursor: pointer }
+.project-stage-tabs > button.active { border-bottom-color: #78c4ef; color: #b4dbf5 }
+.project-stage-tabs > button > span { margin-inline-start: 7px; background: #20334a; padding: 2px 6px; border-radius: 4px; font-size: 10px }
+.admin-project-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px }
+.admin-project-card { padding: 24px }
+.project-card-top { display: flex; justify-content: space-between; align-items: center; gap: 15px; margin-bottom: 25px }
+.project-card-top > span:first-child { font: 11px monospace; color: #6586a6 }
+.project-service-icon { width: 45px; height: 45px; display: grid; place-items: center; border-radius: 9px; background: #203e5d66; color: #83b9de; border: 1px solid #35587666; margin-bottom: 20px }
+.admin-project-card > h2 { font-size: 21px; line-height: 1.5 }
+.admin-project-card > p { font-size: 11.5px; color: #6f8da9; margin: 10px 0 25px }
+.admin-project-card > .button { width: 100%; justify-content: space-between; font-size: 11.5px; margin-top: 6px }
+.admin-field-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 17px }
+.admin-footnote { font-size: 10.5px; color: #617e9b; line-height: 1.9; margin: 18px 0 }
+
+/* ---------- آمار ---------- */
+.analytics-bottom { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 24px }
+.analytics-row { display: flex; gap: 15px; align-items: center; justify-content: space-between; border-top: 1px solid #22334b; padding: 17px 24px; font-size: 11.5px; color: #90aec9 }
+.analytics-row > span { font-size: 11px; overflow-wrap: anywhere }
+.analytics-row > strong { font-size: 11.5px; font-weight: 500; color: #a8c8e4 }
+.source-meter { width: 35%; height: 4px; border-radius: 3px; background: #24354a; margin-inline-start: auto }
+.source-meter i { display: block; height: 100%; border-radius: 3px; background: #6aa9d3 }
+.privacy-callout { display: flex; gap: 18px; background: #132a3b44; border: 1px solid #2e526b66; border-radius: 9px; padding: 24px; margin-top: 25px; color: #76b3d7 }
+.privacy-callout > svg { flex-shrink: 0 }
+.privacy-callout h3 { font-size: 15px; margin: 0 0 8px; color: #9fc4e0 }
+.privacy-callout p { font-size: 11.5px; line-height: 2; color: #6d8eac; margin: 0; max-width: 740px }
+
+/* ---------- تنظیمات ---------- */
+.settings-form { max-width: 900px; display: grid; gap: 23px }
+.settings-form .admin-card { padding: 0 25px 24px }
+.settings-form .admin-card-heading { padding: 24px 0 22px }
+.settings-form label > span { font-size: 10px; color: #5d7794 }
+.admin-checkbox { display: flex !important; gap: 12px; align-items: flex-start; margin-top: 10px }
+.admin-checkbox > input { width: 14px; height: 14px; margin: 3px 0 0; accent-color: #69bff1 }
+.admin-checkbox > span { color: #a0b8ce !important; font-size: 11.5px !important }
+.admin-checkbox small { display: block; font-size: 10px; color: #627f9b; margin-top: 6px; line-height: 1.8 }
+.settings-submit { display: flex; gap: 20px; justify-content: flex-start; align-items: center }
+.settings-submit > span { font-size: 11.5px; color: #81bda5 }
+
+/* ---------- اتصال‌ها ---------- */
+.connection-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 25px }
+.connection-card { padding: 26px; display: flex; flex-direction: column }
+.connection-icon { width: 43px; height: 43px; display: grid; place-items: center; border: 1px solid #35516e; border-radius: 9px; background: #1b375144; color: #83bde3; margin-bottom: 22px }
+.connection-card h2 { font-size: 19px }
+.connection-card p { font-size: 12px; line-height: 2; color: #708ca6; max-width: 380px; min-height: 48px; margin: 13px 0 16px }
+.connection-extra { font-size: 11px; color: #8fb3cd; margin-bottom: 14px }
+.connection-card .button { align-self: flex-start; font-size: 11px }
+.connection-state { display: flex; gap: 7px; align-items: center; border-top: 1px solid #243b52; padding-top: 17px; margin-top: auto; font-size: 11px; color: #78889b }
+.connection-state i { width: 5px; height: 5px; border-radius: 50%; background: #6b788b }
+.connection-state.configured { color: #8ec9b7 }
+.connection-state.configured i { background: #82c7af }
+.security-checklist { padding-bottom: 15px }
+.security-checklist > .admin-card-heading { padding-bottom: 20px }
+.security-checklist > div:not(.admin-card-heading) { display: flex; align-items: flex-start; gap: 15px; padding: 10px 25px }
+.security-checklist > div:not(.admin-card-heading) > span { font: 500 12px 'Vazirmatn'; color: #6aa1c7; padding-top: 4px }
+.security-checklist > div > p { font-size: 12px; line-height: 1.9; color: #879fb9; margin: 0 }
+.security-checklist > .admin-footnote { margin-inline: 25px; padding-top: 15px; border-top: 1px solid #25374c }
+
+/* ---------- اعلان و کشو ---------- */
+.admin-toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: 25px; display: flex; align-items: center; gap: 12px; border: 1px solid #3b677e; background: #13283a; color: #beddec; box-shadow: 0 12px 50px #0008; border-radius: 9px; padding: 15px 18px; z-index: 120; max-width: calc(100vw - 35px); font-size: 12px; line-height: 1.9; animation: page-in .2s }
+.admin-toast > svg { flex-shrink: 0; color: #81bfb0 }
+.admin-toast > button { margin-inline-start: 10px; border: 0; background: none; color: #81a4bd; font-size: 20px; cursor: pointer }
+.drawer-backdrop { position: fixed; inset: 0; z-index: 80; background: #020813a6; backdrop-filter: blur(4px); display: flex; justify-content: flex-end }
+.admin-drawer { width: 445px; max-width: 100vw; height: 100dvh; overflow: auto; background: #101b2b; border-inline-start: 1px solid #314c67; padding: 27px 30px; animation: drawer-in .35s cubic-bezier(.16, 1, .3, 1); scrollbar-width: thin; overscroll-behavior: contain }
+.drawer-header { display: flex; justify-content: space-between; gap: 15px; align-items: center; margin-bottom: 30px }
+.drawer-header .eyebrow { font-size: 11px; letter-spacing: 0; color: #789ec1 }
+.admin-drawer h2 { font-size: 26px; line-height: 1.4; margin: 15px 0 10px }
+.drawer-subtitle { font-size: 12px; line-height: 1.9; color: #7f9bb5; margin-bottom: 24px }
+.drawer-avatar { display: grid; place-items: center; width: 58px; height: 58px; border-radius: 13px; background: #22425e; color: #b9d9ec; font: 600 20px 'Vazirmatn'; border: 1px solid #3a6080 }
+.drawer-facts { border-block: 1px solid #2c425b; padding: 15px 0; margin-bottom: 25px }
+.drawer-facts > div { display: flex; justify-content: space-between; align-items: center; gap: 15px; font-size: 11.5px; padding: 10px 0 }
+.drawer-facts > div > span { color: #6885a2 }
+.drawer-facts a { color: #90c4e9; overflow-wrap: anywhere }
+.drawer-facts strong { font-weight: 500; color: #9fbad1 }
+.admin-drawer .button { width: 100%; justify-content: space-between; margin-top: 10px }
+.admin-drawer .chat-close { margin-inline-start: auto; color: #90b2ca }
+
+/* ---------- صفحهٔ ورود ---------- */
+.admin-auth { min-height: 100vh; display: flex; align-items: center; flex-direction: column; padding: 45px 25px; background: radial-gradient(ellipse at 50% 30%, #1a466d26, transparent 50%), #080f1d }
+.admin-auth > .brand { margin-bottom: 40px }
+.admin-auth .brand > span { font-family: 'Space Grotesk Variable', sans-serif; font-size: 21px }
+.admin-auth .brand-symbol { width: 34px; height: 42px }
+.auth-panel { width: 465px; max-width: 100%; border: 1px solid #2b435e; border-radius: 17px; padding: 35px; background: linear-gradient(145deg, #142136c9, #0d1726); text-align: center; box-shadow: 0 30px 120px #0004 }
+.auth-lock { width: 49px; height: 49px; border-radius: 13px; background: #1d3e5d55; border: 1px solid #385d7c; display: grid; place-items: center; color: #83c6ec; margin: 0 auto 25px }
+.auth-panel > .eyebrow { justify-content: center; font-size: 11px; letter-spacing: 0; color: #78b5df }
+.auth-panel h1 { font-size: 33px; line-height: 1.5; letter-spacing: 0; margin: 19px 0 18px; white-space: normal }
+.auth-panel h1 > span { color: #7cc7f5 }
+.auth-panel > p { font-size: 13px; line-height: 2; color: #7f99b6; margin: 0 0 27px }
+.auth-panel form { text-align: start }
+.auth-panel input { margin-bottom: 14px; font-size: 12.5px; padding: 13px }
+.auth-panel input[dir='ltr'] { direction: ltr; text-align: left }
+.auth-panel .button { width: 100%; justify-content: center; min-height: 45px; font-size: 12.5px }
+.auth-notice { display: flex; gap: 8px; align-items: flex-start; text-align: start; background: #25394c44; border: 1px solid #374c6266; padding: 13px; border-radius: 7px; font-size: 11px !important; line-height: 1.9; color: #8fa9bf; margin: 17px 0 0 }
+.auth-notice svg { flex-shrink: 0; color: #77b5d9 }
+.auth-divider { border-top: 1px solid #2a3b52; margin: 30px 0 24px; position: relative }
+.auth-divider > span { position: absolute; left: 50%; transform: translate(-50%, -50%); top: 0; padding-inline: 12px; background: #111d2e; color: #526e8a; font-size: 10.5px; white-space: nowrap }
+.auth-panel > small { display: block; font-size: 10.5px; line-height: 1.9; color: #57748f; margin-top: 15px }
+.auth-back { font-size: 11.5px; color: #6c91ae; margin-top: 25px }
+
+@keyframes drawer-in { from { transform: translateX(-100%) } to { transform: translateX(0) } }
+@keyframes page-in { from { opacity: 0 } to { opacity: 1 } }
+
+@media(min-width:1500px) {
+  .admin-sidebar { width: 262px; padding-inline: 22px }
+  .admin-body { margin-inline-start: 262px; width: calc(100% - 262px) }
+  .admin-main { padding: 42px 48px 0 }
+  .admin-page-heading h1 { font-size: 32px }
+  .metric-card { padding: 24px }
+  .metric-card > strong { font-size: 39px }
+  .traffic-chart { height: 220px }
+  .leads-table td { padding-block: 18px }
+  .admin-card-heading { padding-block: 25px }
+  .admin-card h2 { font-size: 17.5px }
+  .admin-topbar, .demo-banner { padding-inline: 48px }
+}
+@media(max-width:1150px) {
+  .admin-sidebar { width: 214px; padding-inline: 14px }
+  .admin-body { margin-inline-start: 214px; width: calc(100% - 214px) }
+  .admin-main { padding: 28px 25px 0 }
+  .admin-topbar, .demo-banner { padding-inline: 25px }
+  .metric-grid { gap: 12px }
+  .metric-card { padding: 17px 15px }
+  .metric-card > strong { font-size: 29px }
+  .admin-page-heading h1 { font-size: 26px }
+  .overview-middle { gap: 15px; grid-template-columns: 1.4fr 1fr }
+  .admin-card-heading { padding: 20px }
+  .admin-card h2 { font-size: 15px }
+  .traffic-chart { height: 180px; margin-inline: 20px }
+  .pipeline-summary > button { width: calc(100% - 40px); margin-inline: 20px; gap: 9px }
+  .pipeline-summary .status-badge { min-width: 92px }
+  .leads-table th, .leads-table td { padding-inline: 20px }
+  .enquiry-toolbar { flex-wrap: wrap }
+  .admin-search { max-width: none; min-width: 230px }
+  .admin-project-card { padding: 21px }
+  .admin-field-grid { gap: 12px }
+  .connection-card { padding: 23px }
+  .connection-card h2 { font-size: 18px }
+}
+@media(max-width:850px) {
+  .admin-sidebar { width: 75px; padding: 22px 10px }
+  .admin-body { margin-inline-start: 75px; width: calc(100% - 75px) }
+  .admin-sidebar > .brand { padding: 0; margin-inline: auto }
+  .admin-sidebar .brand > span { display: none }
+  .admin-sidebar .brand-symbol { width: 37px }
+  .workspace-label { display: none }
+  .sidebar-section { font-size: 0; padding: 0; margin-top: 35px; margin-bottom: 8px }
+  .admin-sidebar nav { gap: 10px }
+  .admin-sidebar nav > button { padding: 12px; justify-content: center; position: relative; min-height: 43px }
+  .admin-sidebar nav > button > span { display: none }
+  .admin-sidebar nav > button > small { position: absolute; inset-inline-start: -3px; top: -3px; font-size: 9px; padding: 2px 4px; min-width: 15px }
+  .studio-note, .owner-profile { display: none }
+  .view-site, .sign-out { font-size: 0; justify-content: center; padding-inline: 0 }
+  .view-site > span, .sign-out > span { font-size: 21px }
+  .sidebar-bottom { padding-top: 20px }
+  .metric-grid { grid-template-columns: 1fr 1fr }
+  .metric-card > strong { font-size: 33px }
+  .admin-page-heading { gap: 17px }
+  .admin-page-heading h1 { font-size: 25px }
+  .overview-middle { grid-template-columns: 1fr 1fr; gap: 15px }
+  .admin-card-heading { gap: 10px; padding-inline: 18px }
+  .admin-card h2 { font-size: 15px }
+  .chart-legend { display: none }
+  .traffic-chart { height: 180px; margin-inline: 17px }
+  .chart-bars { gap: 3px }
+  .pipeline-summary > button { width: calc(100% - 36px); margin-inline: 18px }
+  .text-button { font-size: 10.5px }
+  .admin-toast { font-size: 11px }
+  .admin-project-grid { grid-template-columns: 1fr }
+  .analytics-bottom { grid-template-columns: 1fr; gap: 18px }
+  .settings-form .admin-card { padding-inline: 20px }
+  .connection-card h2 { font-size: 17px }
+  .connection-card p { font-size: 11px }
+  .connection-state { font-size: 10px }
+  .demo-banner { font-size: 10px; gap: 10px }
+  .demo-banner > span { line-height: 1.9 }
+  .demo-banner > button { font-size: 10px }
+  .enquiry-toolbar .button { flex: 1; justify-content: center }
+  .enquiry-toolbar > .admin-search { min-width: 100%; max-width: 100% }
+  .enquiry-toolbar > select { flex: 1 }
+  .layout-toggle { flex-shrink: 0 }
+}
+@media(max-width:600px) {
+  .admin-sidebar { width: 58px; padding: 18px 7px }
+  .admin-body { margin-inline-start: 58px; width: calc(100% - 58px) }
+  .admin-sidebar .brand-symbol { width: 30px; height: 39px }
+  .admin-sidebar nav { gap: 8px }
+  .admin-sidebar nav > button { padding: 11px 8px; min-height: 40px; border-radius: 6px }
+  .admin-sidebar nav svg { width: 18px }
+  .sidebar-section { margin-top: 23px }
+  .admin-topbar { height: 59px; padding-inline: 16px }
+  .admin-topbar > div { font-size: 10px; gap: 8px }
+  .admin-topbar > div:last-child { gap: 12px }
+  .mode-pill { font-size: 9px; padding: 5px 7px; gap: 4px }
+  .admin-icon-button { display: none }
+  .demo-banner { padding: 9px 15px; display: block; min-height: 0 }
+  .demo-banner > span { font-size: 10px; line-height: 1.9; align-items: flex-start }
+  .demo-banner > span > svg { width: 12px; flex-shrink: 0 }
+  .demo-banner > button { font-size: 10px; margin-top: 6px; margin-inline-start: 20px }
+  .admin-main { padding: 25px 15px 0 }
+  .admin-page-heading { display: flex; flex-wrap: wrap; gap: 18px; margin-bottom: 23px; align-items: flex-start }
+  .admin-page-heading .eyebrow { font-size: 9.5px; margin-bottom: 10px }
+  .admin-page-heading h1 { font-size: 24px; line-height: 1.4 }
+  .admin-page-heading p { font-size: 11px; line-height: 1.8; max-width: 245px; margin-top: 10px }
+  .admin-page-heading > select { width: 140px; font-size: 11px; padding: 8px; min-height: 35px }
+  .metric-grid { gap: 10px; margin-bottom: 17px }
+  .metric-card { padding: 15px 13px; border-radius: 8px }
+  .metric-card > div { font-size: 10.5px; align-items: flex-start; gap: 8px; line-height: 1.6 }
+  .metric-card > div > svg { width: 13px; height: 13px }
+  .metric-card > strong { font-size: 29px; margin: 17px 0 9px }
+  .metric-card > small { font-size: 9.5px; line-height: 1.8 }
+  .overview-middle { grid-template-columns: 1fr; gap: 17px; margin-bottom: 17px }
+  .admin-card { border-radius: 8px }
+  .admin-card-heading { padding: 19px 17px 15px; align-items: flex-start; gap: 12px }
+  .admin-card h2 { font-size: 15.5px; line-height: 1.6 }
+  .admin-card-heading p { font-size: 10px; line-height: 1.9 }
+  .traffic-chart { height: 165px; margin: 13px 17px 0 }
+  .chart-grid { font-size: 9px; width: 26px }
+  .chart-bars { gap: 3px }
+  .chart-footer { font-size: 9px; margin: 0 17px 20px 42px }
+  .pipeline-summary > .admin-card-heading { padding-bottom: 13px }
+  .pipeline-summary > button { width: calc(100% - 34px); margin-inline: 17px; padding-block: 10px }
+  .pipeline-summary .status-badge { font-size: 10px; min-width: 96px }
+  .pipeline-summary > p { font-size: 10px }
+  .recent-enquiries .admin-card-heading { padding: 19px 17px; flex-wrap: wrap }
+  .leads-table th { font-size: 9.5px; padding: 11px 15px }
+  .leads-table td { font-size: 10.5px; padding: 15px }
+  .contact-cell { gap: 8px }
+  .contact-avatar { width: 28px; height: 28px; font-size: 10px; border-radius: 7px }
+  .leads-table td:nth-child(2) { max-width: 130px; white-space: normal; line-height: 1.8 }
+  .status-badge { font-size: 9.5px; padding: 5px 7px; gap: 5px }
+  .admin-bottom-note { display: block; padding-block: 20px; margin-top: 27px; font-size: 9px; line-height: 1.8 }
+  .admin-bottom-note > span:last-child { display: block; margin-top: 7px }
+  .enquiry-toolbar { gap: 8px }
+  .admin-search { padding-inline: 10px; min-width: 100% }
+  .admin-search input { font-size: 11.5px; padding-block: 11px }
+  .admin-search svg { width: 15px }
+  .enquiry-toolbar > select { font-size: 11px; width: 120px }
+  .layout-toggle > button { font-size: 10px; padding-inline: 9px }
+  .enquiry-toolbar > .button { font-size: 10.5px; padding-inline: 12px; min-height: 38px }
+  .results-count { font-size: 10px }
+  .kanban-column { min-width: 215px }
+  .kanban-board { gap: 12px }
+  .project-stage-tabs { gap: 18px }
+  .project-stage-tabs > button { font-size: 11px }
+  .admin-project-card { padding: 20px 17px }
+  .admin-project-card > h2 { font-size: 20px }
+  .admin-project-card > p { font-size: 10.5px }
+  .project-card-top > span:first-child { font-size: 10px }
+  .admin-field-grid { grid-template-columns: 1fr; gap: 0 }
+  .admin-app label { font-size: 11px }
+  .admin-app input, .admin-app select, .admin-app textarea { font-size: 12px; min-height: 42px }
+  .admin-app input[type=checkbox] { min-height: 0 }
+  .admin-app .button { font-size: 11.5px; padding: 11px 15px }
+  .privacy-callout { gap: 12px; padding: 20px 17px }
+  .privacy-callout > svg { width: 17px }
+  .privacy-callout h3 { font-size: 14px; line-height: 1.7 }
+  .privacy-callout p { font-size: 11px }
+  .analytics-bottom { gap: 17px; margin-top: 17px }
+  .analytics-row { font-size: 11px; padding: 15px 17px; gap: 10px }
+  .analytics-row > span { font-size: 10.5px }
+  .analytics-row > strong { font-size: 11px }
+  .source-meter { width: 25% }
+  .settings-form .admin-card { padding-inline: 17px }
+  .settings-form .admin-card-heading { padding-block: 20px }
+  .settings-submit { flex-wrap: wrap }
+  .settings-submit > span { font-size: 11px }
+  .connection-grid { grid-template-columns: 1fr; gap: 15px }
+  .connection-card { padding: 23px 20px }
+  .connection-card h2 { font-size: 19px }
+  .connection-card p { font-size: 11.5px; line-height: 2 }
+  .connection-state { font-size: 10.5px }
+  .security-checklist > div:not(.admin-card-heading) { padding-inline: 17px; gap: 12px }
+  .security-checklist > div > p { font-size: 11.5px; line-height: 2 }
+  .security-checklist > .admin-footnote { margin-inline: 17px; font-size: 10px }
+  .admin-toast { bottom: 18px; font-size: 11px; padding: 12px 14px; gap: 9px; width: max-content; max-width: calc(100% - 24px) }
+  .admin-drawer { width: min(445px, 100vw); padding: 23px }
+  .drawer-header { margin-bottom: 25px }
+  .admin-drawer h2 { font-size: 27px }
+  .drawer-facts > div { font-size: 11px }
+  .admin-drawer .admin-footnote { font-size: 10.5px }
+  .admin-auth { padding: 28px 20px }
+  .admin-auth > .brand { margin-bottom: 28px }
+  .auth-panel { padding: 29px 25px; border-radius: 13px }
+  .auth-panel h1 { font-size: 29px; line-height: 1.5; margin-top: 20px }
+  .auth-panel > p { font-size: 12px }
+  .auth-panel .button { font-size: 11.5px }
+  .auth-notice { font-size: 10.5px !important }
+  .auth-panel > small { font-size: 10px }
+  .auth-back { font-size: 11px }
+}
+@media(prefers-reduced-motion:reduce) {
+  .admin-drawer, .admin-toast { animation: none }
+  .chart-bar, .kanban-lead { transition: none }
+}

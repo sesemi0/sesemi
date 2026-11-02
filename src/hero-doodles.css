@@ -1,0 +1,7 @@
+/* Hero doodles: the footer's playful sticker weather, raining over the hero. */
+.hd-layer { position: absolute; inset: 0; z-index: 20; overflow: hidden; pointer-events: none; }
+.hd-doodle { position: absolute; top: 0; left: 0; width: 26px; height: 26px; margin: -13px 0 0 -13px; pointer-events: auto; cursor: pointer; opacity: .9; filter: drop-shadow(0 0 9px #48b9ff1e); will-change: transform; }
+.hd-doodle svg { display: block; width: 100%; height: 100%; }
+@media (prefers-reduced-motion: reduce) {
+  .hd-doodle { transition: none }
+}

@@ -1,0 +1,8 @@
+# Every HTML page always revalidates so visitors never see a stale build
+# (phone browsers were serving an old cached bundle with the invisible DNA).
+/*
+  Cache-Control: no-cache, must-revalidate
+
+# Content-hashed build assets are safe to cache forever
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
