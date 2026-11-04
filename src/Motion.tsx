@@ -16,11 +16,14 @@ export function Words({ children, stamp }: { children: string; stamp?: number })
 export default function Motion() {
   useEffect(() => {
     const preference = matchMedia('(prefers-reduced-motion: reduce)');
+    // Lenis only earns its keep with a mouse wheel — on touch the native
+    // scroller is smoother, and skipping it removes a permanent rAF loop
+    const finePointer = matchMedia('(pointer: fine)').matches;
     let lenis: Lenis | undefined;
     const configure = () => {
       lenis?.destroy();
       lenis = undefined;
-      if (!preference.matches) lenis = new Lenis({ autoRaf: true, duration: 1.15, smoothWheel: true, anchors: { offset: -110 } });
+      if (!preference.matches && finePointer) lenis = new Lenis({ autoRaf: true, duration: 1.15, smoothWheel: true, anchors: { offset: -110 } });
       scrollState.lenis = lenis;
     };
     configure();

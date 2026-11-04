@@ -182,3 +182,13 @@
 .light .stellar-footer .sf-bar { color: #54729a; border-top-color: #cadcf0 }
 .light .stellar-footer .sf-doodle svg { filter: brightness(.72) saturate(1.35) }
 .light .stellar-footer .sf-star { filter: drop-shadow(0 0 9px color-mix(in srgb, currentColor 55%, transparent)) brightness(.92) }
+
+/* ---- studio contact strip (location · phone · telegram · mail) ---- */
+.sf-contact { display: grid; gap: 9px; margin-top: 20px; padding-top: 18px; border-top: 1px solid #1b2c47; width: fit-content }
+.sf-contact-item { display: inline-flex; align-items: center; gap: 9px; font-size: 12.5px; color: #a9bcd6; transition: color .2s; width: fit-content }
+a.sf-contact-item:hover { color: #7cc7f5 }
+.sf-contact-loc { color: #93a7c4; letter-spacing: .4px }
+.sf-contact-loc::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: #5ad5b2; box-shadow: 0 0 9px #5ad5b266 }
+.light .stellar-footer .sf-contact { border-top-color: #d5e2ef }
+.light .stellar-footer .sf-contact-item { color: #46608a }
+.light .stellar-footer a.sf-contact-item:hover { color: #1782c9 }

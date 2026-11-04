@@ -83,7 +83,7 @@ export default function App() {
     <a className="skip-link" href="#main">Skip to content</a>
     <div className="site-arrival" aria-hidden="true"><span>SESEMI<span>.</span></span><i /></div>
     <header className="header"><div className="container nav-wrap">
-      <a className="brand" href="/" translate="no" aria-label="SESEMI home"><Ribbon small /><span>SESEMI<span className="brand-dot">.</span></span></a>
+      <div className="brand-group"><a className="brand" href="/" translate="no" aria-label="SESEMI home"><Ribbon small /><span>SESEMI<span className="brand-dot">.</span></span></a><span className="brand-loc" translate="no">Yerevan, Armenia</span></div>
       <nav id="main-navigation" className={menu ? 'nav open' : 'nav'} aria-label="Main navigation">{nav.map(([label, id]) => <a key={id} href={`/#${id}`} onClick={() => setMenu(false)}>{label}</a>)}<a href="/blog" onClick={() => setMenu(false)}>AI Radar</a><a href="/#contact" onClick={() => setMenu(false)}>Get in touch</a></nav>
       <div className="nav-actions"><HeaderAuth /><button className="theme-button" onClick={() => setLight(!light)} aria-label={light ? 'Switch to dark mode' : 'Switch to light mode'} aria-pressed={light}><Icon name="sun" size={19} /></button><a className="button small" href="/#contact">Let’s create <Icon size={16} /></a><button className="menu-button" onClick={() => setMenu(!menu)} aria-controls="main-navigation" aria-label={menu ? 'Close navigation' : 'Open navigation'} aria-expanded={menu}><Icon name="menu" /></button></div>
     </div></header>

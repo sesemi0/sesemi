@@ -26,7 +26,7 @@ export default function Seo({ path }: { path: string }) {
     }
     let schema = document.getElementById('site-schema') as HTMLScriptElement | null;
     if (!schema) { schema = document.createElement('script'); schema.type = 'application/ld+json'; schema.id = 'site-schema'; document.head.append(schema); }
-    schema.textContent = privatePage || !known ? '{}' : JSON.stringify(service ? { '@context': 'https://schema.org', '@type': 'Service', name: service.title, description: service.description, serviceType: service.short, provider: { '@type': 'Organization', name: 'SESEMI', ...(url ? { url } : {}) }, ...(url ? { url: `${url}${path}` } : {}) } : { '@context': 'https://schema.org', '@type': 'Organization', name: 'SESEMI', description: config.description, knowsAbout: services.map(s => s.title), ...(url ? { url, logo: `${url}/brand/sesemi-mark.png` } : {}) });
+    schema.textContent = privatePage || !known ? '{}' : JSON.stringify(service ? { '@context': 'https://schema.org', '@type': 'Service', name: service.title, description: service.description, serviceType: service.short, provider: { '@type': 'Organization', name: 'SESEMI', ...(url ? { url, logo: `${url}/brand/sesemi-mark-512.png` } : {}) }, ...(url ? { url: `${url}${path}` } : {}) } : { '@context': 'https://schema.org', '@type': 'Organization', name: 'SESEMI', description: config.description, knowsAbout: services.map(s => s.title), ...(url ? { url, logo: `${url}/brand/sesemi-mark-512.png` } : {}) });
   }, [path]);
   return null;
 }

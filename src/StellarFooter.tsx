@@ -197,6 +197,12 @@ export default function StellarFooter() {
         <div className="sf-brand-note">
           <a className="sf-brand" href="/" translate="no"><span className="sf-brand-mark" aria-hidden="true"><Icon name="ai" size={20} /></span>SESEMI</a>
           <p>An independent digital and creative studio. Websites, AI advertising films and identities for ambitious brands.</p>
+          <div className="sf-contact">
+            <span className="sf-contact-item sf-contact-loc">Yerevan, Armenia</span>
+            <a className="sf-contact-item" href="tel:+37498426704"><Icon name="phone" size={13} />+374 98 426 704</a>
+            <a className="sf-contact-item" href="https://t.me/MersadJy" target="_blank" rel="noopener noreferrer">Telegram · @MersadJy</a>
+            <a className="sf-contact-item" href="mailto:sesemiaddress@gmail.com"><Icon name="mail" size={13} />sesemiaddress@gmail.com</a>
+          </div>
         </div>
         <nav className="sf-columns" aria-label="Footer">
           <div><h3>Studio</h3>

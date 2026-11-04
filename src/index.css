@@ -37,3 +37,6 @@ html.translated-rtl .english .section-heading>p,html.translated-rtl .english .he
 html.translated-rtl .english .eyebrow,html.translated-rtl .english .tech-name,html.translated-rtl .english .step-english,html.translated-rtl .english .toolkit-label{letter-spacing:0}
 html.translated-rtl .english .detail-heading h1{font-size:42px;line-height:1.5}
 html.translated-rtl .about-section{direction:ltr}
+@media(max-width:767px){.header{backdrop-filter:blur(12px);background:color-mix(in srgb,var(--bg) 94%,transparent)}}
+.brand-group{display:flex;align-items:center;gap:11px}.brand-loc{font-size:9px;letter-spacing:1.4px;text-transform:uppercase;color:#5e718d;white-space:nowrap;padding-top:7px;border-left:1px solid var(--line);padding-left:11px}
+@media(max-width:850px){.brand-loc{display:none}}

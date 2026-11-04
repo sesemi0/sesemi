@@ -11,7 +11,10 @@ export default function StarfieldBackdrop() {
     const element = host.current;
     if (!element) return;
     const reduce = matchMedia('(prefers-reduced-motion: reduce)');
+    // phones already carry the hero's own full starfield inside its canvas —
+    // a second always-on WebGL context there doubled GPU cost for nothing
     const mobile = matchMedia('(max-width: 767px)').matches;
+    if (mobile) return;
     let disposed = false;
     let teardown: (() => void) | undefined;
     import('three').then((THREE) => {

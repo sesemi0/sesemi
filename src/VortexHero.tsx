@@ -122,8 +122,7 @@ async function createHelix(
     throw error;
   }
   renderer.debug.onShaderError = (error) => diag('shader fail: ' + String(error).slice(0, 160));
-  renderer.setPixelRatio(Math.min(devicePixelRatio, mobile ? 1.5 : 1.8));
-  renderer.info.autoReset = false;
+  renderer.setPixelRatio(Math.min(devicePixelRatio, mobile ? 1.25 : 1.8));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.05;
@@ -226,7 +225,6 @@ async function createHelix(
       }`,
   }));
   scene.add(stars);
-  diag('stage: stars added');
 
   // ---- Layer 2: the organic curved DNA rope (procedural particles) --------
   // position attribute packs (t along the arc, base angle, radius, strand).
@@ -394,8 +392,6 @@ async function createHelix(
   });
   const rope = new THREE.Points(geometry, ropeMaterial);
   scene.add(rope);
-  diag('stage: rope added');
-  diag('stage: theme fn defined');
 
   // vDepthOf helper used inside the vertex shader (declared there too)
   // Theme awareness: only the canvas backdrop follows the page theme. The DNA
@@ -517,8 +513,6 @@ async function createHelix(
     try {
       if (!visible || !pageVisible) return;
     frameCount++;
-    if (frameCount === 1 || frameCount === 150 || frameCount === 40) renderer.info.reset();
-    if (frameCount === 1) diag(`f1 dpr=${renderer.getPixelRatio()} narrow=${ropeUniforms.uNarrow.value} reveal=${ropeUniforms.uReveal.value.toFixed(2)} calls=${renderer.info.render.calls} pts=${renderer.info.render.points} tris=${renderer.info.render.triangles}`);
     const dt = lastTime ? Math.min((now - lastTime) / 1000, .05) : .016;
     lastTime = now;
     if (!reduce.matches) elapsed += dt;
@@ -549,28 +543,6 @@ async function createHelix(
     camera.lookAt(0, 0, 0);
     mount.dataset.storm = spin.toFixed(2);
     if (composer) composer.render(); else renderer.render(scene, camera);
-    if (frameCount === 1) diag('render ok f1' + (composer ? ' composer' : ' direct'));
-    if (frameCount === 150) {
-      // pixel heatmap: 8×6 blocks across the whole canvas — where is the DNA?
-      try {
-        const gl = renderer.getContext();
-        const W = gl.drawingBufferWidth, H = gl.drawingBufferHeight;
-        const cols = 8, rows = 6, bw = Math.max(2, W / cols | 0), bh = Math.max(2, H / rows | 0);
-        const px = new Uint8Array(bw * bh * 4);
-        const rowMax: string[] = [];
-        for (let r = 0; r < rows; r++) {
-          let rowStr = '';
-          for (let c = 0; c < cols; c++) {
-            gl.readPixels(c * bw, (rows - 1 - r) * bh, bw, bh, gl.RGBA, gl.UNSIGNED_BYTE, px);
-            let mx = 0;
-            for (let i = 0; i < px.length; i += 4) mx = Math.max(mx, px[i], px[i + 1], px[i + 2]);
-            rowStr += (mx > 99 ? 'XX' : mx > 39 ? String(mx >> 4) : '·') + ' ';
-          }
-          rowMax.push(rowStr);
-        }
-        diag(`HM ${W}x${H} | ` + rowMax.join('/'));
-      } catch (e) { diag('probe fail: ' + (e instanceof Error ? e.message : String(e))); }
-    }
     if (!reduce.matches) frame = requestAnimationFrame(animate);
     } catch (error) {
       if (frameCount < 4) diag('ANIMATE CRASH: ' + (error instanceof Error ? (error.message + ' | ' + String(error.stack).slice(0, 120)) : String(error)));
@@ -591,9 +563,7 @@ async function createHelix(
   mount.appendChild(renderer.domElement);
   mount.dataset.scene = 'ready';
   resize();
-  diag('stage: resize done');
   wake();
-  diag('stage: wake done');
   return () => {
     cancelAnimationFrame(frame);
     ro.disconnect(); io.disconnect(); themeObserver.disconnect();
