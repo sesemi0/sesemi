@@ -51,4 +51,5 @@ data/
 supabase/
 youtube-banner/
 .claude/
-.github/
+.github/*
+!.github/workflows/

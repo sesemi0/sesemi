@@ -1,0 +1,22 @@
+name: Daily AI news refresh
+
+on:
+  schedule:
+    # 04:30 UTC = 08:00 Tehran — once a day, every morning
+    - cron: '30 4 * * *'
+  workflow_dispatch: {}
+
+permissions: {}
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger SESEMI blog refresh
+        run: |
+          code=$(curl -sS -o /tmp/news.json -w '%{http_code}' -X POST \
+            -H "Authorization: Bearer ${{ secrets.NEWS_REFRESH_TOKEN }}" \
+            https://sesemi.pages.dev/api/blog/refresh) || code=000
+          echo "HTTP $code"
+          cat /tmp/news.json 2>/dev/null || true
+          test "$code" = "200"
