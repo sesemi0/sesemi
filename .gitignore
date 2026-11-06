@@ -42,3 +42,13 @@ Rainbow 6 Siege Tracker/
 .wrangler-news-token.tmp
 .wrangler/
 backups/
+
+# private ops — stay local, never public
+INTEGRATIONS.md
+DEPLOY-fa.md
+_reference/
+data/
+supabase/
+youtube-banner/
+.claude/
+.github/
