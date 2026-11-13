@@ -16,7 +16,7 @@ import StellarFooter from './StellarFooter';
 import './cinematic.css';
 
 const Admin = lazy(() => import('./Admin'));
-const nav = [['Services', 'services'], ['Our process', 'process'], ['About the studio', 'about']];
+const nav = [['Services', 'services'], ['Our process', 'process'], ['Office', 'office'], ['About the studio', 'about']];
 const tools = ['React', 'Next.js', 'TypeScript', 'Figma', 'ChatGPT', 'Gemini', 'Claude', 'OpenAI', 'DeepSeek', 'Mistral', 'Runway', 'Kling'];
 const steps = [
   ['Discover', 'Tell us what you want to make. We clarify the audience, goal and scope.'],
@@ -64,7 +64,7 @@ export default function App() {
     const observer = new IntersectionObserver(entries => entries.forEach(entry => {
       if (entry.isIntersecting) { entry.target.classList.add('is-visible'); observer.unobserve(entry.target); }
     }), { threshold: 0.06 });
-    document.querySelectorAll('.section-heading, .service-card, .step, .about-copy, .contact-form-wrap, .detail-block, .tech-strip, .creative-banner, .creative-copy, .film-frame, .faq-list details, .faq-cta, .process-cta, .about-art, .about-seal, .code-window, .values, .detail-cta, .portfolio-item, .contact-copy, .news-card').forEach(el => { el.classList.add('reveal'); observer.observe(el); });
+    document.querySelectorAll('.section-heading, .service-card, .step, .about-copy, .contact-form-wrap, .detail-block, .tech-strip, .creative-banner, .creative-copy, .film-frame, .faq-list details, .faq-cta, .process-cta, .about-art, .about-seal, .code-window, .values, .detail-cta, .portfolio-item, .contact-copy, .news-card, .office-scene, .office-copy').forEach(el => { el.classList.add('reveal'); observer.observe(el); });
     const move = (event: PointerEvent) => {
       const card = (event.target as HTMLElement).closest<HTMLElement>('.service-card, .hero-art');
       if (!card) return;
@@ -96,6 +96,40 @@ export default function App() {
         </section>
         <section className="creative-banner container" id="creative-lab"><div className="film-frame" aria-hidden="true"><div className="film-grain" /><span className="frame-time">EXPERIMENT 001 / SESEMI CREATIVE LAB</span><img className="lab-star" src="/brand/sesemi-star.webp" alt="" loading="lazy" /><div className="lab-rings" /><span className="film-type">A different<br /><em>dimension.</em></span><span className="frame-corner">IDENTITY IN MOTION / CONCEPT STUDY</span></div><div className="creative-copy"><div className="eyebrow section-kicker"><span /> BRAND STORIES, REIMAGINED</div><h2>Give your brand<br /><span>its cinematic moment.</span></h2><p>From a single product to an entire brand world. We combine creative direction, AI-generated visuals and purposeful editing to make advertising teasers with a point of view.</p><a className="button secondary" href="/services/ai-advertising-videos">Explore AI advertising films <Icon size={18} /></a><small>Conceptual studio artwork — not a client campaign.</small></div></section>
         <section className="section container process-section" id="process"><div className="section-heading"><div><div className="eyebrow section-kicker"><span /> LESS FRICTION. MORE MOMENTUM.</div><h2>A clear path.<br /><span>Room for great ideas.</span></h2></div><p>No mystery process. No endless forms.<br />Just a collaborative route from idea to delivery.</p></div><div className="steps">{steps.map(([title, text], i) => <div className="step" key={title}><div className="step-track"><span>0{i + 1}</span><div /></div><h3><Words>{title}</Words></h3><p>{text}</p><span className="step-english">{['GET ALIGNED', 'FIND THE DIRECTION', 'BRING IT TO LIFE', 'MAKE IT YOURS'][i]}</span></div>)}</div><div className="process-cta"><span>Have something in mind?</span><a className="button small" href="#contact">Start your project <Icon size={16} /></a></div></section>
+        <section className="office-section container" id="office" aria-labelledby="office-heading">
+          <div className="office-scene" aria-hidden="true"><span className="office-chip">LIVE OFFICE / AGENTS ON DUTY</span>
+            <svg className="office-iso" viewBox="0 0 520 320" focusable="false">
+              <polygon points="260,55 489,169.5 260,284 31,169.5" fill="#0a1526" stroke="#2b4a6d" strokeWidth="1" />
+              <g stroke="#223d5c" strokeWidth="1" opacity="0.55">
+                <line x1="298.2" y1="74.1" x2="69.2" y2="188.6" /><line x1="336.3" y1="93.2" x2="107.3" y2="207.7" /><line x1="374.5" y1="112.3" x2="145.5" y2="226.8" /><line x1="412.7" y1="131.3" x2="183.7" y2="245.8" /><line x1="450.8" y1="150.4" x2="221.8" y2="264.9" />
+                <line x1="221.8" y1="74.1" x2="450.8" y2="188.6" /><line x1="183.7" y1="93.2" x2="412.7" y2="207.7" /><line x1="145.5" y1="112.3" x2="374.5" y2="226.8" /><line x1="107.3" y1="131.3" x2="336.3" y2="245.8" /><line x1="69.2" y1="150.4" x2="298.2" y2="264.9" />
+              </g>
+              <polygon points="170,160 215,186 215,164 170,138" fill="#0e1c31" stroke="#2b4a6d" /><polygon points="170,160 125,186 125,164 170,138" fill="#12233b" stroke="#2b4a6d" /><polygon points="170,138 215,164 170,190 125,164" fill="#61e7ff1a" stroke="#61e7ff66" />
+              <polygon points="430,150 475,176 475,120 430,94" fill="#0e1c31" stroke="#2b4a6d" /><polygon points="430,150 385,176 385,120 430,94" fill="#12233b" stroke="#2b4a6d" /><polygon points="430,94 475,120 430,146 385,120" fill="#8b5cff22" stroke="#9b7fe0" />
+              <polygon points="330,150 375,176 375,136 330,110" fill="#0e1c31" stroke="#2b4a6d" /><polygon points="330,150 285,176 285,136 330,110" fill="#12233b" stroke="#2b4a6d" /><polygon points="330,110 375,136 330,162 285,136" fill="#48b9ff1f" stroke="#5ba9e6" />
+              <polygon points="250,200 295,226 295,208 250,182" fill="#0e1c31" stroke="#2b4a6d" /><polygon points="250,200 205,226 205,208 250,182" fill="#12233b" stroke="#2b4a6d" /><polygon points="250,182 295,208 250,234 205,208" fill="#48b9ff14" stroke="#2b4a6d" />
+              <polygon points="241,203 262,214 262,186 241,175" fill="#0a1424" stroke="#48b9ff" strokeWidth="1.2" /><polygon points="245,180 258,187 258,200 245,193" fill="#48b9ff26" />
+              <polyline points="450,180 405,206 360,232 315,258 270,284" fill="none" stroke="#48b9ff55" strokeWidth="1.5" strokeDasharray="4 6" />
+              <g stroke="#9fd8ff" strokeWidth="2" strokeLinecap="round" fill="none">
+                <g><circle cx="405" cy="183" r="3.5" fill="#9fd8ff" stroke="none" /><line x1="405" y1="187" x2="405" y2="199" /><line x1="405" y1="199" x2="401" y2="206" /><line x1="405" y1="199" x2="409" y2="206" /></g>
+                <g><circle cx="315" cy="235" r="3.5" fill="#9fd8ff" stroke="none" /><line x1="315" y1="239" x2="315" y2="251" /><line x1="315" y1="251" x2="311" y2="258" /><line x1="315" y1="251" x2="319" y2="258" /></g>
+                <g><circle cx="285" cy="222" r="3.5" fill="#9fd8ff" stroke="none" /><line x1="285" y1="226" x2="285" y2="238" /><line x1="285" y1="238" x2="281" y2="245" /><line x1="285" y1="238" x2="289" y2="245" /></g>
+              </g>
+              <circle cx="350" cy="240" r="2" fill="#61e7ff66" /><circle cx="200" cy="240" r="2" fill="#48b9ff44" /><circle cx="450" cy="230" r="2" fill="#bd70ff44" />
+              <line x1="292" y1="95" x2="330" y2="110" stroke="#48b9ff66" strokeWidth="1" strokeDasharray="3 4" />
+              <rect x="196" y="84" width="96" height="22" rx="11" fill="#0d1a2d" stroke="#2b4a6d" />
+              <text x="244" y="98" textAnchor="middle" fontSize="7.5" fontFamily="monospace" letterSpacing="1" fill="#9fd8ff">TASK 042 ✓</text>
+            </svg>
+            <span className="office-corner">SESEMI OFFICE / SHIFT 001</span>
+          </div>
+          <div className="office-copy">
+            <div className="eyebrow section-kicker"><span /> WALK INTO SESEMI OFFICE</div>
+            <h2 id="office-heading">An isometric office.<br /><span>A team that delivers.</span></h2>
+            <p>Step into our live AI office. Hand a task to a team of AI agents working at their isometric desks — they take the brief, head off to work and come back with it actually done.</p>
+            <a className="button office-cta" href="https://sesemi-office.pages.dev" target="_blank" rel="noopener noreferrer" aria-label="Open the SESEMI Office at sesemi-office.pages.dev">Visit sesemi-office.pages.dev <Icon size={18} /></a>
+            <small>SESEMI Office is a live space — agents keep learning between shifts.</small>
+          </div>
+        </section>
         <section className="about-section container" id="about"><div className="about-art"><div className="about-grid" /><span className="about-top-label">THE MINDSET BEHIND THE WORK</span><div className="code-window"><div className="window-dots"><i /><i /><i /><span>sesemi / studio-dna.ts</span></div><pre><span className="code-purple">const</span> studio = {'{'}<br />  thinking: <span className="code-green">'brand-first'</span>,<br />  design: <span className="code-green">'with intention'</span>,<br />  technology: <span className="code-green">'a creative tool'</span>,<br />  partnership: <span className="code-green">'built on clarity'</span><br />{'}'};<br /><br /><span className="code-comment">// Thoughtful work. Real possibilities.</span><br /><span className="code-purple">export default</span> studio;</pre></div><div className="about-seal"><Icon name="design" size={27} /><span>Human ideas.<br /><strong>Extraordinary possibilities.</strong></span></div></div><div className="about-copy"><div className="eyebrow section-kicker"><span /> HELLO, WE’RE SESEMI</div><h2>Small studio.<br /><span>A wider imagination.</span></h2><p>We bring web design and AI-powered creative production together. One place to build your digital presence and tell your brand’s next story.</p><p>Technology is our toolkit, not our identity. Good judgment, a strong visual point of view and honest collaboration are what make the work matter.</p><div className="values">{[['Clarity from day one', 'A focused brief, agreed deliverables and visible progress.'], ['A human creative perspective', 'AI supports the craft. It does not replace the idea.'], ['Made for your brand', 'Intentional work, not another template.']].map(([title, text]) => <div key={title}><span><Icon name="check" size={17} /></span><div><h3>{title}</h3><p>{text}</p></div></div>)}</div><a className="quiet-link about-cta" href="#contact">Start the conversation <Icon size={15} /></a></div></section>
         <section className="container section faq-section"><div><div className="eyebrow section-kicker"><span /> GOOD QUESTIONS</div><h2>A little clarity<br /><span>before we begin.</span></h2></div><div className="faq-list">{[['What can you help my brand create?', 'Custom websites, UI/UX design, AI advertising films, AI-assisted video editing, logos and visual identities, and creative prompt workflows.'], ['Do I need a finished brief?', 'Not at all. A short description of your goal is enough to start. We can help clarify the scope and creative direction together.'], ['How much does a project cost?', 'Pricing depends on deliverables, complexity and timeline. We agree the scope before providing a project-specific quote.'], ['Can you create videos for social platforms?', 'Yes. We can plan AI advertising teasers and edited content around the aspect ratios, length and creative requirements of your chosen channels.']].map(([q, a]) => <details key={q}><summary>{q}<span>+</span></summary><p>{a}</p></details>)}</div><button className="quiet-link faq-cta" onClick={() => window.dispatchEvent(new Event('sesemi:chat'))}>Still curious? Ask Sesemi <span>↗</span></button></section>
         <NewsTeaser />

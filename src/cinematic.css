@@ -436,3 +436,20 @@ html.translated-rtl .news-card .news-arrow{rotate:0deg;left:auto;right:18px}
 html.translated-rtl .project-row,html.translated-rtl .account-head,html.translated-rtl .account-who{direction:rtl}
 html.translated-rtl .project-row-main strong{letter-spacing:0}
 @media(max-width:600px){.account-card{padding:30px 24px}.project-row{flex-direction:column;align-items:flex-start;gap:14px}.account-head{align-items:flex-start}}
+
+/* SESEMI Office: split section introducing the live isometric AI office. */
+.english.cinematic .office-section{display:grid;grid-template-columns:1.05fr 1fr;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:var(--surface)}
+.office-scene{position:relative;min-height:400px;display:flex;align-items:center;justify-content:center;border-right:1px solid var(--line);background:radial-gradient(ellipse at 62% 34%,#2a4a7566,transparent 62%),#070d1b;padding:34px}
+.office-iso{width:100%;max-width:520px;height:auto;display:block}
+.office-chip,.office-corner{position:absolute;font-family:monospace;color:#718ba8;z-index:2}
+.office-chip{top:24px;left:26px;font-size:8px;letter-spacing:2px}
+.office-corner{bottom:24px;right:26px;font-size:7px;letter-spacing:2px;color:#5f7a99}
+.english.cinematic .office-copy{padding:48px;align-self:center}
+.english.cinematic .office-copy h2{font-size:33px;margin-bottom:0}
+.english.cinematic .office-copy p{font-size:12px;line-height:1.9;color:var(--muted);margin:22px 0 26px;max-width:430px}
+.english.cinematic .office-cta{align-self:flex-start}
+.english.cinematic .office-cta svg{rotate:180deg}
+.english.cinematic .office-cta:hover svg{transform:translateX(-4px)}
+.english.cinematic .office-copy small{display:block;margin-top:18px;font-size:8px;color:#596c88;line-height:1.8}
+@media(max-width:1150px){.english.cinematic .office-copy{padding:34px}.english.cinematic .office-copy h2{font-size:29px}}
+@media(max-width:600px){.english.cinematic .office-section{display:flex;flex-direction:column}.office-scene{min-height:320px;border-right:0;border-bottom:1px solid var(--line);padding:26px 20px}.english.cinematic .office-copy{padding:30px 27px}.english.cinematic .office-copy h2{font-size:30px}}
