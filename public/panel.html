@@ -89,6 +89,16 @@
   </section>
 
   <section>
+    <h2>🤖 خروجی ایجنت‌های دفتر <span class="badge blue" id="outCount" style="margin-inline-start:6px"></span></h2>
+    <div class="hint">ایجنت‌های <b>دفتر سسِمی</b> (sesemi-office.pages.dev) مأموریت‌ها را انجام می‌دهند و خروجی واقعی‌شان اینجا می‌نشیند — از طریق <code>/api/agent-outputs</code>.</div>
+    <div class="row" style="margin-bottom:12px">
+      <button class="ghost" onclick="loadOutputs()">🔄 تازه‌سازی خروجی‌ها</button>
+      <a class="button ghost" style="padding:10px 16px;display:inline-block" href="https://sesemi-office.pages.dev" target="_blank">🏢 باز کردن دفتر</a>
+    </div>
+    <div id="outputs"><div class="hint">برای بارگذاری، دکمهٔ تازه‌سازی را بزن.</div></div>
+  </section>
+
+  <section>
     <h2>💬 Test from Telegram</h2>
     <div class="hint tg">همه‌چیز از تلگرام هم قابل تست و کنترله (بات <b>@sesemiai_bot</b>):</div>
     <div class="tg" style="line-height:2.2">
@@ -169,6 +179,40 @@
   }
 
   loadBoard();
+
+  /* ---- office agents' outputs (mission bridge) ---- */
+  async function loadOutputs() {
+    const box = document.getElementById('outputs');
+    const cnt = document.getElementById('outCount');
+    box.innerHTML = '<div class="hint">در حال بارگذاری...</div>';
+    try {
+      const r = await fetch('https://sesemi.pages.dev/api/agent-outputs?limit=30');
+      const j = await r.json();
+      const items = j.items || [];
+      cnt.textContent = items.length + ' خروجی';
+      box.innerHTML = '';
+      if (!items.length) { box.innerHTML = '<div class="hint">هنوز خروجی‌ای ثبت نشده — در دفتر یک مأموریت را به تیم بسپار.</div>'; return; }
+      for (const it of items) {
+        const div = document.createElement('div');
+        div.style.cssText = 'border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-bottom:10px';
+        const done = it.status === 'done';
+        div.innerHTML =
+          '<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:6px">' +
+          '<b>' + (it.agent_name + '') + '</b>' +
+          '<span class="hint" style="margin:0">(' + (it.agent_role || '') + ')</span>' +
+          '<span class="badge ' + (done ? 'green' : 'red') + '">' + (done ? 'انجام شد ✓' : 'ناموفق') + '</span>' +
+          '<code style="font-size:11px;color:#7cc7f5">' + (it.mission_code || '—') + '</code>' +
+          '</div>' +
+          '<div style="font-weight:600;margin-bottom:6px">' + (it.task_title || '') + '</div>' +
+          '<details><summary class="hint" style="margin:0;cursor:pointer">دیدن خروجی</summary>' +
+          '<pre style="white-space:pre-wrap;font-size:12px;line-height:2;margin:8px 0 0">' + String(it.result || '').replace(/</g, '&lt;') + '</pre></details>';
+        box.appendChild(div);
+      }
+    } catch (e) {
+      box.innerHTML = '<div class="hint">خطا در خواندن خروجی‌ها: ' + (e.message + '') + '</div>';
+    }
+  }
+  loadOutputs();
 </script>
 </body>
 </html>
