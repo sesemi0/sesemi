@@ -570,12 +570,21 @@
     },
     {
       "parameters": {
-        "operation": "getAll",
+        "operation": "get",
         "dataTableId": {
           "__rl": true,
           "mode": "id",
           "value": "uG6yZjXjgSGydZDz",
           "cachedResultName": ""
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "mission_code",
+              "keyValue": "={{ $('Route MC Action').item.json.mission_code }}"
+            }
+          ]
         }
       },
       "id": "f1000013-0000-4000-8000-000000000013",
@@ -590,7 +599,7 @@
     {
       "parameters": {
         "mode": "runOnceForEachItem",
-        "jsCode": "const rows = $input.all().map(i => i.json);\nconst trigger = $('When Called By Agents').item.json;\nif (rows.length === 0) { return { json: { mission_code: trigger.mission_code, status: 'in_progress', result_summary: '', updated_at: new Date().toISOString(), task_count: 0 } }; }\nconst done = rows.filter(r => r.status === 'done').length;\nconst failed = rows.filter(r => r.status === 'failed').length;\nlet status = 'in_progress';\nif (failed > 0) status = 'blocked';\nif (done === rows.length) status = 'done';\nconst summary = rows.map(r => r.seq + '. ' + r.title + ' → ' + r.status).join(' | ');\nreturn { json: { mission_code: trigger.mission_code, status, result_summary: summary.slice(0, 900), updated_at: new Date().toISOString(), task_count: rows.length, done, failed } };"
+        "jsCode": "const rows = $input.all().map(i => i.json);\nconst trigger = $('Route MC Action').item.json;\nif (rows.length === 0) { return { json: { mission_code: trigger.mission_code, status: 'in_progress', result_summary: '', updated_at: new Date().toISOString(), task_count: 0 } }; }\nconst done = rows.filter(r => r.status === 'done').length;\nconst failed = rows.filter(r => r.status === 'failed').length;\nlet status = 'in_progress';\nif (failed > 0) status = 'blocked';\nif (done === rows.length) status = 'done';\nconst summary = rows.map(r => r.seq + '. ' + r.title + ' → ' + r.status).join(' | ');\nreturn { json: { mission_code: trigger.mission_code, status, result_summary: summary.slice(0, 900), updated_at: new Date().toISOString(), task_count: rows.length, done, failed } };"
       },
       "id": "f1000014-0000-4000-8000-000000000014",
       "name": "Recalc Mission Status",
@@ -671,7 +680,7 @@
     {
       "parameters": {
         "mode": "raw",
-        "jsonOutput": "={{ JSON.stringify({ ok: true, mission_code: $('Recalc Mission Status').item.json.mission_code, mission_status: $('Recalc Mission Status').item.json.status, reply_text: '✅ تسک ' + $('When Called By Agents').item.json.task_seq + ' مأموریت ' + $('When Called By Agents').item.json.mission_code + ' → ' + ($('When Called By Agents').item.json.task_status || 'done') + ' | وضعیت مأموریت: ' + $('Recalc Mission Status').item.json.status }) }}",
+        "jsonOutput": "={{ JSON.stringify({ ok: true, mission_code: $('Recalc Mission Status').item.json.mission_code, mission_status: $('Recalc Mission Status').item.json.status, reply_text: '✅ تسک ' + $('Route MC Action').item.json.task_seq + ' مأموریت ' + $('Route MC Action').item.json.mission_code + ' → ' + ($('Route MC Action').item.json.task_status || 'done') + ' | وضعیت مأموریت: ' + $('Recalc Mission Status').item.json.status }) }}",
         "options": {}
       },
       "id": "f1000016-0000-4000-8000-000000000016",
@@ -685,13 +694,18 @@
     },
     {
       "parameters": {
-        "operation": "getAll",
+        "operation": "get",
         "dataTableId": {
           "__rl": true,
           "mode": "id",
           "value": "uG6yZjXjgSGydZDz",
           "cachedResultName": ""
-        }
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": []
+        },
+        "limit": 100
       },
       "id": "f1000017-0000-4000-8000-000000000017",
       "name": "List Recent Tasks",
@@ -761,12 +775,21 @@
     },
     {
       "parameters": {
-        "operation": "getAll",
+        "operation": "get",
         "dataTableId": {
           "__rl": true,
           "mode": "id",
           "value": "uG6yZjXjgSGydZDz",
           "cachedResultName": ""
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "mission_code",
+              "keyValue": "={{ $('Route MC Action').item.json.mission_code.trim().toUpperCase() }}"
+            }
+          ]
         }
       },
       "id": "f1000021-0000-4000-8000-000000000021",
@@ -851,7 +874,7 @@
             {
               "id": "a2",
               "name": "goal",
-              "value": "={{ ($json.body && $json.body.goal) ? $json.body.goal : ($json.goal || '') }}",
+              "value": "={{ (() => { try { const b = $json.body; const o = (typeof b === 'string') ? JSON.parse(b) : (b || {}); return String(o.goal || '').slice(0, 1000); } catch (e) { return ''; } })() }}",
               "type": "string"
             },
             {
@@ -871,6 +894,82 @@
       "position": [
         224,
         1248
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "sesemi-mission-status",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "webhookId": "9c7d22bb-33cc-4d44-8e55-66ff77aa8801",
+      "id": "f1000027-0000-4000-8000-000000000027",
+      "name": "Mission Status Hook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        1424
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "s1",
+              "name": "action",
+              "value": "={{ (() => { try { const b = $json.body; const o = (typeof b === 'string') ? JSON.parse(b) : (b || {}); return o.mission_code ? 'get_mission' : 'list_tasks'; } catch (e) { return 'list_tasks'; } })() }}",
+              "type": "string"
+            },
+            {
+              "id": "s2",
+              "name": "mission_code",
+              "value": "={{ (() => { try { const b = $json.body; const o = (typeof b === 'string') ? JSON.parse(b) : (b || {}); return String(o.mission_code || '').toUpperCase(); } catch (e) { return ''; } })() }}",
+              "type": "string"
+            },
+            {
+              "id": "s3",
+              "name": "goal",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "s4",
+              "name": "source",
+              "value": "web",
+              "type": "string"
+            },
+            {
+              "id": "s5",
+              "name": "task_seq",
+              "value": null,
+              "type": "any"
+            },
+            {
+              "id": "s6",
+              "name": "task_status",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "s7",
+              "name": "result_note",
+              "value": "",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "f1000028-0000-4000-8000-000000000028",
+      "name": "Normalize Status Hook",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        224,
+        1424
       ]
     }
   ],
@@ -1134,6 +1233,28 @@
           }
         ]
       ]
+    },
+    "Mission Status Hook": {
+      "main": [
+        [
+          {
+            "node": "Normalize Status Hook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Status Hook": {
+      "main": [
+        [
+          {
+            "node": "Route MC Action",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "active": true,
@@ -1142,7 +1263,7 @@
     "binaryMode": "separate",
     "availableInMCP": true
   },
-  "versionId": "423b7b9a-c4d1-48fb-aec2-479cca6fdfba",
+  "versionId": "838c945b-af32-4919-992d-d6b8221e72da",
   "meta": {
     "instanceId": "99a9239df2c5f0f2c0494eac38e40d895e22f54aaa7f7b0b19e97cd1e5fed5af"
   },
