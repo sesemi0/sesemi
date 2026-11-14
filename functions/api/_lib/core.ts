@@ -29,6 +29,9 @@ export interface Env {
   BLOG_REFRESH_TOKEN?: string;
   GOOGLE_CLIENT_ID?: string;
   GOOGLE_CLIENT_SECRET?: string;
+  /** Telegram bridge — set both to route site submissions to the owner's chat */
+  TELEGRAM_BOT_TOKEN?: string;
+  TELEGRAM_CHAT_ID?: string;
   AI?: { run(model: string, input: unknown): Promise<{ response?: unknown }> };
 }
 

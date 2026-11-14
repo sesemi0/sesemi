@@ -64,7 +64,7 @@ export default function App() {
     const observer = new IntersectionObserver(entries => entries.forEach(entry => {
       if (entry.isIntersecting) { entry.target.classList.add('is-visible'); observer.unobserve(entry.target); }
     }), { threshold: 0.06 });
-    document.querySelectorAll('.section-heading, .service-card, .step, .about-copy, .contact-form-wrap, .detail-block, .tech-strip, .creative-banner, .creative-copy, .film-frame, .faq-list details, .faq-cta, .process-cta, .about-art, .about-seal, .code-window, .values, .detail-cta, .portfolio-item, .contact-copy, .news-card, .office-scene, .office-copy').forEach(el => { el.classList.add('reveal'); observer.observe(el); });
+    document.querySelectorAll('.section-heading, .service-card, .step, .about-copy, .contact-form-wrap, .detail-block, .tech-strip, .creative-banner, .creative-copy, .film-frame, .faq-list details, .faq-cta, .process-cta, .about-art, .about-seal, .code-window, .values, .detail-cta, .portfolio-item, .contact-copy, .news-card, .office-scene, .office-copy, .pricing-card, .pricing-menu').forEach(el => { el.classList.add('reveal'); observer.observe(el); });
     const move = (event: PointerEvent) => {
       const card = (event.target as HTMLElement).closest<HTMLElement>('.service-card, .hero-art');
       if (!card) return;
@@ -128,6 +128,54 @@ export default function App() {
             <p>Step into our live AI office. Hand a task to a team of AI agents working at their isometric desks — they take the brief, head off to work and come back with it actually done.</p>
             <a className="button office-cta" href="https://sesemi-office.pages.dev" target="_blank" rel="noopener noreferrer" aria-label="Open the SESEMI Office at sesemi-office.pages.dev">Visit sesemi-office.pages.dev <Icon size={18} /></a>
             <small>SESEMI Office is a live space — agents keep learning between shifts.</small>
+          </div>
+        </section>
+        <section className="section container pricing-section" id="pricing" aria-labelledby="pricing-heading">
+          <div className="section-heading"><div>
+            <div className="eyebrow section-kicker"><span /> SIMPLE PRICING</div>
+            <h2 id="pricing-heading">Run an AI office.<br /><span>Priced like a menu.</span></h2>
+          </div>
+            <p>Subscribe to SESEMI Office — the live AI-agent workspace — or order studio services à la carte.</p>
+          </div>
+          <div className="pricing-grid">
+            <div className="pricing-card">
+              <h3>Demo</h3>
+              <span className="price">$0<small>/forever</small></span>
+              <ul>
+                <li>Watch the live AI office work</li>
+                <li>Demo agents, unlimited missions</li>
+                <li>Telegram mission alerts</li>
+              </ul>
+              <a className="button secondary" href="https://sesemi-office.pages.dev" target="_blank" rel="noopener noreferrer">Open the office</a>
+            </div>
+            <div className="pricing-card featured">
+              <span className="pricing-tag">MOST POPULAR</span>
+              <h3>Pro</h3>
+              <span className="price">$19<small>/month</small></span>
+              <ul>
+                <li>Real AI agents on your own key</li>
+                <li>Unlimited missions with auto-delegation</li>
+                <li>Delivery reports to Telegram</li>
+                <li>The office grows with every delivery</li>
+              </ul>
+              <a className="button" href="#contact">Start with Pro</a>
+            </div>
+            <div className="pricing-card">
+              <h3>Business</h3>
+              <span className="price">$49<small>/month</small></span>
+              <ul>
+                <li>Everything in Pro</li>
+                <li>Custom agents and roles</li>
+                <li>Client-facing mission board</li>
+                <li>Priority support on Telegram</li>
+              </ul>
+              <a className="button secondary" href="#contact">Talk to us</a>
+            </div>
+          </div>
+          <div className="pricing-menu">
+            <h3>Studio services — à la carte</h3>
+            {[['Landing page', 'from $290'], ['Brand identity', 'from $250'], ['AI advertising film', 'from $390'], ['UI/UX design', 'from $450'], ['Monthly content pack', '$120/mo'], ['AI workflows & automation', 'from $200']].map(([s, p]) =>
+              <div className="menu-row" key={s}><span>{s}</span><i /><b>{p}</b></div>)}
           </div>
         </section>
         <section className="about-section container" id="about"><div className="about-art"><div className="about-grid" /><span className="about-top-label">THE MINDSET BEHIND THE WORK</span><div className="code-window"><div className="window-dots"><i /><i /><i /><span>sesemi / studio-dna.ts</span></div><pre><span className="code-purple">const</span> studio = {'{'}<br />  thinking: <span className="code-green">'brand-first'</span>,<br />  design: <span className="code-green">'with intention'</span>,<br />  technology: <span className="code-green">'a creative tool'</span>,<br />  partnership: <span className="code-green">'built on clarity'</span><br />{'}'};<br /><br /><span className="code-comment">// Thoughtful work. Real possibilities.</span><br /><span className="code-purple">export default</span> studio;</pre></div><div className="about-seal"><Icon name="design" size={27} /><span>Human ideas.<br /><strong>Extraordinary possibilities.</strong></span></div></div><div className="about-copy"><div className="eyebrow section-kicker"><span /> HELLO, WE’RE SESEMI</div><h2>Small studio.<br /><span>A wider imagination.</span></h2><p>We bring web design and AI-powered creative production together. One place to build your digital presence and tell your brand’s next story.</p><p>Technology is our toolkit, not our identity. Good judgment, a strong visual point of view and honest collaboration are what make the work matter.</p><div className="values">{[['Clarity from day one', 'A focused brief, agreed deliverables and visible progress.'], ['A human creative perspective', 'AI supports the craft. It does not replace the idea.'], ['Made for your brand', 'Intentional work, not another template.']].map(([title, text]) => <div key={title}><span><Icon name="check" size={17} /></span><div><h3>{title}</h3><p>{text}</p></div></div>)}</div><a className="quiet-link about-cta" href="#contact">Start the conversation <Icon size={15} /></a></div></section>

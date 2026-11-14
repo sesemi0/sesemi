@@ -453,3 +453,22 @@ html.translated-rtl .project-row-main strong{letter-spacing:0}
 .english.cinematic .office-copy small{display:block;margin-top:18px;font-size:8px;color:#596c88;line-height:1.8}
 @media(max-width:1150px){.english.cinematic .office-copy{padding:34px}.english.cinematic .office-copy h2{font-size:29px}}
 @media(max-width:600px){.english.cinematic .office-section{display:flex;flex-direction:column}.office-scene{min-height:320px;border-right:0;border-bottom:1px solid var(--line);padding:26px 20px}.english.cinematic .office-copy{padding:30px 27px}.english.cinematic .office-copy h2{font-size:30px}}
+
+/* SESEMI Office pricing: three plans + an à-la-carte service menu. */
+.english.cinematic .pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:26px}
+.english.cinematic .pricing-card{position:relative;border:1px solid var(--line);border-radius:var(--radius);padding:30px 26px;background:var(--surface);display:flex;flex-direction:column}
+.english.cinematic .pricing-card h3{font-size:13px;letter-spacing:2px;color:var(--muted);text-transform:uppercase}
+.english.cinematic .pricing-card .price{font-size:36px;font-weight:700;margin:12px 0 18px}
+.english.cinematic .pricing-card .price small{font-size:11px;color:var(--muted);font-weight:400;margin-inline-start:6px}
+.english.cinematic .pricing-card ul{list-style:none;margin:0 0 22px;padding:0;display:grid;gap:10px}
+.english.cinematic .pricing-card li{font-size:12px;color:var(--muted);line-height:1.7;padding-inline-start:16px;position:relative}
+.english.cinematic .pricing-card li::before{content:'—';position:absolute;inset-inline-start:0;color:#48b9ff}
+.english.cinematic .pricing-card .button{margin-top:auto;align-self:flex-start}
+.english.cinematic .pricing-card.featured{border-color:#48b9ff66;box-shadow:0 0 0 1px #48b9ff22,0 18px 50px rgba(30,90,160,.14)}
+.english.cinematic .pricing-tag{position:absolute;top:-11px;inset-inline-start:26px;font-size:8px;letter-spacing:2px;padding:4px 10px;border-radius:20px;background:#0d1a2d;border:1px solid #48b9ff55;color:#7cc7f5}
+.english.cinematic .pricing-menu{margin-top:34px;border:1px solid var(--line);border-radius:var(--radius);padding:30px 34px;background:var(--surface)}
+.english.cinematic .pricing-menu h3{font-size:11px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:18px}
+.english.cinematic .menu-row{display:flex;align-items:baseline;gap:12px;padding:9px 0;font-size:13px}
+.english.cinematic .menu-row i{flex:1;border-bottom:1px dotted var(--line);transform:translateY(-3px)}
+.english.cinematic .menu-row b{font-weight:600;color:#9fd8ff;white-space:nowrap}
+@media(max-width:900px){.english.cinematic .pricing-grid{grid-template-columns:1fr}.english.cinematic .pricing-menu{padding:24px 22px}}

@@ -121,6 +121,15 @@ export const onRequest = async (context: { request: Request; env: Env; params: {
 
       const mailSent = await sendEnquiryEmail(env, { name, email: contact, service: serviceTitle(service), message });
       if (!mailSent) console.error('enquiry email not sent (Resend not configured or failed)');
+      // آینهٔ تلگرام درخواست — وقتی سکرت‌های بات ست باشند، متن فرم فوراً به چت مالک می‌رود
+      if (env.TELEGRAM_BOT_TOKEN && env.TELEGRAM_CHAT_ID) {
+        waitUntil(fetch(`https://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}/sendMessage`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ chat_id: env.TELEGRAM_CHAT_ID, text: `🔔 درخواست جدید از سایت\n👤 ${name}\n📧 ${contact}\n🛠 ${serviceTitle(service) || '—'}\n\n${message}` }),
+          signal: AbortSignal.timeout(15000),
+        }).catch(() => null));
+      }
       return json({ ok: true });
     }
 
@@ -186,6 +195,26 @@ export const onRequest = async (context: { request: Request; env: Env; params: {
         return json({ ok: true, items: rows.results ?? [] }, 200, cors);
       }
     }
+    /* ============ public: telegram bridge (site submissions → owner chat) ============ */
+    if (path.join('/') === 'agent-notify' && method === 'POST') {
+      if (!rateLimit(`notify:${clientIp(request)}`, 20, 60 * 60 * 1000)) return fail(429, 'درخواست‌های زیاد. کمی بعد دوباره تلاش کنید.');
+      const body = await readJson<Record<string, unknown>>(request);
+      if (!body) return fail(400, 'درخواست نامعتبر است.');
+      const text = cleanText(body.text, 1500);
+      if (!text) return fail(400, 'متن خالی است.');
+      if (!env.TELEGRAM_BOT_TOKEN || !env.TELEGRAM_CHAT_ID) {
+        return json({ ok: true, delivered: false, reason: 'telegram_not_configured' });
+      }
+      const tg = await fetch(`https://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}/sendMessage`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ chat_id: env.TELEGRAM_CHAT_ID, text: text.slice(0, 3500) }),
+        signal: AbortSignal.timeout(15000),
+      }).catch(() => null);
+      if (!tg || !tg.ok) return json({ ok: true, delivered: false, reason: 'telegram_error' });
+      return json({ ok: true, delivered: true });
+    }
+
     if (path.join('/') === 'ai/chat' && method === 'POST') {
       const status = aiStatus(env);
       if (!status.enabled) return fail(503, 'دستیار هوش مصنوعی هنوز متصل نشده است.');
