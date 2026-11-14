@@ -143,43 +143,48 @@ export const onRequest = async (context: { request: Request; env: Env; params: {
     }
 
     /* ============ public: SESEMI Office agent outputs (mission bridge) ============ */
-    if (path.join('/') === 'agent-outputs' && method === 'POST') {
-      if (!rateLimit(`agentout:${clientIp(request)}`, 120, 60 * 60 * 1000)) return fail(429, 'درخواست‌های زیاد. کمی بعد دوباره تلاش کنید.');
-      const body = await readJson<Record<string, unknown>>(request);
-      if (!body) return fail(400, 'درخواست نامعتبر است.');
-      const items = Array.isArray(body.items) ? body.items : [body];
-      if (!items.length || items.length > 12) return fail(400, 'تعداد خروجی‌ها نامعتبر است.');
-      const inserts: Promise<unknown>[] = [];
-      for (const raw of items) {
-        const item = raw as Record<string, unknown>;
-        const missionCode = cleanText(item.missionCode, 40);
-        const taskTitle = cleanText(item.taskTitle, 200);
-        const agentName = cleanText(item.agentName, 40);
-        const agentRole = cleanText(item.agentRole, 40);
-        const status = cleanText(item.status, 20) || 'done';
-        const result = cleanText(item.result, 6000);
-        if (!taskTitle || !agentName || !result) continue; // incomplete rows are silently dropped
-        if (status !== 'done' && status !== 'failed' && status !== 'working') continue;
-        inserts.push(
-          env.DB.prepare(
-            `INSERT INTO agent_outputs (mission_code, task_title, agent_name, agent_role, status, result, created_at)
-             VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)`,
-          ).bind(missionCode, taskTitle, agentName, agentRole, status, result, Date.now()).run(),
-        );
+    if (path.join('/') === 'agent-outputs') {
+      // cross-origin on purpose: the office app (sesemi-office.pages.dev) reports here
+      const cors = { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': 'Content-Type', 'Access-Control-Allow-Methods': 'POST, GET, OPTIONS' };
+      if (method === 'OPTIONS') return new Response(null, { status: 204, headers: cors });
+      if (method === 'POST') {
+        if (!rateLimit(`agentout:${clientIp(request)}`, 120, 60 * 60 * 1000)) return fail(429, 'درخواست‌های زیاد. کمی بعد دوباره تلاش کنید.');
+        const body = await readJson<Record<string, unknown>>(request);
+        if (!body) return fail(400, 'درخواست نامعتبر است.');
+        const items = Array.isArray(body.items) ? body.items : [body];
+        if (!items.length || items.length > 12) return fail(400, 'تعداد خروجی‌ها نامعتبر است.');
+        const inserts: Promise<unknown>[] = [];
+        for (const raw of items) {
+          const item = raw as Record<string, unknown>;
+          const missionCode = cleanText(item.missionCode, 40);
+          const taskTitle = cleanText(item.taskTitle, 200);
+          const agentName = cleanText(item.agentName, 40);
+          const agentRole = cleanText(item.agentRole, 40);
+          const status = cleanText(item.status, 20) || 'done';
+          const result = cleanText(item.result, 6000);
+          if (!taskTitle || !agentName || !result) continue; // incomplete rows are silently dropped
+          if (status !== 'done' && status !== 'failed' && status !== 'working') continue;
+          inserts.push(
+            env.DB.prepare(
+              `INSERT INTO agent_outputs (mission_code, task_title, agent_name, agent_role, status, result, created_at)
+               VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)`,
+            ).bind(missionCode, taskTitle, agentName, agentRole, status, result, Date.now()).run(),
+          );
+        }
+        if (!inserts.length) return fail(400, 'هیچ ردیف معتبر ارسال نشد.');
+        await Promise.all(inserts);
+        return json({ ok: true, stored: inserts.length }, 200, cors);
       }
-      if (!inserts.length) return fail(400, 'هیچ ردیف معتبر ارسال نشد.');
-      await Promise.all(inserts);
-      return json({ ok: true, stored: inserts.length });
-    }
-    if (path.join('/') === 'agent-outputs' && method === 'GET') {
-      const url = new URL(request.url);
-      const mission = cleanText(url.searchParams.get('mission'), 40);
-      const limitRaw = Number(url.searchParams.get('limit')) || 40;
-      const limit = Math.min(100, Math.max(1, Math.floor(limitRaw)));
-      const rows = mission
-        ? await env.DB.prepare(`SELECT id, mission_code, task_title, agent_name, agent_role, status, result, created_at FROM agent_outputs WHERE mission_code = ?1 ORDER BY id DESC LIMIT ?2`).bind(mission, limit).all()
-        : await env.DB.prepare(`SELECT id, mission_code, task_title, agent_name, agent_role, status, result, created_at FROM agent_outputs ORDER BY id DESC LIMIT ?1`).bind(limit).all();
-      return json({ ok: true, items: rows.results ?? [] });
+      if (method === 'GET') {
+        const url = new URL(request.url);
+        const mission = cleanText(url.searchParams.get('mission'), 40);
+        const limitRaw = Number(url.searchParams.get('limit')) || 40;
+        const limit = Math.min(100, Math.max(1, Math.floor(limitRaw)));
+        const rows = mission
+          ? await env.DB.prepare(`SELECT id, mission_code, task_title, agent_name, agent_role, status, result, created_at FROM agent_outputs WHERE mission_code = ?1 ORDER BY id DESC LIMIT ?2`).bind(mission, limit).all()
+          : await env.DB.prepare(`SELECT id, mission_code, task_title, agent_name, agent_role, status, result, created_at FROM agent_outputs ORDER BY id DESC LIMIT ?1`).bind(limit).all();
+        return json({ ok: true, items: rows.results ?? [] }, 200, cors);
+      }
     }
     if (path.join('/') === 'ai/chat' && method === 'POST') {
       const status = aiStatus(env);
