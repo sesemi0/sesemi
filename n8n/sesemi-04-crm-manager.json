@@ -1,0 +1,1480 @@
+{
+  "name": "SESEMI 04 – CRM Manager",
+  "nodes": [
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "action"
+            },
+            {
+              "name": "project_code"
+            },
+            {
+              "name": "customer_email"
+            },
+            {
+              "name": "tx_hash"
+            },
+            {
+              "name": "status"
+            },
+            {
+              "name": "payment_status"
+            },
+            {
+              "name": "owner_note"
+            },
+            {
+              "name": "customer_name"
+            },
+            {
+              "name": "company"
+            },
+            {
+              "name": "business_type"
+            },
+            {
+              "name": "language"
+            },
+            {
+              "name": "tools_used"
+            },
+            {
+              "name": "requirements_summary"
+            },
+            {
+              "name": "proposed_solution"
+            },
+            {
+              "name": "features"
+            },
+            {
+              "name": "plan_tier"
+            },
+            {
+              "name": "setup_price_usd",
+              "type": "any"
+            },
+            {
+              "name": "monthly_price_usd",
+              "type": "any"
+            },
+            {
+              "name": "timeline_days",
+              "type": "any"
+            },
+            {
+              "name": "complexity"
+            },
+            {
+              "name": "needs_manual_review",
+              "type": "any"
+            },
+            {
+              "name": "chat_session_id"
+            }
+          ]
+        }
+      },
+      "id": "9fd82c57-e7f8-49d8-9d9b-453a3ce6d280",
+      "name": "When Called By Another Workflow",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        480
+      ]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.action }}",
+                    "rightValue": "^(update_status|get|submit_payment_proof)$",
+                    "operator": {
+                      "type": "string",
+                      "operation": "regex"
+                    }
+                  },
+                  {
+                    "leftValue": "={{ $json.project_code }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "empty",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "missing_project_code"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.action }}",
+                    "rightValue": "create",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "create"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.action }}",
+                    "rightValue": "update_status",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "update_status"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.action }}",
+                    "rightValue": "get",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "get"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.action }}",
+                    "rightValue": "submit_payment_proof",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "submit_payment_proof"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.action }}",
+                    "rightValue": "get_payment_config",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "get_payment_config"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra",
+          "renameFallbackOutput": "unknown_action"
+        }
+      },
+      "id": "3bc40d27-4326-4d68-82d4-de32187815ec",
+      "name": "Route By Action",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        224,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={{ JSON.stringify({ ok: false, error: [\"update_status\",\"get\",\"submit_payment_proof\"].includes($json.action) && !$json.project_code ? \"missing_project_code\" : \"unknown_action\", action: $json.action || null }) }}",
+        "options": {}
+      },
+      "id": "e0208bdc-0f77-4af6-9a58-26a00e34379b",
+      "name": "Return Request Error",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        608,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={{ JSON.stringify({ project_code: \"SES-\" + $now.setZone(\"Asia/Yerevan\").toFormat(\"yyMMdd\") + \"-\" + Array.from({length: 4}, () => \"ABCDEFGHJKLMNPQRSTUVWXYZ23456789\"[Math.floor(Math.random() * 32)]).join(\"\"), customer_name: $json.customer_name || \"\", customer_email: ($json.customer_email || \"\").trim().toLowerCase(), company: $json.company || \"\", business_type: $json.business_type || \"\", language: $json.language || \"\", tools_used: $json.tools_used || \"\", requirements_summary: $json.requirements_summary || \"\", proposed_solution: $json.proposed_solution || \"\", features: $json.features || \"\", plan_tier: $json.plan_tier || \"\", setup_price_usd: ($json.setup_price_usd === null || $json.setup_price_usd === \"\" || $json.setup_price_usd === undefined) ? null : Number($json.setup_price_usd), monthly_price_usd: ($json.monthly_price_usd === null || $json.monthly_price_usd === \"\" || $json.monthly_price_usd === undefined) ? null : Number($json.monthly_price_usd), timeline_days: ($json.timeline_days === null || $json.timeline_days === \"\" || $json.timeline_days === undefined) ? null : Number($json.timeline_days), complexity: $json.complexity || \"\", needs_manual_review: $json.needs_manual_review === true || String($json.needs_manual_review).toLowerCase() === \"true\", status: \"awaiting_owner_approval\", payment_status: \"unpaid\", payment_tx_hash: \"\", payment_amount_usdt: ($json.setup_price_usd === null || $json.setup_price_usd === \"\" || $json.setup_price_usd === undefined) ? null : Number($json.setup_price_usd), chat_session_id: $json.chat_session_id || \"\", owner_note: \"\", last_error: \"\", submitted_at: $now.toISO(), status_changed_at: $now.toISO() }) }}",
+        "options": {}
+      },
+      "id": "62f60302-c2d9-47ac-94c7-df8974d8710b",
+      "name": "Prepare New Project",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        496,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "dataTableId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "jxR2tLlOpOQmew0z",
+          "cachedResultName": "sesemi_projects"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "project_code",
+              "displayName": "project_code",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "customer_name",
+              "displayName": "customer_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "customer_email",
+              "displayName": "customer_email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "company",
+              "displayName": "company",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "business_type",
+              "displayName": "business_type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "language",
+              "displayName": "language",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "tools_used",
+              "displayName": "tools_used",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "requirements_summary",
+              "displayName": "requirements_summary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "proposed_solution",
+              "displayName": "proposed_solution",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "features",
+              "displayName": "features",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "plan_tier",
+              "displayName": "plan_tier",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "setup_price_usd",
+              "displayName": "setup_price_usd",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "monthly_price_usd",
+              "displayName": "monthly_price_usd",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "timeline_days",
+              "displayName": "timeline_days",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "complexity",
+              "displayName": "complexity",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "needs_manual_review",
+              "displayName": "needs_manual_review",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "boolean",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "payment_status",
+              "displayName": "payment_status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "payment_tx_hash",
+              "displayName": "payment_tx_hash",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "payment_amount_usdt",
+              "displayName": "payment_amount_usdt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "chat_session_id",
+              "displayName": "chat_session_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "owner_note",
+              "displayName": "owner_note",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "last_error",
+              "displayName": "last_error",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "submitted_at",
+              "displayName": "submitted_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "status_changed_at",
+              "displayName": "status_changed_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "ab4efa2b-d024-4212-9123-1738a5f14033",
+      "name": "Insert Project Row",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        720,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={{ JSON.stringify(Object.assign({}, $(\"Prepare New Project\").item.json, { row_id: $('Insert Project Row').item.json.id ?? null, ok: true })) }}",
+        "options": {}
+      },
+      "id": "6091652d-141e-4840-bab2-e6f7a071e22e",
+      "name": "Return Created Project",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        944,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "jxR2tLlOpOQmew0z",
+          "cachedResultName": "sesemi_projects"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "project_code",
+              "keyValue": "={{ $(\"When Called By Another Workflow\").item.json.project_code }}"
+            }
+          ]
+        },
+        "limit": 1
+      },
+      "id": "063c2e3a-f98d-4cf8-acb6-5b94ea7d2690",
+      "name": "Find Project For Update",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        496,
+        608
+      ],
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const req = $('When Called By Another Workflow').item.json;\nconst row = $json || {};\nconst allowedStatus = ['awaiting_owner_approval', 'approved_awaiting_payment', 'rejected', 'paid_in_build', 'delivered'];\nconst allowedPayment = ['unpaid', 'pending_verification', 'paid'];\nif (!row.project_code) {\n  return { json: { ok: false, error: 'not_found', project_code: req.project_code } };\n}\nconst status = req.status ? String(req.status).trim() : row.status;\nconst paymentStatus = req.payment_status ? String(req.payment_status).trim() : row.payment_status;\nif (!allowedStatus.includes(status)) {\n  return { json: { ok: false, error: 'invalid_status', project_code: row.project_code, status: row.status } };\n}\nif (!allowedPayment.includes(paymentStatus)) {\n  return { json: { ok: false, error: 'invalid_payment_status', project_code: row.project_code, status: row.status } };\n}\nreturn { json: { ok: true, row, new_status: status, new_payment_status: paymentStatus, new_owner_note: (req.owner_note !== undefined && req.owner_note !== null && req.owner_note !== '') ? req.owner_note : (row.owner_note || ''), changed_at: new Date().toISOString() } };"
+      },
+      "id": "14db1046-b74a-4076-ad2c-9f39acfdad86",
+      "name": "Check Status Update",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        720,
+        608
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.ok }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "4555f7d2-c565-4d29-945e-9e73fe722f61",
+      "name": "Is Update Valid",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        944,
+        608
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "jxR2tLlOpOQmew0z",
+          "cachedResultName": "sesemi_projects"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "project_code",
+              "keyValue": "={{ $json.row.project_code }}"
+            }
+          ]
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "status": "={{ $json.new_status }}",
+            "payment_status": "={{ $json.new_payment_status }}",
+            "owner_note": "={{ $json.new_owner_note }}",
+            "status_changed_at": "={{ $json.changed_at }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "payment_status",
+              "displayName": "payment_status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "owner_note",
+              "displayName": "owner_note",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "status_changed_at",
+              "displayName": "status_changed_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "17a872e4-bc81-4f92-87f6-810d276942be",
+      "name": "Update Project Status",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        1168,
+        512
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={{ JSON.stringify(Object.assign({}, $(\"Check Status Update\").item.json.row, { status: $(\"Check Status Update\").item.json.new_status, payment_status: $(\"Check Status Update\").item.json.new_payment_status, owner_note: $(\"Check Status Update\").item.json.new_owner_note, status_changed_at: $(\"Check Status Update\").item.json.changed_at, previous_status: $(\"Check Status Update\").item.json.row.status, previous_payment_status: $(\"Check Status Update\").item.json.row.payment_status, ok: true })) }}",
+        "options": {}
+      },
+      "id": "82ee5de3-0aba-47fd-98d8-a87f65850f07",
+      "name": "Return Updated Project",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1392,
+        512
+      ],
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={{ JSON.stringify($json) }}",
+        "options": {}
+      },
+      "id": "464c181d-1941-404f-af0d-0703ccda32d6",
+      "name": "Return Update Error",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1168,
+        704
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "jxR2tLlOpOQmew0z",
+          "cachedResultName": "sesemi_projects"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "project_code",
+              "keyValue": "={{ $(\"When Called By Another Workflow\").item.json.project_code.trim().toUpperCase() }}"
+            }
+          ]
+        },
+        "limit": 1
+      },
+      "id": "ab923f62-f267-4e97-b2f8-8267fce05894",
+      "name": "Find Project",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        496,
+        704
+      ],
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const req = $('When Called By Another Workflow').item.json;\nconst row = $json || {};\nif (!row.project_code) {\n  return { json: { ok: false, error: 'not_found' } };\n}\nconst email = (req.customer_email || '').trim().toLowerCase();\nif (email && String(row.customer_email || '').trim().toLowerCase() !== email) {\n  return { json: { ok: false, error: 'not_found' } };\n}\nreturn { json: Object.assign({}, row, { ok: true }) };"
+      },
+      "id": "505ba219-2cc8-4cc5-b806-71489408cad4",
+      "name": "Return Project Lookup",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        720,
+        704
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "jxR2tLlOpOQmew0z",
+          "cachedResultName": "sesemi_projects"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "project_code",
+              "keyValue": "={{ $(\"When Called By Another Workflow\").item.json.project_code.trim().toUpperCase() }}"
+            }
+          ]
+        },
+        "limit": 1
+      },
+      "id": "ae3302aa-fa1e-4177-a239-4999c0170e57",
+      "name": "Find Project For Payment",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        496,
+        992
+      ],
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const req = $('When Called By Another Workflow').item.json;\nconst row = $json || {};\nconst email = (req.customer_email || '').trim().toLowerCase();\nconst tx = (req.tx_hash || '').trim();\nif (!email || !tx) {\n  return { json: { ok: false, error: 'missing_email_or_tx_hash' } };\n}\nif (!row.project_code || String(row.customer_email || '').trim().toLowerCase() !== email) {\n  return { json: { ok: false, error: 'not_found' } };\n}\nif (row.status !== 'approved_awaiting_payment') {\n  return { json: { ok: false, error: 'not_awaiting_payment', status: row.status, project_code: row.project_code } };\n}\nreturn { json: { ok: true, row, tx_hash: tx } };"
+      },
+      "id": "e2e89cdb-9f47-4ad1-a9cf-fa735fb9ac51",
+      "name": "Check Payment Proof",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        720,
+        992
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.ok }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "fa90b91b-8096-482e-9ec0-50e6e32cc229",
+      "name": "Is Payment Proof Valid",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        944,
+        992
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "jxR2tLlOpOQmew0z",
+          "cachedResultName": "sesemi_projects"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "project_code",
+              "keyValue": "={{ $json.row.project_code }}"
+            }
+          ]
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "payment_tx_hash": "={{ $json.tx_hash }}",
+            "payment_status": "pending_verification"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "payment_tx_hash",
+              "displayName": "payment_tx_hash",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "payment_status",
+              "displayName": "payment_status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "702d599d-01fa-4b3d-9305-b26e3b009441",
+      "name": "Save Payment Proof",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        1168,
+        896
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={{ JSON.stringify(Object.assign({}, $(\"Check Payment Proof\").item.json.row, { payment_tx_hash: $(\"Check Payment Proof\").item.json.tx_hash, payment_status: \"pending_verification\", ok: true })) }}",
+        "options": {}
+      },
+      "id": "347785ce-e3f4-4f86-9de3-e64a59161c8f",
+      "name": "Return Payment Proof Saved",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1392,
+        896
+      ],
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={{ JSON.stringify($json) }}",
+        "options": {}
+      },
+      "id": "dee59088-b3b0-44a5-a1c4-45ff38aae9eb",
+      "name": "Return Payment Proof Error",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1168,
+        1088
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "7OHO39N8on08eJQv",
+          "cachedResultName": "sesemi_payment_config"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "config_key",
+              "keyValue": "primary_wallet"
+            },
+            {
+              "keyName": "is_active",
+              "condition": "isTrue"
+            }
+          ]
+        },
+        "limit": 1
+      },
+      "id": "0f66aa4b-4f90-44b5-b4fe-497cec84b5dc",
+      "name": "Load Payment Config",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        496,
+        1088
+      ],
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={{ JSON.stringify($json.receiving_address ? { ok: true, currency: $json.currency, network: $json.network, network_label: $json.network_label, receiving_address: $json.receiving_address, payment_instructions: $json.payment_instructions } : { ok: false, error: \"payment_config_missing\" }) }}",
+        "options": {}
+      },
+      "id": "a8fe343c-3f48-46d7-a53f-c25a810fb235",
+      "name": "Return Payment Config",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        720,
+        1088
+      ]
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "wfbANcXRgYrC4us4",
+          "mode": "id",
+          "cachedResultName": "SESEMI – Telegram Owner Notifier"
+        },
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "event_type",
+              "value": "new_project"
+            },
+            {
+              "name": "project_code",
+              "value": "={{ $('Prepare New Project').item.json.project_code }}"
+            },
+            {
+              "name": "customer_name",
+              "value": "={{ $('Prepare New Project').item.json.customer_name }}"
+            },
+            {
+              "name": "customer_email",
+              "value": "={{ $('Prepare New Project').item.json.customer_email }}"
+            },
+            {
+              "name": "requirements_summary",
+              "value": "={{ $('Prepare New Project').item.json.requirements_summary }}"
+            },
+            {
+              "name": "proposed_solution",
+              "value": "={{ $('Prepare New Project').item.json.proposed_solution }}"
+            },
+            {
+              "name": "plan_tier",
+              "value": "={{ $('Prepare New Project').item.json.plan_tier }}"
+            },
+            {
+              "name": "setup_price_usd",
+              "value": "={{ $('Prepare New Project').item.json.setup_price_usd }}"
+            },
+            {
+              "name": "monthly_price_usd",
+              "value": "={{ $('Prepare New Project').item.json.monthly_price_usd }}"
+            },
+            {
+              "name": "timeline_days",
+              "value": "={{ $('Prepare New Project').item.json.timeline_days }}"
+            },
+            {
+              "name": "complexity",
+              "value": "={{ $('Prepare New Project').item.json.complexity }}"
+            },
+            {
+              "name": "show_buttons",
+              "value": "approve_reject"
+            }
+          ]
+        },
+        "options": {
+          "waitForSubWorkflow": false
+        }
+      },
+      "id": "e1a00001-0000-4000-8000-000000000001",
+      "name": "Notify New Project",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        832,
+        320
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "wfbANcXRgYrC4us4",
+          "mode": "id",
+          "cachedResultName": "SESEMI – Telegram Owner Notifier"
+        },
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "event_type",
+              "value": "info"
+            },
+            {
+              "name": "project_code",
+              "value": "={{ $('Check Status Update').item.json.row.project_code }}"
+            },
+            {
+              "name": "title",
+              "value": "={{ 'وضعیت پروژه ' + ($('Check Status Update').item.json.row.project_code || '') }}"
+            },
+            {
+              "name": "details",
+              "value": "={{ 'وضعیت: ' + ($('Check Status Update').item.json.row.status || '') + ' ← ' + ($('Check Status Update').item.json.new_status || '') + ' | پرداخت: ' + ($('Check Status Update').item.json.new_payment_status || '') + (($('Check Status Update').item.json.new_owner_note) ? (' | یادداشت: ' + $('Check Status Update').item.json.new_owner_note) : '') }}"
+            }
+          ]
+        },
+        "options": {
+          "waitForSubWorkflow": false
+        }
+      },
+      "id": "e1a00002-0000-4000-8000-000000000002",
+      "name": "Notify Status Update",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        1280,
+        512
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "wfbANcXRgYrC4us4",
+          "mode": "id",
+          "cachedResultName": "SESEMI – Telegram Owner Notifier"
+        },
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "event_type",
+              "value": "payment_proof"
+            },
+            {
+              "name": "project_code",
+              "value": "={{ $('Check Payment Proof').item.json.row.project_code }}"
+            },
+            {
+              "name": "customer_email",
+              "value": "={{ $('Check Payment Proof').item.json.row.customer_email }}"
+            },
+            {
+              "name": "tx_hash",
+              "value": "={{ $('Check Payment Proof').item.json.tx_hash }}"
+            },
+            {
+              "name": "payment_amount_usdt",
+              "value": "={{ $('Check Payment Proof').item.json.row.payment_amount_usdt }}"
+            },
+            {
+              "name": "show_buttons",
+              "value": "verify_payment"
+            }
+          ]
+        },
+        "options": {
+          "waitForSubWorkflow": false
+        }
+      },
+      "id": "e1a00003-0000-4000-8000-000000000003",
+      "name": "Notify Payment Proof",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        1280,
+        896
+      ],
+      "onError": "continueRegularOutput"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When Called By Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Route By Action",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route By Action": {
+      "main": [
+        [
+          {
+            "node": "Return Request Error",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Prepare New Project",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Find Project For Update",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Find Project",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Find Project For Payment",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Load Payment Config",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Return Request Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare New Project": {
+      "main": [
+        [
+          {
+            "node": "Insert Project Row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert Project Row": {
+      "main": [
+        [
+          {
+            "node": "Notify New Project",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Find Project For Update": {
+      "main": [
+        [
+          {
+            "node": "Check Status Update",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Status Update": {
+      "main": [
+        [
+          {
+            "node": "Is Update Valid",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Update Valid": {
+      "main": [
+        [
+          {
+            "node": "Update Project Status",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Return Update Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Project Status": {
+      "main": [
+        [
+          {
+            "node": "Notify Status Update",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Find Project": {
+      "main": [
+        [
+          {
+            "node": "Return Project Lookup",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Find Project For Payment": {
+      "main": [
+        [
+          {
+            "node": "Check Payment Proof",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Payment Proof": {
+      "main": [
+        [
+          {
+            "node": "Is Payment Proof Valid",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Payment Proof Valid": {
+      "main": [
+        [
+          {
+            "node": "Save Payment Proof",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Return Payment Proof Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save Payment Proof": {
+      "main": [
+        [
+          {
+            "node": "Notify Payment Proof",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Load Payment Config": {
+      "main": [
+        [
+          {
+            "node": "Return Payment Config",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Notify New Project": {
+      "main": [
+        [
+          {
+            "node": "Return Created Project",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Notify Status Update": {
+      "main": [
+        [
+          {
+            "node": "Return Updated Project",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Notify Payment Proof": {
+      "main": [
+        [
+          {
+            "node": "Return Payment Proof Saved",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": true
+  },
+  "versionId": "93da2cfe-20bc-4331-8bdf-462d702242a6",
+  "meta": {
+    "instanceId": "99a9239df2c5f0f2c0494eac38e40d895e22f54aaa7f7b0b19e97cd1e5fed5af"
+  },
+  "nodeGroups": [
+    {
+      "id": "e54f29f2-0b22-443e-b079-2c92daa3d4cb",
+      "name": "Register new project",
+      "nodeIds": [
+        "62f60302-c2d9-47ac-94c7-df8974d8710b",
+        "ab4efa2b-d024-4212-9123-1738a5f14033",
+        "6091652d-141e-4840-bab2-e6f7a071e22e",
+        "e1a00001-0000-4000-8000-000000000001"
+      ],
+      "description": "Gives the request a unique SES code and saves it as awaiting owner approval and unpaid"
+    },
+    {
+      "id": "6b9dc9a2-093f-49b0-b8da-081d711dfba6",
+      "name": "Change project status",
+      "nodeIds": [
+        "063c2e3a-f98d-4cf8-acb6-5b94ea7d2690",
+        "14db1046-b74a-4076-ad2c-9f39acfdad86",
+        "4555f7d2-c565-4d29-945e-9e73fe722f61",
+        "17a872e4-bc81-4f92-87f6-810d276942be",
+        "82ee5de3-0aba-47fd-98d8-a87f65850f07",
+        "464c181d-1941-404f-af0d-0703ccda32d6",
+        "e1a00002-0000-4000-8000-000000000002"
+      ],
+      "description": "Finds the project by code, checks the new status is allowed, then saves it with a timestamp"
+    },
+    {
+      "id": "29446278-7566-4b62-84ce-fa1bf7e40710",
+      "name": "Look up project",
+      "nodeIds": [
+        "ab923f62-f267-4e97-b2f8-8267fce05894",
+        "505ba219-2cc8-4cc5-b806-71489408cad4"
+      ],
+      "description": "Returns one project by code, only when the optional customer email also matches"
+    },
+    {
+      "id": "d4cf21ff-49ea-401b-85d6-35b3606fe69a",
+      "name": "Record payment proof",
+      "nodeIds": [
+        "ae3302aa-fa1e-4177-a239-4999c0170e57",
+        "e2e89cdb-9f47-4ad1-a9cf-fa735fb9ac51",
+        "fa90b91b-8096-482e-9ec0-50e6e32cc229",
+        "702d599d-01fa-4b3d-9305-b26e3b009441",
+        "347785ce-e3f4-4f86-9de3-e64a59161c8f",
+        "dee59088-b3b0-44a5-a1c4-45ff38aae9eb",
+        "e1a00003-0000-4000-8000-000000000003"
+      ],
+      "description": "Accepts a TX hash only for approved unpaid projects and marks payment as pending verification"
+    },
+    {
+      "id": "0b914f9c-ce19-409e-8411-69f5bad6af99",
+      "name": "Provide wallet details",
+      "nodeIds": [
+        "0f66aa4b-4f90-44b5-b4fe-497cec84b5dc",
+        "a8fe343c-3f48-46d7-a53f-c25a810fb235"
+      ],
+      "description": "Reads the single active receiving wallet, currency and network from central payment settings"
+    }
+  ],
+  "id": "P2T0lop0BwbpR2Wh",
+  "tags": []
+}

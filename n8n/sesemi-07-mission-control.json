@@ -1,0 +1,1152 @@
+{
+  "name": "SESEMI 07 – Mission Control (Groundwork)",
+  "nodes": [
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "action"
+            },
+            {
+              "name": "mission_code"
+            },
+            {
+              "name": "goal"
+            },
+            {
+              "name": "source"
+            },
+            {
+              "name": "task_seq",
+              "type": "any"
+            },
+            {
+              "name": "task_status"
+            },
+            {
+              "name": "result_note"
+            }
+          ]
+        }
+      },
+      "id": "f1000001-0000-4000-8000-000000000001",
+      "name": "When Called By Agents",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.action }}",
+                    "rightValue": "create_mission",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "create_mission"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.action }}",
+                    "rightValue": "update_task",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "update_task"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.action }}",
+                    "rightValue": "list_tasks",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "list_tasks"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.action }}",
+                    "rightValue": "get_mission",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "get_mission"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra",
+          "renameFallbackOutput": "unknown_action"
+        }
+      },
+      "id": "f1000002-0000-4000-8000-000000000002",
+      "name": "Route MC Action",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.3,
+      "position": [
+        224,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const j = $input.item.json;\nconst goal = String(j.goal || '').trim();\nif (!goal) { throw new Error('Mission goal is empty'); }\nconst alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';\nconst suffix = Array.from({ length: 4 }, () => alphabet[Math.floor(Math.random() * alphabet.length)]).join('');\nconst code = 'SESM-' + $now.setZone('Asia/Yerevan').toFormat('yyMMdd') + '-' + suffix;\nconst now = new Date().toISOString();\nreturn { json: { mission_code: code, goal: goal.slice(0, 1000), source: String(j.source || 'telegram'), status: 'in_progress', result_summary: '', created_at: now, updated_at: now } };"
+      },
+      "id": "f1000003-0000-4000-8000-000000000003",
+      "name": "Prepare Mission",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        496,
+        144
+      ]
+    },
+    {
+      "parameters": {
+        "dataTableId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "u0wTO8LOVjXyuatN",
+          "cachedResultName": ""
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "mission_code",
+              "displayName": "mission_code",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "goal",
+              "displayName": "goal",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "source",
+              "displayName": "source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "result_summary",
+              "displayName": "result_summary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "date",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "updated_at",
+              "displayName": "updated_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "date",
+              "canBeUsedToMatch": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "f1000004-0000-4000-8000-000000000004",
+      "name": "Insert Mission Row",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        720,
+        144
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are the SESEMI mission planner. Break the GOAL below into 2-6 concrete, ordered tasks for a small automation agency.\n\nReturn ONLY a JSON array. Each element: {\"title\": \"short task title\", \"description\": \"one sentence what to do\", \"assigned_agent\": \"crm|email|web|research|manual\", \"priority\": \"high|medium|low\"}.\nRules: the first task is always analysis/research (assigned_agent: research). The last task is always delivery/QA sign-off (assigned_agent: manual). Keep titles under 60 chars. No markdown, no code fences, no commentary.\n\nGOAL: {{ $json.goal }}",
+        "batching": {}
+      },
+      "id": "f1000005-0000-4000-8000-000000000005",
+      "name": "Plan Mission With AI",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        944,
+        144
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "id": "f1000006-0000-4000-8000-000000000006",
+      "name": "Mission Planner Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        944,
+        304
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": null,
+          "name": "",
+          "__aiGatewayManaged": true
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const raw = String($input.first().json.text || '');\nlet m = raw.match(/\\[[\\s\\S]*\\]/);\nif (!m) { throw new Error('AI planner did not return a JSON array: ' + raw.slice(0, 200)); }\nlet plan;\ntry { plan = JSON.parse(m[0]); } catch (e) { throw new Error('Bad JSON from planner: ' + e.message); }\nif (!Array.isArray(plan) || plan.length === 0) { throw new Error('Planner returned an empty plan'); }\nconst allowed = ['crm', 'email', 'web', 'research', 'manual'];\nconst allowedP = ['high', 'medium', 'low'];\nconst missionCode = $('Insert Mission Row').first().json.mission_code;\nconst now = new Date().toISOString();\nconst out = plan.slice(0, 6).map((t, i) => ({\n  mission_code: missionCode,\n  seq: i + 1,\n  title: String(t.title || ('Task ' + (i + 1))).slice(0, 120),\n  description: String(t.description || '').slice(0, 500),\n  assigned_agent: allowed.includes(String(t.assigned_agent)) ? String(t.assigned_agent) : 'manual',\n  priority: allowedP.includes(String(t.priority)) ? String(t.priority) : 'medium',\n  status: i === 0 ? 'active' : 'pending',\n  result_note: '',\n  created_at: now,\n  updated_at: now\n}));\nreturn out.map(j => ({ json: j }));"
+      },
+      "id": "f1000007-0000-4000-8000-000000000007",
+      "name": "Parse Task Plan",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1168,
+        144
+      ]
+    },
+    {
+      "parameters": {
+        "dataTableId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "uG6yZjXjgSGydZDz",
+          "cachedResultName": ""
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "mission_code",
+              "displayName": "mission_code",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "seq",
+              "displayName": "seq",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "title",
+              "displayName": "title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "description",
+              "displayName": "description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "assigned_agent",
+              "displayName": "assigned_agent",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "priority",
+              "displayName": "priority",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "result_note",
+              "displayName": "result_note",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "date",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "updated_at",
+              "displayName": "updated_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "date",
+              "canBeUsedToMatch": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "f1000008-0000-4000-8000-000000000008",
+      "name": "Insert Task Rows",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        1392,
+        144
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const mission = $('Insert Mission Row').first().json;\nconst tasks = $('Parse Task Plan').all().map(i => i.json);\nconst agentFa = { crm: 'مدیریت پروژه', email: 'ایمیل', web: 'وب', research: 'تحقیق', manual: 'انسان' };\nconst lines = ['🎯 مأموریت ' + mission.mission_code + ' ثبت شد', '🎯 هدف: ' + mission.goal, ''];\nfor (const t of tasks) {\n  lines.push(t.seq + '. ' + t.title + ' — ' + (agentFa[t.assigned_agent] || t.assigned_agent) + ' (' + t.priority + ')');\n}\nlines.push('', 'ایجنت‌ها شروع می‌کنند. وضعیت: /tasks');\nreturn [{ json: { ok: true, mission_code: mission.mission_code, reply_text: lines.join('\\n').slice(0, 3500), tasks: JSON.stringify(tasks) } }];"
+      },
+      "id": "f1000009-0000-4000-8000-000000000009",
+      "name": "Build Mission Reply",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1616,
+        144
+      ]
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "wfbANcXRgYrC4us4",
+          "mode": "id",
+          "cachedResultName": "SESEMI – Telegram Owner Notifier"
+        },
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "event_type",
+              "value": "info"
+            },
+            {
+              "name": "project_code",
+              "value": "={{ $('Build Mission Reply').item.json.mission_code }}"
+            },
+            {
+              "name": "title",
+              "value": "={{ '🎯 مأموریت جدید ' + $('Build Mission Reply').item.json.mission_code }}"
+            },
+            {
+              "name": "details",
+              "value": "={{ $('Build Mission Reply').item.json.reply_text }}"
+            }
+          ]
+        },
+        "options": {
+          "waitForSubWorkflow": false
+        }
+      },
+      "id": "f1000010-0000-4000-8000-000000000010",
+      "name": "Notify Mission Created",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        1840,
+        144
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={{ JSON.stringify({ ok: true, mission_code: $('Build Mission Reply').item.json.mission_code, reply_text: $('Build Mission Reply').item.json.reply_text, tasks: $('Build Mission Reply').item.json.tasks }) }}",
+        "options": {}
+      },
+      "id": "f1000011-0000-4000-8000-000000000011",
+      "name": "Return Mission Created",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2064,
+        144
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "uG6yZjXjgSGydZDz",
+          "cachedResultName": ""
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "mission_code",
+              "keyValue": "={{ $json.mission_code }}"
+            },
+            {
+              "keyName": "seq",
+              "keyValue": "={{ $json.task_seq }}"
+            }
+          ]
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "status": "={{ $json.task_status || 'done' }}",
+            "result_note": "={{ $json.result_note || '' }}",
+            "updated_at": "={{ $now.toISO() }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "result_note",
+              "displayName": "result_note",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "updated_at",
+              "displayName": "updated_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "date",
+              "canBeUsedToMatch": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "f1000012-0000-4000-8000-000000000012",
+      "name": "Update Task Status",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        496,
+        528
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "uG6yZjXjgSGydZDz",
+          "cachedResultName": ""
+        }
+      },
+      "id": "f1000013-0000-4000-8000-000000000013",
+      "name": "Fetch Mission Tasks",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        720,
+        528
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const rows = $input.all().map(i => i.json);\nconst trigger = $('When Called By Agents').item.json;\nif (rows.length === 0) { return { json: { mission_code: trigger.mission_code, status: 'in_progress', result_summary: '', updated_at: new Date().toISOString(), task_count: 0 } }; }\nconst done = rows.filter(r => r.status === 'done').length;\nconst failed = rows.filter(r => r.status === 'failed').length;\nlet status = 'in_progress';\nif (failed > 0) status = 'blocked';\nif (done === rows.length) status = 'done';\nconst summary = rows.map(r => r.seq + '. ' + r.title + ' → ' + r.status).join(' | ');\nreturn { json: { mission_code: trigger.mission_code, status, result_summary: summary.slice(0, 900), updated_at: new Date().toISOString(), task_count: rows.length, done, failed } };"
+      },
+      "id": "f1000014-0000-4000-8000-000000000014",
+      "name": "Recalc Mission Status",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        944,
+        528
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "u0wTO8LOVjXyuatN",
+          "cachedResultName": ""
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "mission_code",
+              "keyValue": "={{ $json.mission_code }}"
+            }
+          ]
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "status": "={{ $json.status }}",
+            "result_summary": "={{ $json.result_summary }}",
+            "updated_at": "={{ $json.updated_at }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "result_summary",
+              "displayName": "result_summary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "updated_at",
+              "displayName": "updated_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "date",
+              "canBeUsedToMatch": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "f1000015-0000-4000-8000-000000000015",
+      "name": "Update Mission Row",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        1168,
+        528
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={{ JSON.stringify({ ok: true, mission_code: $('Recalc Mission Status').item.json.mission_code, mission_status: $('Recalc Mission Status').item.json.status, reply_text: '✅ تسک ' + $('When Called By Agents').item.json.task_seq + ' مأموریت ' + $('When Called By Agents').item.json.mission_code + ' → ' + ($('When Called By Agents').item.json.task_status || 'done') + ' | وضعیت مأموریت: ' + $('Recalc Mission Status').item.json.status }) }}",
+        "options": {}
+      },
+      "id": "f1000016-0000-4000-8000-000000000016",
+      "name": "Return Task Updated",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1392,
+        528
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "uG6yZjXjgSGydZDz",
+          "cachedResultName": ""
+        }
+      },
+      "id": "f1000017-0000-4000-8000-000000000017",
+      "name": "List Recent Tasks",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        496,
+        704
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const rows = $input.all().map(i => i.json);\nconst statusFa = { in_progress: '🔄 در جریان', done: '✅ تمام', blocked: '⛔ متوقف', planning: '📋 برنامه‌ریزی', failed: '❌ شکست', active: '▶️ فعال', pending: '⏳ در صف' };\nif (rows.length === 0) {\n  return [{ json: { ok: true, reply_text: 'هنوز مأموریتی ثبت نشده. با /mission <هدف> شروع کن.' } }];\n}\nconst byMission = {};\nfor (const r of rows) {\n  if (!byMission[r.mission_code]) byMission[r.mission_code] = [];\n  byMission[r.mission_code].push(r);\n}\nconst lines = ['📋 تابلوی مأموریت‌ها', ''];\nfor (const [code, tasks] of Object.entries(byMission)) {\n  const done = tasks.filter(t => t.status === 'done').length;\n  lines.push('🎯 ' + code + ' (' + done + '/' + tasks.length + ' ' + (statusFa[tasks[0].status] || tasks[0].status) + ')');\n  for (const t of tasks.sort((a, b) => a.seq - b.seq)) {\n    lines.push('   ' + t.seq + '. ' + t.title + ' [' + (statusFa[t.status] || t.status) + ']');\n  }\n  lines.push('');\n}\nreturn [{ json: { ok: true, reply_text: lines.join('\\n').slice(0, 3800) } }];"
+      },
+      "id": "f1000018-0000-4000-8000-000000000018",
+      "name": "Format Mission Board",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        720,
+        704
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={{ JSON.stringify($json) }}",
+        "options": {}
+      },
+      "id": "f1000019-0000-4000-8000-000000000019",
+      "name": "Return Mission Board",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        944,
+        704
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "u0wTO8LOVjXyuatN",
+          "cachedResultName": ""
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "mission_code",
+              "keyValue": "={{ $json.mission_code.trim().toUpperCase() }}"
+            }
+          ]
+        },
+        "limit": 1
+      },
+      "id": "f1000020-0000-4000-8000-000000000020",
+      "name": "Get Mission Row",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        496,
+        880
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "uG6yZjXjgSGydZDz",
+          "cachedResultName": ""
+        }
+      },
+      "id": "f1000021-0000-4000-8000-000000000021",
+      "name": "Get Mission Tasks",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        720,
+        880
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const mission = $('Get Mission Row').first().json;\nconst tasks = $input.all().map(i => i.json).sort((a, b) => a.seq - b.seq);\nconst statusFa = { in_progress: '🔄 در جریان', done: '✅ تمام', blocked: '⛔ متوقف', planning: '📋 برنامه‌ریزی', failed: '❌ شکست', active: '▶️ فعال', pending: '⏳ در صف' };\nconst lines = ['🎯 ' + mission.mission_code + ' — ' + (statusFa[mission.status] || mission.status), 'هدف: ' + mission.goal, ''];\nfor (const t of tasks) {\n  lines.push(t.seq + '. ' + t.title + ' [' + (statusFa[t.status] || t.status) + ']');\n  if (t.result_note) lines.push('   ↳ ' + t.result_note);\n}\nlines.push('', 'به‌روزرسانی: ' + mission.updated_at);\nreturn [{ json: { ok: true, mission_code: mission.mission_code, status: mission.status, reply_text: lines.join('\\n').slice(0, 3800) } }];"
+      },
+      "id": "f1000022-0000-4000-8000-000000000022",
+      "name": "Format Mission Detail",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        944,
+        880
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={{ JSON.stringify($json) }}",
+        "options": {}
+      },
+      "id": "f1000023-0000-4000-8000-000000000023",
+      "name": "Return Mission Detail",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1168,
+        880
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={{ JSON.stringify({ ok: false, reply_text: '❓ دستور نامعتبر است.\\n\\n/mission <هدف> — ثبت مأموریت جدید\\n/tasks — تابلوی مأموریت‌ها\\n/tasks <کد مأموریت> — جزئیات یک مأموریت' }) }}",
+        "options": {}
+      },
+      "id": "f1000024-0000-4000-8000-000000000024",
+      "name": "Return MC Error",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        496,
+        1056
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "sesemi-mission",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "id": "f1000025-0000-4000-8000-000000000025",
+      "name": "Mission Web Hook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        1248
+      ],
+      "webhookId": "8f4c11aa-22bb-4c33-8d44-55ee66ff7700"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a1",
+              "name": "action",
+              "value": "create_mission",
+              "type": "string"
+            },
+            {
+              "id": "a2",
+              "name": "goal",
+              "value": "={{ ($json.body && $json.body.goal) ? $json.body.goal : ($json.goal || '') }}",
+              "type": "string"
+            },
+            {
+              "id": "a3",
+              "name": "source",
+              "value": "web",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "f1000026-0000-4000-8000-000000000026",
+      "name": "Normalize Web Mission",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        224,
+        1248
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When Called By Agents": {
+      "main": [
+        [
+          {
+            "node": "Route MC Action",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route MC Action": {
+      "main": [
+        [
+          {
+            "node": "Prepare Mission",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update Task Status",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "List Recent Tasks",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get Mission Row",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Return MC Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Mission": {
+      "main": [
+        [
+          {
+            "node": "Insert Mission Row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert Mission Row": {
+      "main": [
+        [
+          {
+            "node": "Plan Mission With AI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mission Planner Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Plan Mission With AI",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Plan Mission With AI": {
+      "main": [
+        [
+          {
+            "node": "Parse Task Plan",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Task Plan": {
+      "main": [
+        [
+          {
+            "node": "Insert Task Rows",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert Task Rows": {
+      "main": [
+        [
+          {
+            "node": "Build Mission Reply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Mission Reply": {
+      "main": [
+        [
+          {
+            "node": "Notify Mission Created",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Notify Mission Created": {
+      "main": [
+        [
+          {
+            "node": "Return Mission Created",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Task Status": {
+      "main": [
+        [
+          {
+            "node": "Fetch Mission Tasks",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Mission Tasks": {
+      "main": [
+        [
+          {
+            "node": "Recalc Mission Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Recalc Mission Status": {
+      "main": [
+        [
+          {
+            "node": "Update Mission Row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Mission Row": {
+      "main": [
+        [
+          {
+            "node": "Return Task Updated",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "List Recent Tasks": {
+      "main": [
+        [
+          {
+            "node": "Format Mission Board",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Mission Board": {
+      "main": [
+        [
+          {
+            "node": "Return Mission Board",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Mission Row": {
+      "main": [
+        [
+          {
+            "node": "Get Mission Tasks",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Mission Tasks": {
+      "main": [
+        [
+          {
+            "node": "Format Mission Detail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Mission Detail": {
+      "main": [
+        [
+          {
+            "node": "Return Mission Detail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mission Web Hook": {
+      "main": [
+        [
+          {
+            "node": "Normalize Web Mission",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Web Mission": {
+      "main": [
+        [
+          {
+            "node": "Prepare Mission",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": true
+  },
+  "versionId": "423b7b9a-c4d1-48fb-aec2-479cca6fdfba",
+  "meta": {
+    "instanceId": "99a9239df2c5f0f2c0494eac38e40d895e22f54aaa7f7b0b19e97cd1e5fed5af"
+  },
+  "nodeGroups": [],
+  "id": "mS7DkxkLHdJYX4mQ",
+  "tags": []
+}
