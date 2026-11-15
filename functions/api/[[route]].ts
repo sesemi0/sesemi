@@ -170,7 +170,7 @@ export const onRequest = async (context: { request: Request; env: Env; params: {
           const agentName = cleanText(item.agentName, 40);
           const agentRole = cleanText(item.agentRole, 40);
           const status = cleanText(item.status, 20) || 'done';
-          const result = cleanText(item.result, 6000);
+          const result = cleanText(item.result, 24000); // صفحات HTML ساخته‌شده توسط ایجنت‌ها جا شوند
           if (!taskTitle || !agentName || !result) continue; // incomplete rows are silently dropped
           if (status !== 'done' && status !== 'failed' && status !== 'working') continue;
           inserts.push(

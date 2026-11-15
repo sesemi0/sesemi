@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { t } from './i18n';
 import { Icon } from './Visuals';
 import { Words } from './Motion';
 
@@ -41,13 +42,13 @@ export function NewsTeaser() {
   return <section className="section container news-section" id="ai-radar">
     <div className="section-heading">
       <div><div className="eyebrow section-kicker"><span /> TODAY IN WORLD AI — UPDATED EVERY DAY</div>
-        <h2><Words>The AI Radar.</Words><br /><span>Fresh intelligence, daily.</span></h2></div>
-      <p>The day’s most important AI stories,<br />pulled from leading world sources<br />and refreshed automatically every day.</p>
+        <h2><Words>{t('teaser.kicker')}</Words><br /><span>{t('teaser.h')}</span></h2></div>
+      <p>{t('teaser.p')}</p>
     </div>
     {posts === null ? <NewsSkeleton /> : posts.length
       ? <div className="news-grid">{posts.slice(0, 3).map(post => <NewsCard post={post} key={post.id} />)}</div>
-      : <p className="news-empty">{failed ? 'The news feed could not be reached. ' : 'The first daily update is being collected. '}<a href="/blog">Open the AI Radar</a></p>}
-    <div className="news-cta"><a className="button small" href="/blog">Open the AI Radar <Icon size={15} /></a></div>
+      : <p className="news-empty">{failed ? 'The news feed could not be reached. ' : 'The first daily update is being collected. '}<a href="/blog">{t('teaser.cta')}</a></p>}
+    <div className="news-cta"><a className="button small" href="/blog">{t('teaser.cta')} <Icon size={15} /></a></div>
   </section>;
 }
 

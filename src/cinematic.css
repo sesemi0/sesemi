@@ -454,6 +454,12 @@ html.translated-rtl .project-row-main strong{letter-spacing:0}
 @media(max-width:1150px){.english.cinematic .office-copy{padding:34px}.english.cinematic .office-copy h2{font-size:29px}}
 @media(max-width:600px){.english.cinematic .office-section{display:flex;flex-direction:column}.office-scene{min-height:320px;border-right:0;border-bottom:1px solid var(--line);padding:26px 20px}.english.cinematic .office-copy{padding:30px 27px}.english.cinematic .office-copy h2{font-size:30px}}
 
+/* Language switch — sits next to the theme button. */
+.lang-switch{display:inline-flex;border:1px solid var(--line);border-radius:20px;overflow:hidden;margin-inline-end:2px}
+.lang-switch button{background:transparent;border:0;color:var(--muted);font:inherit;font-size:10.5px;padding:6px 9px;cursor:pointer;letter-spacing:.5px}
+.lang-switch button.on{background:var(--accent,#48b9ff);color:#04121f;font-weight:700}
+.lang-switch button:not(.on):hover{color:var(--text,#e8f0fa)}
+
 /* SESEMI Office pricing: three plans + an à-la-carte service menu. */
 .english.cinematic .pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:26px}
 .english.cinematic .pricing-card{position:relative;border:1px solid var(--line);border-radius:var(--radius);padding:30px 26px;background:var(--surface);display:flex;flex-direction:column}

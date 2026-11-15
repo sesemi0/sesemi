@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { t } from './i18n';
 import { Words } from './Motion';
 import { Icon } from './Visuals';
 import { scrollToSection } from './scroll';
@@ -55,21 +56,21 @@ export default function VortexHero() {
         <div className="order-2 lg:order-1">
           <div className="eyebrow hero-stamp" style={{ '--d': '80ms' } as React.CSSProperties}><span className="live-dot" /> INDEPENDENT DIGITAL &amp; CREATIVE STUDIO</div>
           <h1 className="mt-7 max-w-[640px] whitespace-nowrap text-[clamp(46px,4.6vw,76px)] font-medium leading-[1.05] tracking-[-3px] text-[#f3f6ff] max-[767px]:whitespace-normal max-[767px]:tracking-[-1.5px]">
-            <Words stamp={250}>Built to work.</Words><br /><span className="text-[#48b9ff]"><Words stamp={490}>Made to stand out.</Words></span>
+            <Words stamp={250}>{t('hero.l1')}</Words><br /><span className="text-[#48b9ff]"><Words stamp={490}>{t('hero.l2')}</Words></span>
           </h1>
           <p className="hero-stamp mt-6 max-w-[440px] text-[13px] leading-[2.15] text-[#94a3bb]" style={{ '--d': '1150ms' } as React.CSSProperties}>
             Distinctive websites. Cinematic AI advertising films. We turn ambitious ideas into digital experiences and brand stories people remember.
           </p>
           <div className="mt-8 flex flex-wrap gap-3.5">
-            <a className="button hero-stamp" style={{ '--d': '1400ms' } as React.CSSProperties} href="#contact">Start your project <Icon size={19} /></a>
-            <a className="button hero-stamp secondary" style={{ '--d': '1520ms' } as React.CSSProperties} href="#about">Meet Sesemi <Icon size={18} /></a>
+            <a className="button hero-stamp" style={{ '--d': '1400ms' } as React.CSSProperties} href="#contact">{t('hero.start')} <Icon size={19} /></a>
+            <a className="button hero-stamp secondary" style={{ '--d': '1520ms' } as React.CSSProperties} href="#about">{t('hero.meet')} <Icon size={18} /></a>
           </div>
           <div className="ownership hero-stamp mt-7" style={{ '--d': '1660ms' } as React.CSSProperties}><Icon name="check" size={17} /> Clear scope. Thoughtful craft. A simple way to start.</div>
         </div>
         <div className="relative order-1 hidden min-h-[380px] lg:order-2 lg:block" aria-hidden="true">
           <div className="pointer-events-none absolute -bottom-6 right-0 flex flex-col items-end gap-1.5 font-mono text-[8px] tracking-[.18em] text-[#8fa5bd]">
             <span className="text-[#b6c9df]">01 / SESEMI IN ANOTHER DIMENSION</span>
-            <span>HUMAN IMAGINATION. NEW POSSIBILITIES.</span>
+            <span>{t('hero.kicker')}</span>
           </div>
         </div>
       </div>

@@ -1,0 +1,267 @@
+/**
+ * SESEMI site i18n — English (default), Persian (RTL) and Armenian.
+ * The language lives in localStorage, applies <html lang/dir> and re-renders
+ * every t() reader through the onLang subscription. Persian reuses the
+ * html.translated-rtl CSS layer that already ships for browser-translate.
+ */
+export type Lang = 'en' | 'fa' | 'hy';
+
+const STORE_KEY = 'sesemi-lang';
+
+let current: Lang = 'en';
+try { const saved = localStorage.getItem(STORE_KEY); if (saved === 'fa' || saved === 'hy' || saved === 'en') current = saved; } catch { /* private mode */ }
+
+type Dict = Record<string, string>;
+
+const en: Dict = {
+  'nav.services': 'Services',
+  'nav.process': 'Our process',
+  'nav.office': 'Office',
+  'nav.about': 'About the studio',
+  'nav.radar': 'AI Radar',
+  'nav.contact': 'Get in touch',
+  'nav.create': 'Let’s create',
+  'a11y.skip': 'Skip to content',
+  'hero.kicker': 'HUMAN IMAGINATION. NEW POSSIBILITIES.',
+  'hero.l1': 'Built to work.',
+  'hero.l2': 'Made to stand out.',
+  'hero.start': 'Start your project',
+  'hero.meet': 'Meet Sesemi',
+  'hero.hint': 'MOVE YOUR CURSOR. CHANGE YOUR PERSPECTIVE.',
+  'tools.label': 'OUR TOOLKIT, ALWAYS EVOLVING',
+  'tools.disclaimer': 'Tools we can work with. Names do not imply an official partnership or affiliation.',
+  'svc.kicker': 'WHAT WE DO',
+  'svc.h1': 'Digital craft.',
+  'svc.h2': 'Creative possibility.',
+  'svc.sub': 'From your first impression to your next big launch. A focused set of services, built around your brand.',
+  'lab.kicker': 'BRAND STORIES, REIMAGINED',
+  'lab.h1': 'Give your brand',
+  'lab.h2': 'its cinematic moment.',
+  'lab.p': 'From a single product to an entire brand world. We combine creative direction, AI-generated visuals and purposeful editing to make advertising teasers with a point of view.',
+  'lab.cta': 'Explore AI advertising films',
+  'lab.note': 'Conceptual studio artwork — not a client campaign.',
+  'proc.kicker': 'LESS FRICTION. MORE MOMENTUM.',
+  'proc.h1': 'A clear path.',
+  'proc.h2': 'Room for great ideas.',
+  'proc.sub': 'No mystery process. No endless forms. Just a collaborative route from idea to delivery.',
+  'proc.s1': 'Discover', 'proc.s1d': 'Tell us what you want to make. We clarify the audience, goal and scope.',
+  'proc.s2': 'Shape', 'proc.s2d': 'Explore a focused direction, from interface concepts to storyboards.',
+  'proc.s3': 'Create', 'proc.s3d': 'We design, develop or edit, with clear checkpoints and room for feedback.',
+  'proc.s4': 'Deliver', 'proc.s4d': 'Receive your finished assets, website or film, ready for the next chapter.',
+  'proc.cta': 'Have something in mind?',
+  'proc.start': 'Start your project',
+  'office.kicker': 'WALK INTO SESEMI OFFICE',
+  'office.h1': 'An isometric office.',
+  'office.h2': 'A team that delivers.',
+  'office.p': 'Step into our live AI office. Hand a task to a team of AI agents working at their isometric desks — they take the brief, head off to work and come back with it actually done.',
+  'office.cta': 'Visit sesemi-office.pages.dev',
+  'office.note': 'SESEMI Office is a live space — agents keep learning between shifts.',
+  'price.kicker': 'SIMPLE PRICING',
+  'price.h1': 'Run an AI office.',
+  'price.h2': 'Priced like a menu.',
+  'price.sub': 'Subscribe to SESEMI Office — the live AI-agent workspace — or order studio services à la carte.',
+  'price.popular': 'MOST POPULAR',
+  'price.forever': '/forever', 'price.month': '/month',
+  'price.demo.f1': 'Watch the live AI office work', 'price.demo.f2': 'Demo agents, unlimited missions', 'price.demo.f3': 'Telegram mission alerts',
+  'price.demo.cta': 'Open the office',
+  'price.pro.f1': 'Real AI agents on your own key', 'price.pro.f2': 'Unlimited missions with auto-delegation', 'price.pro.f3': 'Delivery reports to Telegram', 'price.pro.f4': 'The office grows with every delivery',
+  'price.pro.cta': 'Start with Pro',
+  'price.biz.f1': 'Everything in Pro', 'price.biz.f2': 'Custom agents and roles', 'price.biz.f3': 'Client-facing mission board', 'price.biz.f4': 'Priority support on Telegram',
+  'price.biz.cta': 'Talk to us',
+  'price.menu': 'Studio services — à la carte',
+  'about.kicker': 'HELLO, WE’RE SESEMI',
+  'about.h1': 'Small studio.',
+  'about.h2': 'A wider imagination.',
+  'about.p1': 'We bring web design and AI-powered creative production together. One place to build your digital presence and tell your brand’s next story.',
+  'about.p2': 'Technology is our toolkit, not our identity. Good judgment, a strong visual point of view and honest collaboration are what make the work matter.',
+  'about.v1': 'Clarity from day one', 'about.v1d': 'A focused brief, agreed deliverables and visible progress.',
+  'about.v2': 'A human creative perspective', 'about.v2d': 'AI supports the craft. It does not replace the idea.',
+  'about.v3': 'Made for your brand', 'about.v3d': 'Intentional work, not another template.',
+  'about.cta': 'Start the conversation',
+  'faq.kicker': 'GOOD QUESTIONS',
+  'faq.h1': 'A little clarity',
+  'faq.h2': 'before we begin.',
+  'faq.q1': 'What can you help my brand create?',
+  'faq.a1': 'Custom websites, UI/UX design, AI advertising films, AI-assisted video editing, logos and visual identities, and creative prompt workflows.',
+  'faq.q2': 'Do I need a finished brief?',
+  'faq.a2': 'Not at all. A short description of your goal is enough to start. We can help clarify the scope and creative direction together.',
+  'faq.q3': 'How much does a project cost?',
+  'faq.a3': 'Pricing depends on deliverables, complexity and timeline. We agree the scope before providing a project-specific quote.',
+  'faq.q4': 'Can you create videos for social platforms?',
+  'faq.a4': 'Yes. We can plan AI advertising teasers and edited content around the aspect ratios, length and creative requirements of your chosen channels.',
+  'faq.cta': 'Still curious? Ask Sesemi',
+  'teaser.kicker': 'The AI Radar.',
+  'teaser.h': 'Fresh intelligence, daily.',
+  'teaser.p': 'The day’s most important AI stories, pulled from leading world sources and refreshed automatically every day.',
+  'teaser.cta': 'Open the AI Radar',
+  'contact.h': 'Something in mind?',
+  'contact.p': 'Let’s give it a start.',
+};
+
+const fa: Dict = {
+  'nav.services': 'خدمات', 'nav.process': 'مسیر کار ما', 'nav.office': 'دفتر', 'nav.about': 'دربارهٔ استودیو',
+  'nav.radar': 'رادار AI', 'nav.contact': 'ارتباط با ما', 'nav.create': 'بسازیم', 'a11y.skip': 'پرش به محتوا',
+  'hero.kicker': 'تخیل انسانی. امکان‌های تازه.',
+  'hero.l1': 'ساخته‌شده برای کار.', 'hero.l2': 'ساخته‌شده برای دیده‌شدن.',
+  'hero.start': 'شروع پروژهٔ تو', 'hero.meet': 'با سسِمی آشنا شو',
+  'hero.hint': 'نشانگر را حرکت بده. زاویهٔ دید عوض شود.',
+  'tools.label': 'جعبه‌ابزار ما، همیشه در حال رشد',
+  'tools.disclaimer': 'ابزارهایی که با آن‌ها کار می‌کنیم؛ ذکر نام به معنی همکاری رسمی نیست.',
+  'svc.kicker': 'چه کار می‌کنیم',
+  'svc.h1': 'صنعتگری دیجیتال.', 'svc.h2': 'امکانِ خلاق.',
+  'svc.sub': 'از اولین برخورد تا لانچ بعدی‌ات؛ مجموعه‌ای متمرکز از خدمات، دور برند تو ساخته شده.',
+  'lab.kicker': 'روایت برند، از نو',
+  'lab.h1': 'به برندت بده', 'lab.h2': 'لحظهٔ سینمایی‌اش را.',
+  'lab.p': 'از یک محصول تا یک دنیای کامل برند. جهت‌دهی خلاق، تصویرسازی با هوش مصنوعی و تدوین هدفمند را کنار هم می‌گذاریم تا تیزرهای تبلیغاتی با شخصیت بسازیم.',
+  'lab.cta': 'تماشای فیلم‌های تبلیغاتی AI',
+  'lab.note': 'آرت‌ورک مفهومی استودیو — نه کمپین مشتری.',
+  'proc.kicker': 'اصطکاک کمتر. شتاب بیشتر.',
+  'proc.h1': 'یک مسیر روشن.', 'proc.h2': 'جا برای ایده‌های بزرگ.',
+  'proc.sub': 'بدون فرایند رمزآلود و فرم‌های بی‌پایان؛ فقط یک مسیر مشارکتی از ایده تا تحویل.',
+  'proc.s1': 'کشف', 'proc.s1d': 'بگو چه می‌خواهی بسازی؛ مخاطب، هدف و قالب را با هم روشن می‌کنیم.',
+  'proc.s2': 'شکل‌دهی', 'proc.s2d': 'یک جهت متمرکز را می‌کاویم؛ از کانسپت رابط تا استوری‌بورد.',
+  'proc.s3': 'خلق', 'proc.s3d': 'طراحی، توسعه یا تدوین — با نقطه‌های بازبینی روشن و جا برای بازخورد.',
+  'proc.s4': 'تحویل', 'proc.s4d': 'خروجی نهایی را می‌گیری: وب‌سایت، ویدیو یا فایل‌ها، آمادهٔ فصل بعد.',
+  'proc.cta': 'چیزی در ذهن داری؟', 'proc.start': 'شروع پروژه',
+  'office.kicker': 'قدم به دفتر سسِمی بگذار',
+  'office.h1': 'یک دفتر ایزومتریک.', 'office.h2': 'تیمی که تحویل می‌دهد.',
+  'office.p': 'وارد دفتر زندهٔ هوش مصنوعی ما شو. کار را به تیمی از ایجنت‌های AI بده که پشت میزهای ایزومتریک‌شان می‌نشینند — بریف را می‌گیرند، می‌روند سر کار و با نتیجهٔ واقعی برمی‌گردند.',
+  'office.cta': 'دیدن sesemi-office.pages.dev',
+  'office.note': 'دفتر سسِمی یک فضای زنده است — ایجنت‌ها بین نوبت‌ها هم یاد می‌گیرند.',
+  'price.kicker': 'قیمت‌گذاری ساده',
+  'price.h1': 'یک دفتر AI داشته باش.', 'price.h2': 'قیمتش مثل منو.',
+  'price.sub': 'اشتراک دفتر سسِمی — محیط کاری زندهٔ ایجنت‌ها — یا سفارش خدمات استودیو به‌صورت منویی.',
+  'price.popular': 'محبوب‌ترین', 'price.forever': '/همیشه', 'price.month': '/ماه',
+  'price.demo.f1': 'تماشای کار زندهٔ دفتر AI', 'price.demo.f2': 'ایجنت‌های نمایشی، مأموریت نامحدود', 'price.demo.f3': 'اعلان مأموریت در تلگرام',
+  'price.demo.cta': 'باز کردن دفتر',
+  'price.pro.f1': 'ایجنت‌های واقعی AI با کلید خودت', 'price.pro.f2': 'مأموریت نامحدود با توزیع خودکار', 'price.pro.f3': 'گزارش تحویل در تلگرام', 'price.pro.f4': 'دفتر با هر تحویل بزرگ‌تر می‌شود',
+  'price.pro.cta': 'شروع با Pro',
+  'price.biz.f1': 'همهٔ امکانات Pro', 'price.biz.f2': 'ایجنت و نقش سفارشی', 'price.biz.f3': 'تابلوی مأموریت برای مشتری', 'price.biz.f4': 'پشتیبانی اولویت‌دار در تلگرام',
+  'price.biz.cta': 'با ما حرف بزن',
+  'price.menu': 'خدمات استودیو — به‌صورت منو',
+  'about.kicker': 'سلام، ما سسِمی‌ایم',
+  'about.h1': 'استودیوی کوچک.', 'about.h2': 'تخیل گسترده‌تر.',
+  'about.p1': 'طراحی وب و تولید خلاقِ مبتنی بر هوش مصنوعی را یکی می‌کنیم؛ یک جا برای ساختن حضور دیجیتال تو و روایتِ داستان بعدی برندت.',
+  'about.p2': 'فناوری ابزار ماست، نه هویت‌مان. سلیقهٔ درست، نگاه بصری قوی و همکاری صادقانه است که کار را معنی‌دار می‌کند.',
+  'about.v1': 'شفافیت از روز اول', 'about.v1d': 'بریف متمرکز، خروجی‌های توافق‌شده و پیشرفت قابل دیدن.',
+  'about.v2': 'نگاه خلاق انسانی', 'about.v2d': 'هوش مصنوعی پشتیبان صنعتگری است؛ جای ایده را نمی‌گیرد.',
+  'about.v3': 'ساخته‌شده برای برند تو', 'about.v3d': 'کارِ هدفمند، نه یک قالب تکراری.',
+  'about.cta': 'شروع گفت‌وگو',
+  'faq.kicker': 'سؤال‌های خوب',
+  'faq.h1': 'کمی شفافیت', 'faq.h2': 'قبل از شروع.',
+  'faq.q1': 'برای برند من چه چیزی می‌توانید بسازید؟',
+  'faq.a1': 'وب‌سایت سفارشی، طراحی UI/UX، فیلم تبلیغاتی با هوش مصنوعی، تدوین ویدیو، لوگو و هویت بصری و پرامپت‌ورک‌های خلاقانه.',
+  'faq.q2': 'بریف کامل لازم دارم؟',
+  'faq.a2': 'اصلاً. چند خط توضیح دربارهٔ هدفت کافی است تا شروع کنیم؛ محدوده و مسیر خلاق را با هم روشن می‌کنیم.',
+  'faq.q3': 'هزینهٔ پروژه چقدر است؟',
+  'faq.a3': 'به خروجی‌ها، پیچیدگی و زمان‌بندی بستگی دارد؛ قبل از شروع، محدوده و قیمت پروژه را با هم توافق می‌کنیم.',
+  'faq.q4': 'برای شبکه‌های اجتماعی ویدیو می‌سازید؟',
+  'faq.a4': 'بله. تیزرهای تبلیغاتی با هوش مصنوعی را متناسب با نسبت تصویر، طول و نیاز کانال موردنظرت برنامه‌ریزی و تدوین می‌کنیم.',
+  'faq.cta': 'کنجکاوی ماندی؟ از سسِمی بپرس',
+  'teaser.kicker': 'رادار AI.',
+  'teaser.h': 'اطلاعات تازه، هر روز.',
+  'teaser.p': 'مهم‌ترین خبرهای روز هوش مصنوعی، از معتبرترین منابع جهان، هر روز خودکار به‌روز می‌شود.',
+  'teaser.cta': 'باز کردن رادار AI',
+  'contact.h': 'چیزی در ذهن داری؟', 'contact.p': 'بزن بریم.',
+};
+
+const hy: Dict = {
+  'nav.services': 'Ծառայություններ', 'nav.process': 'Մեր գործընթացը', 'nav.office': 'Գրասենյակ', 'nav.about': 'Մեր մասին',
+  'nav.radar': 'AI Radar', 'nav.contact': 'Կապվեք մեզ հետ', 'nav.create': 'Ստեղծենք', 'a11y.skip': 'Անցնել բովանդակությանը',
+  'hero.kicker': 'ՄԱՐԴԿԱՅԻՆ ԵՐԵՎԱԿԱՅՈՒԹՅՈՒՆ. ՆՈՐ ՀՆԱՐԱՎՈՐՈՒԹՅՈՒՆՆԵՐ։',
+  'hero.l1': 'Ստեղծված է աշխատելու համար։', 'hero.l2': 'Ստեղծված է փայլելու համար։',
+  'hero.start': 'Մեկնարկեք ձեր նախագիծը', 'hero.meet': 'Ծանոթացեք Sesemi-ի հետ',
+  'hero.hint': 'ՇԱՐԺԵՔ ԿՈՒՐՍՈՐԸ. ՓՈԽԵՔ ՏԵՍԱՆԿՅՈՒՆԸ։',
+  'tools.label': 'ՄԵՐ ԳՈՐԾԻՔԱԿԱԼՈՒԹՅՈՒՆԸ՝ ՄՇՏԱՊԵՍ ԶԱՐԳԱՑՈՂ',
+  'tools.disclaimer': 'Գործիքներ, որոնց հետ աշխատում ենք. անունները պաշտոնական գործընկերություն չեն նշանակում։',
+  'svc.kicker': 'ԻՆՉ ԵՆՔ ԱՆՈՒՄ',
+  'svc.h1': 'Թվային վարպետություն։', 'svc.h2': 'Ստեղծագործ հնարավորություն։',
+  'svc.sub': 'Ձեր առաջին տպավորությունից մինչև հաջորդ մեծ մեկնարկը։ Կենտրոնացած ծառայություններ՝ կառուցված ձեր բրենդի շուրջ։',
+  'lab.kicker': 'ԲՐԵՆԴԻ ՊԱՏՄՈՒԹՅՈՒՆՆԵՐ՝ ՆՈՐՈՎԱԶՐՎԱԾ',
+  'lab.h1': 'Տվեք ձեր բրենդին', 'lab.h2': 'իր կինոմատոգրաֆիական պահը։',
+  'lab.p': 'Մեկ արտադրանքից մինչև ամբողջական բրենդ-աշխարհ։ Միավորում ենք ստեղծագործ ուղղորդումը, AI-տեսողությունը և նպատակաուղղված մոնտաժը՝ բնավորությամբ գովազդային տեսահոլովակներ ստեղծելու համար։',
+  'lab.cta': 'Դիտել AI գովազդային ֆիլմերը',
+  'lab.note': 'Ստուդիայի կոնցեպտուալ արտ-աշխատանք՝ ոչ թե հաճախորդի արշավ։',
+  'proc.kicker': 'ՔԻՉ ԽՈՉԸՆԿԵՏՈՒՄ. ԱՎԵԼԻ ՇԱՏ ԱՐԱԳՈՒԹՅՈՒՆ։',
+  'proc.h1': 'Հստակ ուղի։', 'proc.h2': 'Տեղ մեծ գաղափարների համար։',
+  'proc.sub': 'Ոչ մի առեղծվածային գործընթաց, ոչ մի անվերջ ձևաթուղթ։ Ուղղակի համագործակցային ճանապարհ՝ գաղափարից մինչև պատրաստի արդյունք։',
+  'proc.s1': 'Բացահայտում', 'proc.s1d': 'Ասեք՝ ինչ եք ուզում ստեղծել. միասին ճշգրտում ենք լսարանը, նպատակը և շրջանակը։',
+  'proc.s2': 'Ձևավորում', 'proc.s2d': 'Ուսումնասիրում ենք կենտրոնացած ուղղությունը՝ ինտերֆեյսի կոնցեպտից մինչև ստորիոբորդ։',
+  'proc.s3': 'Ստեղծում', 'proc.s3d': 'Ձևավորում, մշակում կամ մոնտաժ՝ հստակ ստուգակետերով և հետադարձ կապի տեղով։',
+  'proc.s4': 'Հանձնում', 'proc.s4d': 'Ստանում եք պատրաստի արդյունքը՝ կայք, տեսանյութ կամ ֆայլեր՝ հաջորդ փուլի համար։',
+  'proc.cta': 'Ինչ-որ բան ունե՞ք մտքում։', 'proc.start': 'Մեկնարկել նախագիծը',
+  'office.kicker': 'ՄՈՒՏՔ ԳՈՐԾԵՔ SESEMI ԳՐԱՍԵՆՅԱԿ',
+  'office.h1': 'Իզոմետրիկ գրասենյակ։', 'office.h2': 'Թիմ, որ արդյունք է տալիս։',
+  'office.p': 'Մտեք մեր ուղիղ AI գրասենյակը։ Հանձնեք առաջադրանքը AI գործակալների թիմին՝ իրենց իզոմետրիկ սեղանների մոտ — նրանք վերցնում են հանձնարարականը, գնում աշխատելու և վերադառնում իրական արդյունքով։',
+  'office.cta': 'Այցելել sesemi-office.pages.dev',
+  'office.note': 'SESEMI գրասենյակը կենդանի տարածք է — գործակալները սովորում են փոփոխությունների արանքում։',
+  'price.kicker': 'ՊԱՐԶ ԳՆԱԳՐՈՒՄ',
+  'price.h1': 'Ունեցեք AI գրասենյակ։', 'price.h2': 'Գնացիկի պես գներով։',
+  'price.sub': 'Բաժանորդագրվեք SESEMI Office-ին — գործակալների կենդանի աշխատանքային տարածքին — կամ պատվիրեք ստուդիայի ծառայություններ առանձին։',
+  'price.popular': 'ԱՄԵՆԱՊԱՀԱՆՋՎԱԾԸ', 'price.forever': '/ընդմիշտ', 'price.month': '/ամիս',
+  'price.demo.f1': 'Դիտեք AI գրասենյակի կենդանի աշխատանքը', 'price.demo.f2': 'Դեմո գործակալներ, անսահման առաքելություններ', 'price.demo.f3': 'Առաքելությունների ծանուցումներ Telegram-ում',
+  'price.demo.cta': 'Բացել գրասենյակը',
+  'price.pro.f1': 'Իրական AI գործակալներ՝ ձեր սեփական բանալիով', 'price.pro.f2': 'Անսահման առաքելություններ՝ ավտոմատ բաշխմամբ', 'price.pro.f3': 'Հաշվետվություններ Telegram-ում', 'price.pro.f4': 'Գրասենյակը մեծանում է ամեն հանձնման հետ',
+  'price.pro.cta': 'Սկսել Pro-ով',
+  'price.biz.f1': 'Pro-ի ամեն ինչ', 'price.biz.f2': 'Հատուկ գործակալներ և դերեր', 'price.biz.f3': 'Հաճախորդի համար նախատեսված առաքելությունների տախտակ', 'price.biz.f4': 'Առաջնահերթ աջակցություն Telegram-ում',
+  'price.biz.cta': 'Խոսեք մեզ հետ',
+  'price.menu': 'Ստուդիայի ծառայություններ — առանձին ցանկով',
+  'about.kicker': 'ՈՂՋՈՒՅՆՆԵՐ, ՄԵՆՔ SESEMI-Ն ԵՆՔ',
+  'about.h1': 'Փոքր ստուդիա։', 'about.h2': 'Ավելի լայն երևակայություն։',
+  'about.p1': 'Կայքի ձևավորումը և AI-ի վրա հիմնված ստեղծագործ արտադրությունը միավորում ենք մեկ վայրում՝ ձեր թվային ներկայությունը կառուցելու և բրենդի հաջորդ պատմությունը պատմելու համար։',
+  'about.p2': 'Տեխնոլոգիան մեր գործիքն է, ոչ թե ինքնությունը։ Առողջ դատողությունը, ուժեղ վիզուալ տեսլականը և ազնիվ համագործակցությունն են աշխատանքը իմաստավորում։',
+  'about.v1': 'Պարզություն առաջին օրից', 'about.v1d': 'Կենտրոնացած բրիֆ, համաձայնեցված արդյունքներ և տեսանելի առաջընթաց։',
+  'about.v2': 'Մարդկային ստեղծագործ տեսլական', 'about.v2d': 'AI-ն աջակցում է վարպետությանը. այն չի փոխարինում գաղափարին։',
+  'about.v3': 'Պատրաստված ձեր բրենդի համար', 'about.v3d': 'Նպատակային աշխատանք, ոչ թե ևս մեկ կաղապար։',
+  'about.cta': 'Սկսել զրույցը',
+  'faq.kicker': 'ԼԱՎ ՀԱՐՑԵՐ',
+  'faq.h1': 'Մի քիչ պարզություն', 'faq.h2': 'նախքան սկսելը։',
+  'faq.q1': 'Ինչ կարող եք ստեղծել իմ բրենդի համար։',
+  'faq.a1': 'Հատուկ կայքեր, UI/UX ձևավորում, AI գովազդային ֆիլմեր, տեսամոնտաժ, լոգոներ և վիզուալ ինքնություն, ստեղծագործ պրոմպտ-աշխատանքներ։',
+  'faq.q2': 'Արդյոք պատրաստի բրիֆ է պետք։',
+  'faq.a2': 'Ընդհանրապես ոչ։ Նպատակի կարճ նկարագրությունը բավական է մեկնարկի համար. շրջանակը և ստեղծագործ ուղղությունը միասին ենք ճշգրտում։',
+  'faq.q3': 'Ի՞նչ արժե նախագիծը։',
+  'faq.a3': 'Կախված է արդյունքներից, բարդությունից և ժամանակացույցից. նախքան մեկնարկը շրջանակը և գինը միասին ենք համաձայնեցնում։',
+  'faq.q4': 'Սոցցանցերի համար տեսանյութե՞ր եք պատրաստում։',
+  'faq.a4': 'Այո։ AI գովազդային տեսահոլովակներ ենք պլանավորում և մոնտաժում՝ ըստ ձեր ընտրած ալիքի չափաչափի, տևողության և պահանջների։',
+  'faq.cta': 'Դեռ հետաքրքիր է՞. հարցրեք Sesemi-ին',
+  'teaser.kicker': 'AI Radar։',
+  'teaser.h': 'Թարմ հետախուզություն՝ ամեն օր։',
+  'teaser.p': 'Օրվա կարևորագույն AI նորությունները՝ աշխարհի առաջատար աղբյուրներից, ամեն օր ավտոմատ թարմացվող։',
+  'teaser.cta': 'Բացել AI Radar-ը',
+  'contact.h': 'Ինչ-որ բան ունե՞ք մտքում։', 'contact.p': 'Եկեք սկսենք։',
+};
+
+const T: Record<Lang, Dict> = { en, fa, hy };
+
+const listeners = new Set<() => void>();
+
+function applyLang(): void {
+  const el = document.documentElement;
+  el.lang = current;
+  el.dir = current === 'fa' ? 'rtl' : 'ltr';
+  // فارسی از همان لایهٔ RTL موجود استفاده می‌کند (فونت وزیرمتن + جهت)
+  el.classList.toggle('translated-rtl', current === 'fa');
+}
+
+applyLang();
+
+export function getLang(): Lang { return current; }
+
+export function setLang(lang: Lang): void {
+  if (lang === current) return;
+  current = lang;
+  try { localStorage.setItem(STORE_KEY, lang); } catch { /* private mode */ }
+  applyLang();
+  for (const fn of listeners) fn();
+}
+
+export function onLang(fn: () => void): () => void {
+  listeners.add(fn);
+  return () => { listeners.delete(fn); };
+}
+
+/** رشتهٔ ترجمه‌شده برای کلید — نبودِ ترجمه به انگلیسی و بعد به خود کلید برمی‌گردد */
+export function t(key: string): string {
+  return T[current][key] ?? en[key] ?? key;
+}
