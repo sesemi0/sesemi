@@ -54,12 +54,12 @@ export default function VortexHero() {
       <div className="vh-bottomfade pointer-events-none absolute inset-x-0 bottom-0 z-10 h-32" aria-hidden="true" />
       <div className="relative z-10 mx-auto grid min-h-[100svh] w-full max-w-[1360px] grid-cols-1 items-center gap-x-16 px-6 pb-28 pt-20 sm:px-10 lg:grid-cols-[1.02fr_.98fr] lg:pb-16 lg:pt-6">
         <div className="order-2 lg:order-1">
-          <div className="eyebrow hero-stamp" style={{ '--d': '80ms' } as React.CSSProperties}><span className="live-dot" /> INDEPENDENT DIGITAL &amp; CREATIVE STUDIO</div>
+          <div className="eyebrow hero-stamp" style={{ '--d': '80ms' } as React.CSSProperties}><span className="live-dot" /> {t('hero.studio')}</div>
           <h1 className="mt-7 max-w-[640px] whitespace-nowrap text-[clamp(46px,4.6vw,76px)] font-medium leading-[1.05] tracking-[-3px] text-[#f3f6ff] max-[767px]:whitespace-normal max-[767px]:tracking-[-1.5px]">
             <Words stamp={250}>{t('hero.l1')}</Words><br /><span className="text-[#48b9ff]"><Words stamp={490}>{t('hero.l2')}</Words></span>
           </h1>
           <p className="hero-stamp mt-6 max-w-[440px] text-[13px] leading-[2.15] text-[#94a3bb]" style={{ '--d': '1150ms' } as React.CSSProperties}>
-            Distinctive websites. Cinematic AI advertising films. We turn ambitious ideas into digital experiences and brand stories people remember.
+            {t('hero.sub')}
           </p>
           <div className="mt-8 flex flex-wrap gap-3.5">
             <a className="button hero-stamp" style={{ '--d': '1400ms' } as React.CSSProperties} href="#contact">{t('hero.start')} <Icon size={19} /></a>
