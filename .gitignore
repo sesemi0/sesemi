@@ -53,3 +53,4 @@ youtube-banner/
 .claude/
 .github/*
 !.github/workflows/
+ai-studio-handoff.md
