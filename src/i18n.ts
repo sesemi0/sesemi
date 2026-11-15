@@ -240,8 +240,8 @@ function applyLang(): void {
   const el = document.documentElement;
   el.lang = current;
   el.dir = current === 'fa' ? 'rtl' : 'ltr';
-  // فارسی از همان لایهٔ RTL موجود استفاده می‌کند (فونت وزیرمتن + جهت)
-  el.classList.toggle('translated-rtl', current === 'fa');
+  // کلاس اختصاصی — نه translated-rtl (ناظر ترجمهٔ کروم React را با بازنویسی DOM می‌کشد)
+  el.classList.toggle('lang-fa', current === 'fa');
 }
 
 applyLang();
