@@ -1,7 +1,17 @@
-# Every HTML page always revalidates so visitors never see a stale build
-# (phone browsers were serving an old cached bundle with the invisible DNA).
+# SESEMI headers — cache policy + security hardening (Cloudflare Pages).
+# The app is fully self-hosted (no CDN fonts/scripts). Inline JSON-LD never
+# executes, so scripts stay locked to 'self'; React style props need
+# style-src 'unsafe-inline'.
+
 /*
   Cache-Control: no-cache, must-revalidate
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()
+  Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
+  Cross-Origin-Opener-Policy: same-origin
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self'; media-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests
 
 # Content-hashed build assets are safe to cache forever
 /assets/*

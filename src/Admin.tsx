@@ -10,12 +10,13 @@ import './admin.css';
  * داده‌ها از بک‌اند کلادفلر (/api/admin) می‌آید؛ بدون نشست معتبر چیزی بارگذاری نمی‌شود.
  */
 
-type View = 'Overview' | 'Enquiries' | 'Projects' | 'Analytics' | 'Settings' | 'Connections';
+type View = 'Overview' | 'Enquiries' | 'Projects' | 'Analytics' | 'Security' | 'Settings' | 'Connections';
 const navigation: [View, string, string][] = [
   ['Overview', 'design', 'نمای کلی'],
   ['Enquiries', 'mail', 'پیام‌ها'],
   ['Projects', 'brand', 'پروژه‌ها'],
   ['Analytics', 'ai', 'آمار'],
+  ['Security', 'shield', 'امنیت'],
   ['Settings', 'edit', 'تنظیمات'],
   ['Connections', 'code', 'اتصال‌ها'],
 ];
@@ -25,6 +26,7 @@ const titles: Record<View, [string, string]> = {
   Enquiries: ['هر گفت‌وگو از همین‌جا شروع می‌شود.', 'پیام‌ها و ارتباط‌ها'],
   Projects: ['از یک بریف خوب تا کارِ بزرگ.', 'مسیر خلاقانهٔ پروژه‌ها.'],
   Analytics: ['مسیر مخاطب را بفهم، نه فقط عددش را.', 'دید روشن‌تر از مخاطب‌ها.'],
+  Security: ['هر تلاش ورود را می‌بینم، قبل از اینکه دیده شود.', 'نگهبانی سایت'],
   Settings: ['ورک‌اسپیس را مال خودت کن.', 'تنظیمات استودیو.'],
   Connections: ['اتصال‌های درست، کارِ درست.', 'اتاق کنترل استودیو.'],
 };
@@ -37,6 +39,7 @@ const SERVICE_FA: Record<string, string> = {
   'ui-ux-design': 'طراحی رابط و تجربهٔ کاربری',
   'brand-identity': 'لوگو و هویت بصری',
   'prompt-engineering': 'مهندسی پرامپت خلاقانه',
+  'geo-optimization': 'بهینه‌سازی حضور در پاسخ‌های AI (GEO)',
   'Web design': 'طراحی وب',
   'AI advertising films': 'فیلم تبلیغاتی AI',
   'AI video editing': 'تدوین ویدیو AI',
@@ -55,10 +58,27 @@ function Badge({ value }: { value: string }) {
 }
 
 type SystemInfo = { ai: { enabled: boolean; provider: string; model: string }; mail: { enabled: boolean } };
+type SecurityEvent = { id: number; at: number; type: string; severity: string; ip: string; path: string; detail: string; user_agent: string };
+type SecurityData = { events: SecurityEvent[]; summary: { type: string; n: number }[]; twoFactor: boolean };
+const SECURITY_FA: Record<string, string> = {
+  admin_login_fail: 'تلاش ناموفق ورود',
+  admin_login_success: 'ورود مدیر (کد تلگرام)',
+  admin_2fa_sent: 'ارسال کد تلگرام',
+  admin_2fa_fail: 'کد دومرحله‌ای اشتباه',
+  admin_2fa_success: 'ورود دومرحله‌ای موفق',
+  admin_2fa_bypass: 'ورود تک‌مرحله‌ای (تلگرام خاموش)',
+  probe_scan: 'اسکن مهاجم',
+  honeypot: 'ربات فرم (تلهٔ عسل)',
+  rate_limit: 'اتک فشار روی API',
+};
+const SEVERITY_FA: Record<string, string> = { info: 'عادی', warning: 'هشدار', critical: 'بحرانی' };
+const faTime = (ms: number) => new Intl.DateTimeFormat('fa-IR', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }).format(new Date(ms));
 
 export default function Admin() {
-  const [mode, setMode] = useState<'checking' | 'locked' | 'setup' | 'demo' | 'live'>('checking');
+  const [mode, setMode] = useState<'checking' | 'locked' | 'twofa' | 'setup' | 'demo' | 'live'>('checking');
   const [credentials, setCredentials] = useState({ username: '', password: '' });
+  const [pendingId, setPendingId] = useState('');
+  const [code, setCode] = useState('');
   const [authMessage, setAuthMessage] = useState('');
   const [authBusy, setAuthBusy] = useState(false);
   const [csrf, setCsrf] = useState('');
@@ -78,6 +98,7 @@ export default function Admin() {
   const [system, setSystem] = useState<SystemInfo | null>(null);
   const [pwForm, setPwForm] = useState({ current: '', next: '', confirm: '' });
   const [pwBusy, setPwBusy] = useState(false);
+  const [security, setSecurity] = useState<SecurityData | null>(null);
   const drawerRef = useRef<HTMLElement>(null);
   const lastFocus = useRef<HTMLElement | null>(null);
 
@@ -98,6 +119,7 @@ export default function Admin() {
   useEffect(() => {
     if (mode !== 'live') return;
     adminRequest<SystemInfo>('/system').then(setSystem).catch(() => setSystem(null));
+    adminRequest<SecurityData>('/security').then(setSecurity).catch(() => setSecurity(null));
   }, [mode]);
   useEffect(() => { if (toast) { const timer = setTimeout(() => setToast(''), 5000); return () => clearTimeout(timer); } }, [toast]);
   useEffect(() => {
@@ -156,11 +178,28 @@ export default function Admin() {
     if (!adminBase || authBusy) return;
     setAuthBusy(true); setAuthMessage('');
     try {
-      const session = await adminRequest<{ role: string; csrfToken: string }>('/login', { method: 'POST', body: JSON.stringify(credentials) });
-      setCsrf(session.csrfToken);
+      const result = await adminRequest<{ role: string; csrfToken: string; pending2fa?: boolean; pendingId?: string }>('/login', { method: 'POST', body: JSON.stringify(credentials) });
+      if (result.pending2fa && result.pendingId) {
+        setPendingId(result.pendingId); setCredentials({ username: '', password: '' });
+        setAuthMessage(''); setMode('twofa');
+        return;
+      }
+      setCsrf(result.csrfToken);
       const data = await adminRequest<Workspace>('/workspace');
       setWorkspace(data); setSettings(data.settings); setCredentials({ username: '', password: '' }); setMode('live');
     } catch (error) { setAuthMessage(error instanceof Error ? error.message : 'ورود ممکن نشد.'); }
+    finally { setAuthBusy(false); }
+  }
+  async function verifyCode(event: React.FormEvent) {
+    event.preventDefault();
+    if (!adminBase || authBusy || code.length !== 6) return;
+    setAuthBusy(true); setAuthMessage('');
+    try {
+      const session = await adminRequest<{ role: string; csrfToken: string }>('/verify-2fa', { method: 'POST', body: JSON.stringify({ pendingId, code }) });
+      setCsrf(session.csrfToken); setPendingId(''); setCode('');
+      const data = await adminRequest<Workspace>('/workspace');
+      setWorkspace(data); setSettings(data.settings); setMode('live');
+    } catch (error) { setAuthMessage(error instanceof Error ? error.message : 'تأیید کد ممکن نشد.'); }
     finally { setAuthBusy(false); }
   }
   async function createOwner(event: React.FormEvent) {
@@ -204,6 +243,25 @@ export default function Admin() {
   function exportLeads() { csvDownload([['ID', 'Name', 'Company', 'Email', 'Service', 'Status', 'Created', 'Follow up'], ...filtered.map(l => [l.id, l.name, l.company, l.email, l.service, l.status, l.createdAt, l.followUp])], `sesemi-${demo ? 'demo-' : ''}enquiries.csv`); setToast('خروجی پیام‌های فیلترشده آماده شد. اطلاعات مشتری را خصوصی نگه دارید.'); }
 
   if (mode === 'checking') return <div className="admin-loading">در حال بررسی نشست شما…</div>;
+
+  if (mode === 'twofa') return <div className="admin-auth" dir="rtl">
+    <a href="/" className="brand"><Ribbon small /><span>SESEMI<span className="brand-dot">.</span></span></a>
+    <div className="auth-panel">
+      <div className="auth-lock"><Icon name="shield" size={28} /></div>
+      <div className="eyebrow">ورود دومرحله‌ای</div>
+      <h1>گذرواژه تأیید شد.<br /><span>حالا کد تلگرام.</span></h1>
+      <p>یک کد ۶ رقمی یک‌بارمصرف به چت تلگرامت فرستاده شد. ۱۰ دقیقه اعتبار دارد.</p>
+      <form onSubmit={verifyCode}>
+        <label>کد تلگرام<input dir="ltr" inputMode="numeric" pattern="\d{6}" value={code} onChange={e => setCode(e.target.value.replace(/\D/g, '').slice(0, 6))} placeholder="______" required autoComplete="one-time-code" className="otp-input" /></label>
+        <button className="button" disabled={!adminBase || authBusy || code.length !== 6}>{authBusy ? 'در حال بررسی…' : 'تأیید و ورود'} <Icon /></button>
+      </form>
+      {authMessage && <p className="auth-notice" role="status">{authMessage}</p>}
+      <div className="auth-divider"><span>کد نرسید؟</span></div>
+      <button className="button secondary" onClick={() => { setMode('locked'); setPendingId(''); setCode(''); }}>بازگشت به ورود <span>←</span></button>
+      <small>این کد فقط یک‌بار مصرف است؛ اگر کسی گذرواژه‌ات را حدس زد، بدون کد تلگرام باز هم داخل نمی‌شود.</small>
+    </div>
+    <a className="auth-back" href="/">← بازگشت به استودیو</a>
+  </div>;
 
   if (mode === 'locked' || mode === 'setup') return <div className="admin-auth" dir="rtl">
     <a href="/" className="brand"><Ribbon small /><span>SESEMI<span className="brand-dot">.</span></span></a>
@@ -329,6 +387,32 @@ export default function Admin() {
           <div className="privacy-callout"><Icon name="shield" /><div><h3>بازدیدها را بفهم؛ به مردم احترام بگذار.</h3><p>بازدیدکنندهٔ ناشناس قابل شناسایی نیست. یک نفر فقط وقتی خودش جزئیاتش را بفرستد به «پیام شناخته‌شده» تبدیل می‌شود. هیچ ردیابی هویت پنهان یا لاگ بازدید بدون رضایت در اینجا وجود ندارد.</p></div></div>
         </>}
 
+        {view === 'Security' && <>
+          <div className="metric-grid">{[
+            ['وضعیت ورود دومرحله‌ای', security?.twoFactor ? 'فعال' : 'خاموش', security?.twoFactor ? 'گذرواژه + کد یک‌بارمصرف تلگرام' : 'TELEGRAM_CHAT_ID تنظیم نشده — بعد از تنظیم خودکار فعال می‌شود', 'shield'],
+            ['رویدادهای ۲۴ ساعت', faNumber(security?.summary.reduce((a, s) => a + s.n, 0) ?? 0), 'تلاش‌های ورود، اسکن‌ها و اتک‌های ثبت‌شده', 'mail'],
+            ['اسکن مهاجم', faNumber(security?.summary.find(s => s.type === 'probe_scan')?.n ?? 0), 'ربات‌هایی که دنبال مسیرهای هک می‌گشتند', 'code'],
+            ['کد اشتباه', faNumber(security?.summary.find(s => s.type === 'admin_2fa_fail')?.n ?? 0), 'تلاش برای عبور از قفل دومرحله‌ای', 'ai'],
+          ].map(([title, value, desc, icon]) => <div className="metric-card" key={title}><div><span>{title}</span><Icon name={icon} size={18} /></div><strong>{value}</strong><small>{desc}</small></div>)}</div>
+          <section className="admin-card">
+            <div className="admin-card-heading"><div><h2>دفتر نگهبانی</h2><p>آخرین رویدادهای امنیتی — هرکسی که به درهای قفل نزدیک شده. هشدارهای مهم همزمان به تلگرامت هم می‌روند.</p></div>
+              <button className="text-button" onClick={async () => { setBusy(true); try { await adminRequest('/security', { method: 'DELETE' }, csrf); const fresh = await adminRequest<SecurityData>('/security'); setSecurity(fresh); setToast('رویدادهای قدیمی‌تر از ۳۰ روز پاک شدند.'); } catch (error) { setToast(error instanceof Error ? error.message : 'پاک‌سازی ممکن نشد.'); } finally { setBusy(false); } }}>پاک‌سازی قدیمی‌ها ←</button>
+            </div>
+            <div className="security-log" dir="ltr">
+              {(security?.events || []).map(ev => <div className={`security-row sev-${ev.severity}`} key={ev.id}>
+                <span className="sec-time">{faTime(ev.at)}</span>
+                <span className="sec-badge">{SECURITY_FA[ev.type] || ev.type}</span>
+                <span className="sec-sev">{SEVERITY_FA[ev.severity] || ev.severity}</span>
+                <span className="sec-ip">{ev.ip || '—'}</span>
+                <span className="sec-path">{ev.path || '—'}</span>
+                <span className="sec-detail">{ev.detail || ''}</span>
+              </div>)}
+              {!security?.events.length && <div className="admin-empty"><Icon name="shield" size={30} /><h3>دفتر خالی است — هنوز.</h3><p>وقتی کسی تلاش کند وارد شود یا سایت را اسکن کند، همین‌جا ثبت می‌شود و به تلگرامت اطلاع می‌رود.</p></div>}
+            </div>
+            <p className="admin-footnote">هیچ IP ای در سطح مالک قابل ردیابی‌سازی شخصی نیست؛ این لاگ فقط برای تشخیص الگوی حمله نگه داشته می‌شود (۳۰ روز).</p>
+          </section>
+        </>}
+
         {view === 'Settings' && <form className="settings-form" onSubmit={async e => { e.preventDefault(); setBusy(true); setSettingsSaved(false); try { const saved = demo ? settings : await adminRequest<Settings>('/settings', { method: 'PATCH', body: JSON.stringify(settings) }, csrf); setWorkspace(w => ({ ...w, settings: saved })); setSettings(saved); setSettingsSaved(true); setToast(demo ? 'تنظیمات نمونه فقط در همین پیش‌نمایش ذخیره شد.' : 'تنظیمات ذخیره شد.'); } catch (error) { setToast(error instanceof Error ? error.message : 'ذخیرهٔ تنظیمات ممکن نشد.'); } finally { setBusy(false); } }}>
           <section className="admin-card"><div className="admin-card-heading"><div><h2>جزئیات استودیو</h2><p>تنظیمات ورک‌اسپیس. متن سایت عمومی در فایل‌های سورس مدیریت می‌شود.</p></div></div>
             <div className="admin-field-grid">
@@ -369,7 +453,7 @@ export default function Admin() {
             <span className={`connection-state ${connected ? 'configured' : ''}`}><i />{connected ? 'تنظیم شده · تحویل سمت سرور را بررسی کنید' : 'متصل نیست'}</span>
           </section>)}</div>
           <section className="admin-card security-checklist"><div className="admin-card-heading"><div><h2>ورک‌اسپیس خصوصی به بک‌اند واقعی نیاز دارد.</h2><p>هیچ گذرواژه‌ای در مرورگر ذخیره نمی‌شود و کنترل دسترسی فقط سمت سرور است.</p></div><Icon name="shield" size={24} /></div>
-            {['حساب مالک با گذرواژهٔ هش‌شده (PBKDF2) و فهرست مجاز تک‌کاربره.', 'محافظت از همهٔ درخواست‌های API پشت نشست معتبر، نه فقط صفحهٔ ورود.', 'کوکی امن HttpOnly با SameSite و توکن CSRF برای تغییرات.', 'ذخیرهٔ پیام‌ها در دیتابیس با سیاست دسترسی فقط-مالک.', 'کلیدهای ایمیل و هوش مصنوعی فقط به‌صورت secret روی سرور.'].map((t, i) => <div key={t}><span>{faNumber(i + 1)}</span><p>{t}</p></div>)}
+            {['حساب مالک با گذرواژهٔ هش‌شده (PBKDF2) و فهرست مجاز تک‌کاربره.', 'ورود دومرحله‌ای: بعد از گذرواژه، کد یک‌بارمصرف تلگرام.', 'محافظت از همهٔ درخواست‌های API پشت نشست معتبر، نه فقط صفحهٔ ورود.', 'کوکی امن HttpOnly با SameSite و توکن CSRF برای تغییرات.', 'دفتر نگهبانی: اسکن مهاجم، تلهٔ عسل فرم و اتک فشار ثبت و به تلگرام هشدار داده می‌شود.', 'کلیدهای ایمیل و هوش مصنوعی فقط به‌صورت secret روی سرور.'].map((t, i) => <div key={t}><span>{faNumber(i + 1)}</span><p>{t}</p></div>)}
             <p className="admin-footnote">قراردادهای راه‌اندازی در فایل INTEGRATIONS.md مستند شده‌اند.</p>
           </section>
         </>}

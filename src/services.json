@@ -76,5 +76,19 @@
     "deliverables": ["Creative brief and model selection", "Structured prompt libraries", "Style consistency and iteration workflow", "Documentation and practical handover"],
     "fit": "Brand teams, content creators and businesses developing AI-powered creative workflows.",
     "keywords": "creative prompt engineering, AI image prompts, AI video workflow"
+  },
+  {
+    "slug": "geo-optimization",
+    "icon": "code",
+    "title": "Generative engine optimization (GEO)",
+    "short": "GEO",
+    "description": "Get your brand cited inside ChatGPT, Gemini and Perplexity answers — the new search is generative, and we make you part of it.",
+    "category": "BE SEEN IN AI ANSWERS",
+    "symbol": "GEO",
+    "intro": "More people now ask an AI assistant instead of a search engine. GEO (Generative Engine Optimization) makes your brand findable in those answers: structured content AI can parse, citation-worthy pages, entity clarity and measurable visibility tracking across the assistants your customers actually use. In a reference case study, a brand raised its AI-answer visibility by about 30% with a disciplined GEO program.",
+    "deliverables": ["AI-visibility audit across ChatGPT, Gemini and Perplexity", "Structured content and schema so engines can cite you", "Entity and knowledge-graph cleanup (FAQs, Q&A formats, source pages)", "Competitor AI-share-of-voice tracking and monthly GEO report"],
+    "fit": "Brands that want to be the answer people hear from AI assistants, not just a blue link.",
+    "keywords": "generative engine optimization, GEO agency, AI search visibility, ChatGPT brand visibility",
+    "image": "/geo/geo-reference.jpg"
   }
 ]

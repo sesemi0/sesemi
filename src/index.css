@@ -40,3 +40,5 @@ html.translated-rtl ,html.lang-fa .about-section{direction:ltr}
 @media(max-width:767px){.header{backdrop-filter:blur(12px);background:color-mix(in srgb,var(--bg) 94%,transparent)}}
 .brand-group{display:flex;align-items:center;gap:11px}.brand-loc{font-size:9px;letter-spacing:1.4px;text-transform:uppercase;color:#5e718d;white-space:nowrap;padding-top:7px;border-left:1px solid var(--line);padding-left:11px}
 @media(max-width:850px){.brand-loc{display:none}}
+.service-reference{margin:0 0 65px;border:1px solid var(--line);border-radius:15px;overflow:hidden;background:var(--surface);position:relative}.service-reference img{display:block;width:100%;height:auto}.service-reference figcaption{position:absolute;left:24px;bottom:22px;font:8px monospace;letter-spacing:1.5px;color:#9fc4e6;text-shadow:0 1px 8px #000a;direction:ltr}
+@media(max-width:600px){.service-reference{margin-bottom:40px}.service-reference figcaption{left:16px;bottom:14px}}

@@ -40,10 +40,17 @@ const SESSION_TTL_SECONDS = 60 * 60 * 24 * 7;
 // The Workers runtime caps PBKDF2 iterations at 100,000 — do not raise this.
 const PBKDF2_ITERATIONS = 100_000;
 
+/** Baseline response hardening — applied to every API response, incl. errors. */
+const API_SECURITY_HEADERS: Record<string, string> = {
+  'X-Content-Type-Options': 'nosniff',
+  'Referrer-Policy': 'strict-origin-when-cross-origin',
+  'X-Frame-Options': 'DENY',
+};
+
 export function json(data: unknown, status = 200, headers: Record<string, string> = {}): Response {
   return new Response(JSON.stringify(data), {
     status,
-    headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store', ...headers },
+    headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store', ...API_SECURITY_HEADERS, ...headers },
   });
 }
 

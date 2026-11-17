@@ -21,6 +21,7 @@ import {
   exchangeGoogleCode, upsertGoogleUser, linkLeadsByEmail, listVisitorProjects,
   OAUTH_STATE_COOKIE,
 } from './_lib/accounts';
+import { logSecurity, issueAdminCode, verifyAdminCode, telegramConfigured } from './_lib/security';
 
 const REFRESH_INTERVAL = 20 * 60 * 60 * 1000; // matches news.ts — cron daily + lazy backstop
 
@@ -35,6 +36,7 @@ const FA_SERVICES: Record<string, string> = {
   'ui-ux-design': 'طراحی رابط و تجربهٔ کاربری',
   'brand-identity': 'لوگو و هویت بصری',
   'prompt-engineering': 'مهندسی پرامپت خلاقانه',
+  'geo-optimization': 'بهینه‌سازی حضور در پاسخ‌های AI (GEO)',
 };
 
 type LeadRow = { id: string; name: string; company: string; email: string; service: string; status: string; created_at: string; notes: string; source: string; follow_up: string };
@@ -98,10 +100,19 @@ export const onRequest = async (context: { request: Request; env: Env; params: {
   try {
     /* ============ public: contact form ============ */
     if (path.join('/') === 'contact' && method === 'POST') {
-      if (!rateLimit(`contact:${clientIp(request)}`, 10, 60 * 60 * 1000)) return fail(429, 'درخواست‌های زیاد. کمی بعد دوباره تلاش کنید.');
+      if (!rateLimit(`contact:${clientIp(request)}`, 10, 60 * 60 * 1000)) {
+        waitUntil(logSecurity(env, env.DB, { type: 'rate_limit', ip: clientIp(request), path: '/api/contact', detail: 'contact form flood (10/h exceeded)' }, waitUntil));
+        return fail(429, 'درخواست‌های زیاد. کمی بعد دوباره تلاش کنید.');
+      }
       const body = await readJson<Record<string, unknown>>(request);
       if (!body) return fail(400, 'درخواست نامعتبر است.');
-      if (cleanText(body.website, 100)) return json({ ok: true }); // honeypot — silently accept bots
+      if (cleanText(body.website, 100)) { // honeypot — silently accept bots but record them
+        waitUntil(logSecurity(env, env.DB, {
+          type: 'honeypot', severity: 'warning', ip: clientIp(request), path: '/api/contact',
+          detail: 'hidden website field filled — automated form bot',
+        }, waitUntil));
+        return json({ ok: true });
+      }
       const name = cleanText(body.name, 100);
       const contact = cleanText(body.contact, 150);
       const message = cleanText(body.message, 3000);
@@ -218,7 +229,10 @@ export const onRequest = async (context: { request: Request; env: Env; params: {
     if (path.join('/') === 'ai/chat' && method === 'POST') {
       const status = aiStatus(env);
       if (!status.enabled) return fail(503, 'دستیار هوش مصنوعی هنوز متصل نشده است.');
-      if (!rateLimit(`ai:${clientIp(request)}`, 20, 60 * 60 * 1000)) return fail(429, 'تعداد پیام‌ها زیاد است. کمی صبر کنید.');
+      if (!rateLimit(`ai:${clientIp(request)}`, 20, 60 * 60 * 1000)) {
+        waitUntil(logSecurity(env, env.DB, { type: 'rate_limit', ip: clientIp(request), path: '/api/ai/chat', detail: 'assistant flood (20/h exceeded)' }, waitUntil));
+        return fail(429, 'تعداد پیام‌ها زیاد است. کمی صبر کنید.');
+      }
       const body = await readJson<{ messages?: unknown }>(request);
       const raw = Array.isArray(body?.messages) ? body.messages : [];
       if (!raw.length) return fail(400, 'پیامی ارسال نشده است.');
@@ -331,7 +345,7 @@ export const onRequest = async (context: { request: Request; env: Env; params: {
       });
     }
 
-    /* ============ owner: login ============ */
+    /* ============ owner: login (step 1: password) ============ */
     if (path.join('/') === 'admin/login' && method === 'POST') {
       const body = await readJson<Record<string, unknown>>(request);
       const username = cleanText(body?.username, 40).toLowerCase();
@@ -347,7 +361,13 @@ export const onRequest = async (context: { request: Request; env: Env; params: {
         `SELECT count, window_start FROM login_throttle WHERE key = ?1`,
       ).bind(throttleKey).first<{ count: number; window_start: number }>();
       const failedCount = throttleRow && throttleRow.window_start >= cutoff ? throttleRow.count : 0;
-      if (failedCount >= 6) return fail(429, 'تلاش‌های ناموفق زیاد بود. ۱۵ دقیقه صبر کنید.');
+      if (failedCount >= 6) {
+        waitUntil(logSecurity(env, env.DB, {
+          type: 'admin_login_fail', severity: 'critical', ip, path: '/api/admin/login',
+          detail: `lockout engaged (6+ fails) username=${username}`, userAgent: request.headers.get('User-Agent') || '',
+        }, waitUntil));
+        return fail(429, 'تلاش‌های ناموفق زیاد بود. ۱۵ دقیقه صبر کنید.');
+      }
 
       const owner = await env.DB.prepare(`SELECT username, pass_hash FROM owner WHERE username = ?1`).bind(username).first<{ username: string; pass_hash: string }>();
       const valid = owner ? await verifyPassword(password, owner.pass_hash) : await verifyPassword(password, 'pbkdf2$100000$AAAAAAAAAAAAAAAAAAAAAA$AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA');
@@ -355,11 +375,61 @@ export const onRequest = async (context: { request: Request; env: Env; params: {
         await env.DB.prepare(
           `INSERT OR REPLACE INTO login_throttle (key, count, window_start) VALUES (?1, ?2, ?3)`,
         ).bind(throttleKey, failedCount + 1, now).run();
+        waitUntil(logSecurity(env, env.DB, {
+          type: 'admin_login_fail', severity: 'warning', ip, path: '/api/admin/login',
+          detail: `wrong credentials username=${username} attempt=${failedCount + 1}/6`, userAgent: request.headers.get('User-Agent') || '',
+        }, waitUntil));
         return fail(401, 'نام کاربری یا گذرواژه درست نیست.');
       }
       await env.DB.prepare(`DELETE FROM login_throttle WHERE key = ?1`).bind(throttleKey).run();
-      const token = await createSessionToken(owner.username, env.SESSION_SECRET);
-      const csrfToken = await csrfTokenFor({ username: owner.username, expiresAt: 0, payload: token.split('.')[0] }, env.SESSION_SECRET);
+
+      // step 2: one-time code to the owner's Telegram chat
+      const pending = await issueAdminCode(env, env.DB, owner.username);
+      if (!pending) {
+        // Telegram not configured or delivery failed — never strand the owner:
+        // fall back to single-factor and record it so it is visible in the panel
+        waitUntil(logSecurity(env, env.DB, {
+          type: 'admin_2fa_bypass', severity: 'warning', ip, path: '/api/admin/login',
+          detail: telegramConfigured(env) ? 'telegram delivery failed — single-factor fallback used' : 'TELEGRAM_BOT_TOKEN/TELEGRAM_CHAT_ID not set',
+        }, waitUntil));
+        const token = await createSessionToken(owner.username, env.SESSION_SECRET);
+        const csrfToken = await csrfTokenFor({ username: owner.username, expiresAt: 0, payload: token.split('.')[0] }, env.SESSION_SECRET);
+        return json({ role: 'owner', csrfToken }, 200, { 'Set-Cookie': sessionCookie(token, isSecure(request)) });
+      }
+      waitUntil(logSecurity(env, env.DB, {
+        type: 'admin_login_success', severity: 'info', ip, path: '/api/admin/login',
+        detail: `password OK, code sent to Telegram username=${owner.username}`,
+      }, waitUntil));
+      return json({ pending2fa: true, pendingId: pending.pendingId });
+    }
+
+    /* ============ owner: login (step 2: Telegram code) ============ */
+    if (path.join('/') === 'admin/verify-2fa' && method === 'POST') {
+      const body = await readJson<Record<string, unknown>>(request);
+      const pendingId = cleanText(body?.pendingId, 64);
+      const code = cleanText(body?.code, 12).replace(/\D/g, '');
+      if (!pendingId || !/^\d{6}$/.test(code)) return fail(400, 'کد نامعتبر است.');
+      if (!rateLimit(`2fa:${clientIp(request)}`, 15, 60 * 60 * 1000)) return fail(429, 'تلاش‌های زیاد. کمی بعد دوباره تلاش کنید.');
+      const result = await verifyAdminCode(env.DB, pendingId, code);
+      if (!result.ok) {
+        waitUntil(logSecurity(env, env.DB, {
+          type: 'admin_2fa_fail', severity: result.reason === 'locked' ? 'critical' : 'warning',
+          ip: clientIp(request), path: '/api/admin/verify-2fa', detail: `code rejected (${result.reason})`,
+        }, waitUntil));
+        const messages: Record<string, string> = {
+          not_found: 'کد مورد انتظار نیست. از نو وارد شوید.',
+          expired: 'کد منقضی شده است. دوباره وارد شوید.',
+          locked: 'تلاش‌های اشتباه زیاد بود. از نو وارد شوید.',
+          wrong: 'کد درست نیست.',
+        };
+        return fail(403, messages[result.reason] || 'کد درست نیست.');
+      }
+      const token = await createSessionToken(result.username, env.SESSION_SECRET);
+      const csrfToken = await csrfTokenFor({ username: result.username, expiresAt: 0, payload: token.split('.')[0] }, env.SESSION_SECRET);
+      waitUntil(logSecurity(env, env.DB, {
+        type: 'admin_2fa_success', ip: clientIp(request), path: '/api/admin/verify-2fa',
+        detail: `owner signed in username=${result.username}`,
+      }, waitUntil));
       return json({ role: 'owner', csrfToken }, 200, { 'Set-Cookie': sessionCookie(token, isSecure(request)) });
     }
 
@@ -382,6 +452,29 @@ export const onRequest = async (context: { request: Request; env: Env; params: {
     if (path[0] !== 'admin') return fail(404, 'مسیر یافت نشد.');
     const auth = await requireOwner(request, env, method !== 'GET');
     if (!('session' in auth)) return auth;
+
+    /* ============ owner: security observability ============ */
+    if (path.length === 2 && path[1] === 'security' && method === 'GET') {
+      const since = Date.now() - 24 * 60 * 60 * 1000;
+      const [rows, summary] = await Promise.all([
+        env.DB.prepare(
+          `SELECT id, at, type, severity, ip, path, detail, user_agent FROM security_events ORDER BY id DESC LIMIT 120`,
+        ).all(),
+        env.DB.prepare(
+          `SELECT type, COUNT(*) AS n FROM security_events WHERE at >= ?1 GROUP BY type`,
+        ).bind(since).all<{ type: string; n: number }>(),
+      ]);
+      return json({
+        events: rows.results ?? [],
+        summary: summary.results ?? [],
+        twoFactor: telegramConfigured(env),
+      });
+    }
+
+    if (path.length === 2 && path[1] === 'security' && method === 'DELETE') {
+      await env.DB.prepare(`DELETE FROM security_events WHERE at < ?1`).bind(Date.now() - 30 * 24 * 60 * 60 * 1000).run();
+      return json({ ok: true });
+    }
 
     if (path.length === 2 && path[1] === 'password' && method === 'POST') {
       const body = await readJson<Record<string, unknown>>(request);

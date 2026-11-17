@@ -107,3 +107,26 @@ CREATE TABLE IF NOT EXISTS agent_outputs (
 );
 CREATE INDEX IF NOT EXISTS idx_agent_outputs_mission ON agent_outputs (mission_code);
 CREATE INDEX IF NOT EXISTS idx_agent_outputs_created ON agent_outputs (created_at);
+
+-- 004 — two-step owner login: one-time Telegram codes (hash-only storage)
+CREATE TABLE IF NOT EXISTS admin_2fa (
+  pending_id TEXT PRIMARY KEY,          -- random 22-char id handed to the browser
+  username   TEXT NOT NULL,
+  code_hash  TEXT NOT NULL,             -- sha256 of the 6-digit code
+  expires_at INTEGER NOT NULL,          -- ms epoch, 10 minutes
+  attempts   INTEGER NOT NULL DEFAULT 0,
+  created_at INTEGER NOT NULL
+);
+
+-- 005 — security observability: attacker probes, brute force, honeypot hits
+CREATE TABLE IF NOT EXISTS security_events (
+  id         INTEGER PRIMARY KEY AUTOINCREMENT,
+  at         INTEGER NOT NULL,
+  type       TEXT NOT NULL,             -- admin_login_fail | admin_2fa_fail | probe_scan | honeypot | rate_limit | admin_2fa_bypass
+  severity   TEXT NOT NULL DEFAULT 'info',
+  ip         TEXT NOT NULL DEFAULT '',
+  path       TEXT NOT NULL DEFAULT '',
+  detail     TEXT NOT NULL DEFAULT '',
+  user_agent TEXT NOT NULL DEFAULT ''
+);
+CREATE INDEX IF NOT EXISTS idx_security_events_at ON security_events (at);
