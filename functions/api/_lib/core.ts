@@ -18,6 +18,8 @@ export interface D1Database {
 
 export interface Env {
   DB: D1Database;
+  /** Pages static assets binding — the root catch-all function serves the site through it */
+  ASSETS: { fetch(input: RequestInfo, init?: RequestInit): Promise<Response> };
   SESSION_SECRET: string;
   ALLOW_SETUP?: string;
   RESEND_API_KEY?: string;
