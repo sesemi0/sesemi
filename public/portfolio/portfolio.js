@@ -214,6 +214,35 @@ applyLanguage(T[document.documentElement.lang]?document.documentElement.lang:"en
     hy:{top:"Սկիզբ",work:"Ավտոմատացում",services:"Ծառայություններ",studio:"Ինքնություն",about:"Մեր մասին",resume:"CV",contact:"Կապ"}
   };
   var lang=T[document.documentElement.lang]?document.documentElement.lang:"en";
+
+  /* ---- dark/light theme toggle — shares the localStorage "sesemi-theme" key
+     with the main studio site, so one choice is honored across the domain ---- */
+  var ICONS={
+    moon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>',
+    sun:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>'
+  };
+  var THEME_LABEL={en:"Switch theme",fa:"تغییر تم",hy:"Փոխել թեման"};
+  (function(){
+    var tools=document.querySelector(".nav-tools");
+    if(!tools)return;
+    var button=document.createElement("button");
+    button.type="button";button.className="theme-toggle";
+    button.setAttribute("aria-label",THEME_LABEL[lang]||THEME_LABEL.en);
+    var paint=function(){
+      var dark=document.documentElement.dataset.theme==="dark";
+      button.innerHTML=dark?ICONS.sun:ICONS.moon; // icon shows what you switch TO
+      button.setAttribute("aria-pressed",String(dark));
+    };
+    button.addEventListener("click",function(){
+      var next=document.documentElement.dataset.theme==="dark"?"light":"dark";
+      document.documentElement.dataset.theme=next;
+      try{localStorage.setItem("sesemi-theme",next);}catch(e){}
+      paint();
+    });
+    tools.insertBefore(button,tools.firstChild);
+    paint();
+  })();
+
   var nav=document.createElement("nav");
   nav.className="scroll-rail";nav.setAttribute("aria-label","Page scroll progress");
   var fill=document.createElement("span");fill.className="rail-fill";nav.appendChild(fill);
