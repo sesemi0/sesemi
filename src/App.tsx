@@ -18,6 +18,8 @@ import './cinematic.css';
 
 const Admin = lazy(() => import('./Admin'));
 const nav = [['nav.services', 'services'], ['nav.process', 'process'], ['nav.office', 'office'], ['nav.about', 'about']] as const;
+/** Portfolio lives on its own vendored page — the entry point is a real link, not an embed. */
+const portfolioHref = '/portfolio/';
 const tools = ['React', 'Next.js', 'TypeScript', 'Figma', 'ChatGPT', 'Gemini', 'Claude', 'OpenAI', 'DeepSeek', 'Mistral', 'Runway', 'Kling'];
 const stepKeys = ['s1', 's2', 's3', 's4'] as const;
 
@@ -73,7 +75,7 @@ export default function App() {
     const observer = new IntersectionObserver(entries => entries.forEach(entry => {
       if (entry.isIntersecting) { entry.target.classList.add('is-visible'); observer.unobserve(entry.target); }
     }), { threshold: 0.06 });
-    document.querySelectorAll('.section-heading, .service-card, .step, .about-copy, .contact-form-wrap, .detail-block, .tech-strip, .creative-banner, .creative-copy, .film-frame, .faq-list details, .faq-cta, .process-cta, .about-art, .about-seal, .code-window, .values, .detail-cta, .portfolio-item, .contact-copy, .news-card, .office-scene, .office-copy, .pricing-card, .pricing-menu').forEach(el => { el.classList.add('reveal'); observer.observe(el); });
+    document.querySelectorAll('.section-heading, .service-card, .step, .about-copy, .contact-form-wrap, .detail-block, .tech-strip, .creative-banner, .creative-copy, .film-frame, .faq-list details, .faq-cta, .process-cta, .about-art, .about-seal, .code-window, .values, .detail-cta, .folio-banner, .contact-copy, .news-card, .office-scene, .office-copy, .pricing-card, .pricing-menu').forEach(el => { el.classList.add('reveal'); observer.observe(el); });
     const move = (event: PointerEvent) => {
       const card = (event.target as HTMLElement).closest<HTMLElement>('.service-card, .hero-art');
       if (!card) return;
@@ -93,7 +95,7 @@ export default function App() {
     <div className="site-arrival" aria-hidden="true"><span>SESEMI<span>.</span></span><i /></div>
     <header className="header"><div className="container nav-wrap">
       <div className="brand-group"><a className="brand" href="/" translate="no" aria-label="SESEMI home"><Ribbon small /><span>SESEMI<span className="brand-dot">.</span></span></a><span className="brand-loc" translate="no">Yerevan, Armenia</span></div>
-      <nav id="main-navigation" className={menu ? 'nav open' : 'nav'} aria-label="Main navigation">{nav.map(([key, id]) => <a key={id} href={`/#${id}`} onClick={() => setMenu(false)}>{t(key)}</a>)}<a href="/blog" onClick={() => setMenu(false)}>{t('nav.radar')}</a><a href="/#contact" onClick={() => setMenu(false)}>{t('nav.contact')}</a></nav>
+      <nav id="main-navigation" className={menu ? 'nav open' : 'nav'} aria-label="Main navigation">{nav.map(([key, id]) => <a key={id} href={`/#${id}`} onClick={() => setMenu(false)}>{t(key)}</a>)}<a href={portfolioHref} onClick={() => setMenu(false)}>{t('nav.portfolio')}</a><a href="/blog" onClick={() => setMenu(false)}>{t('nav.radar')}</a><a href="/#contact" onClick={() => setMenu(false)}>{t('nav.contact')}</a></nav>
       <div className="nav-actions"><HeaderAuth /><LangSwitch /><button className="theme-button" onClick={() => setLight(!light)} aria-label={light ? 'Switch to dark mode' : 'Switch to light mode'} aria-pressed={light}><Icon name="sun" size={19} /></button><a className="button small" href="/#contact">{t('nav.create')} <Icon size={16} /></a><button className="menu-button" onClick={() => setMenu(!menu)} aria-controls="main-navigation" aria-label={menu ? 'Close navigation' : 'Open navigation'} aria-expanded={menu}><Icon name="menu" /></button></div>
     </div></header>
     <main id="main">
@@ -188,6 +190,18 @@ export default function App() {
           </div>
         </section>
         <section className="about-section container" id="about"><div className="about-art"><div className="about-grid" /><span className="about-top-label">THE MINDSET BEHIND THE WORK</span><div className="code-window"><div className="window-dots"><i /><i /><i /><span>sesemi / studio-dna.ts</span></div><pre><span className="code-purple">const</span> studio = {'{'}<br />  thinking: <span className="code-green">'brand-first'</span>,<br />  design: <span className="code-green">'with intention'</span>,<br />  technology: <span className="code-green">'a creative tool'</span>,<br />  partnership: <span className="code-green">'built on clarity'</span><br />{'}'};<br /><br /><span className="code-comment">// Thoughtful work. Real possibilities.</span><br /><span className="code-purple">export default</span> studio;</pre></div><div className="about-seal"><Icon name="design" size={27} /><span>Human ideas.<br /><strong>Extraordinary possibilities.</strong></span></div></div><div className="about-copy"><div className="eyebrow section-kicker"><span /> {t('about.kicker')}</div><h2>{t('about.h1')}<br /><span>{t('about.h2')}</span></h2><p>{t('about.p1')}</p><p>{t('about.p2')}</p><div className="values">{[1, 2, 3].map(n => <div key={n}><span><Icon name="check" size={17} /></span><div><h3>{t(`about.v${n}`)}</h3><p>{t(`about.v${n}d`)}</p></div></div>)}</div><a className="quiet-link about-cta" href="#contact">{t('about.cta')} <Icon size={15} /></a></div></section>
+        <section className="folio-banner container" id="portfolio" aria-labelledby="folio-heading">
+          <div className="folio-portrait" aria-hidden="true">
+            <img src="/portfolio/assets/mersad-portrait.webp" alt="" loading="lazy" />
+            <span className="folio-tag">FOUNDER / MERSAD JAVIDI</span>
+          </div>
+          <div className="folio-copy">
+            <div className="eyebrow section-kicker"><span /> {t('folio.kicker')}</div>
+            <h2 id="folio-heading">{t('folio.h1')}<br /><span>{t('folio.h2')}</span></h2>
+            <p>{t('folio.p')}</p>
+            <a className="button folio-cta" href={portfolioHref}>{t('folio.cta')} <Icon size={18} /></a>
+          </div>
+        </section>
         <section className="container section faq-section"><div><div className="eyebrow section-kicker"><span /> {t('faq.kicker')}</div><h2>{t('faq.h1')}<br /><span>{t('faq.h2')}</span></h2></div><div className="faq-list">{[1, 2, 3, 4].map(n => <details key={n}><summary>{t(`faq.q${n}`)}<span>+</span></summary><p>{t(`faq.a${n}`)}</p></details>)}</div><button className="quiet-link faq-cta" onClick={() => window.dispatchEvent(new Event('sesemi:chat'))}>{t('faq.cta')} <span>↗</span></button></section>
         <NewsTeaser />
         <QuickContact />

@@ -1,7 +1,8 @@
 # SESEMI headers — cache policy + security hardening (Cloudflare Pages).
-# The app is fully self-hosted (no CDN fonts/scripts). Inline JSON-LD never
-# executes, so scripts stay locked to 'self'; React style props need
-# style-src 'unsafe-inline'.
+# The main app is fully self-hosted; /portfolio/ (vendored static bundle) loads
+# its typefaces from Google Fonts, so those two origins are allowlisted below.
+# Inline JSON-LD never executes, so scripts stay locked to 'self'; React style
+# props need style-src 'unsafe-inline'.
 
 /*
   Cache-Control: no-cache, must-revalidate
@@ -11,8 +12,12 @@
   Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()
   Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
   Cross-Origin-Opener-Policy: same-origin
-  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self'; media-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob: https:; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self'; media-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests
 
 # Content-hashed build assets are safe to cache forever
 /assets/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# The portfolio bundle is immutable content too (fonts/media, no HTML semantics)
+/portfolio/assets/*
   Cache-Control: public, max-age=31536000, immutable

@@ -36,5 +36,8 @@ for (const page of pages) {
   if (page.path === '/404') await writeFile('dist/404.html', html);
 }
 await writeFile('dist/robots.txt', `User-agent: *\nAllow: /\nDisallow: /admin\n${origin ? `Sitemap: ${origin}/sitemap.xml\n` : ''}`);
-if (origin) await writeFile('dist/sitemap.xml', `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${pages.filter(p => !p.noindex).map(p => `<url><loc>${escape(origin + p.path)}</loc></url>`).join('')}</urlset>`);
+// /portfolio/ ships as a self-contained static bundle (public/portfolio) — add its
+// canonical URLs to the sitemap without emitting generated pages for it.
+const extraSitemapPaths = ['/portfolio/', '/portfolio/fa.html', '/portfolio/hy.html'];
+if (origin) await writeFile('dist/sitemap.xml', `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${pages.filter(p => !p.noindex).map(p => `<url><loc>${escape(origin + p.path)}</loc></url>`).concat(extraSitemapPaths.map(p => `<url><loc>${escape(origin + p)}</loc></url>`)).join('')}</urlset>`);
 console.log(`Generated ${pages.length} crawlable pages.${origin ? ' Canonicals and sitemap enabled.' : ' Set site.config.json siteUrl to enable canonicals and sitemap on your real domain.'}`);

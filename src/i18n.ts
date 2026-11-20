@@ -18,6 +18,7 @@ const en: Dict = {
   'nav.process': 'Our process',
   'nav.office': 'Office',
   'nav.about': 'About the studio',
+  'nav.portfolio': 'Portfolio',
   'nav.radar': 'AI Radar',
   'nav.contact': 'Get in touch',
   'nav.create': 'Let’s create',
@@ -98,10 +99,16 @@ const en: Dict = {
   'teaser.cta': 'Open the AI Radar',
   'contact.h': 'Something in mind?',
   'contact.p': 'Let’s give it a start.',
+  'folio.kicker': 'THE PERSON BEHIND THE WORK',
+  'folio.h1': 'Meet Mersad.',
+  'folio.h2': 'The maker, in person.',
+  'folio.p': 'The portfolio of SESEMI’s founder — n8n and AI automations, custom websites and cinematic campaign films, told first-hand with selected projects and a working reel.',
+  'folio.cta': 'Open the portfolio',
 };
 
 const fa: Dict = {
   'nav.services': 'خدمات', 'nav.process': 'مسیر کار ما', 'nav.office': 'دفتر', 'nav.about': 'دربارهٔ استودیو',
+  'nav.portfolio': 'پورتفولیو',
   'nav.radar': 'رادار AI', 'nav.contact': 'ارتباط با ما', 'nav.create': 'بسازیم', 'a11y.skip': 'پرش به محتوا',
   'hero.kicker': 'تخیل انسانی. امکان‌های تازه.',
   'hero.studio': 'استودیوی مستقل دیجیتال و خلاق',
@@ -167,10 +174,16 @@ const fa: Dict = {
   'teaser.p': 'مهم‌ترین خبرهای روز هوش مصنوعی، از معتبرترین منابع جهان، هر روز خودکار به‌روز می‌شود.',
   'teaser.cta': 'باز کردن رادار AI',
   'contact.h': 'چیزی در ذهن داری؟', 'contact.p': 'بزن بریم.',
+  'folio.kicker': 'آدمِ پشت کار',
+  'folio.h1': 'با مرصاد آشنا شو.',
+  'folio.h2': 'خودِ سازنده، روایتِ اول‌شخص.',
+  'folio.p': 'پورتفولیوی بنیان‌گذار سسِمی — اتوماسیون‌های n8n و AI، وب‌سایت‌های سفارشی و فیلم‌های تبلیغاتی سینمایی، با پروژه‌های انتخابی و ریل کاری.',
+  'folio.cta': 'باز کردن پورتفولیو',
 };
 
 const hy: Dict = {
   'nav.services': 'Ծառայություններ', 'nav.process': 'Մեր գործընթացը', 'nav.office': 'Գրասենյակ', 'nav.about': 'Մեր մասին',
+  'nav.portfolio': 'Պորտֆոլիո',
   'nav.radar': 'AI Radar', 'nav.contact': 'Կապվեք մեզ հետ', 'nav.create': 'Ստեղծենք', 'a11y.skip': 'Անցնել բովանդակությանը',
   'hero.kicker': 'ՄԱՐԴԿԱՅԻՆ ԵՐԵՎԱԿԱՅՈՒԹՅՈՒՆ. ՆՈՐ ՀՆԱՐԱՎՈՐՈՒԹՅՈՒՆՆԵՐ։',
   'hero.studio': 'ԱՆԿԱԽ ԹՎԱՅԻՆ ԵՎ ՍՏԵՂԾԱԳՈՐԾ ՍՏՈՒԴԻԱ',
@@ -236,6 +249,11 @@ const hy: Dict = {
   'teaser.p': 'Օրվա կարևորագույն AI նորությունները՝ աշխարհի առաջատար աղբյուրներից, ամեն օր ավտոմատ թարմացվող։',
   'teaser.cta': 'Բացել AI Radar-ը',
   'contact.h': 'Ինչ-որ բան ունե՞ք մտքում։', 'contact.p': 'Եկեք սկսենք։',
+  'folio.kicker': 'ԱՆՁԸ՝ ԱՇԽԱՏԱՆՔԻ ԵՏԻՆ',
+  'folio.h1': 'Ծանոթացեք Մերսադի հետ։',
+  'folio.h2': 'Ստեղծողը՝ անձամբ։',
+  'folio.p': 'SESEMI-ի հիմնադիրի պորտֆոլիոն — n8n և AI ավտոմատացումներ, հատուկ կայքեր և կինեմատոգրաֆիական գովազդային ֆիլմեր, ընտրված նախագծերով և աշխատանքային ռիլով։',
+  'folio.cta': 'Բացել պորտֆոլիոն',
 };
 
 const T: Record<Lang, Dict> = { en, fa, hy };
