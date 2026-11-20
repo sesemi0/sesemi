@@ -45,14 +45,11 @@ html.translated-rtl ,html.lang-fa .about-section{direction:ltr}
 .folio-banner{display:grid;grid-template-columns:0.9fr 1.1fr;gap:60px;align-items:center;margin-block:20px 0}.folio-portrait{position:relative;border:1px solid var(--line);border-radius:15px;overflow:hidden;background:linear-gradient(135deg,#0b192d,#070f1e)}.folio-portrait img{display:block;width:100%;height:auto;filter:saturate(.9) contrast(1.02);transition:transform .7s}.folio-banner:hover .folio-portrait img{transform:scale(1.03)}.folio-tag{position:absolute;left:20px;bottom:18px;font:8px monospace;letter-spacing:2px;color:#9fd8ff;background:#04070fcc;border:1px solid #2b4a6d;border-radius:20px;padding:7px 13px}.folio-copy h2{font-size:40px;line-height:1.15;letter-spacing:-1.5px}.folio-copy h2 span{color:var(--blue)}.folio-copy>p{font-size:12px;line-height:2.2;color:var(--muted);max-width:520px;margin-top:17px}.folio-cta{margin-top:23px}
 @media(max-width:850px){.folio-banner{grid-template-columns:1fr;gap:26px}.folio-copy h2{font-size:29px}.folio-portrait{max-width:420px}}
 /* ---- scroll progress rail (desktop: line+dots+active label, mobile: hairline edge) ---- */
-.scroll-rail{position:fixed;right:24px;top:50%;translate:0 -50%;height:min(58vh,520px);width:2px;background:var(--line);z-index:55;animation:rail-in .9s .5s both}
+.scroll-rail{position:fixed;left:24px;top:50%;translate:0 -50%;height:min(58vh,520px);width:2px;background:var(--line);z-index:55;animation:rail-in .9s .5s both}
 @keyframes rail-in{from{opacity:0}to{opacity:1}}
 .rail-fill{position:absolute;inset-inline:0;top:0;height:0;background:var(--blue);box-shadow:0 0 10px #53b9fb77;border-radius:2px}
 .rail-dot{position:absolute;left:50%;translate:-50% -50%;width:8px;height:8px;border-radius:50%;background:var(--bg);border:1px solid var(--muted);cursor:pointer;padding:0;transition:background .25s,border-color .25s,box-shadow .25s;z-index:2}
 .rail-dot:hover{border-color:var(--blue)}
 .rail-dot.active{background:var(--blue);border-color:var(--blue);box-shadow:0 0 9px #53b9fb88}
-.rail-label{position:absolute;inset-inline-end:18px;top:50%;translate:0 -50%;font:9px/1 monospace;letter-spacing:2px;text-transform:uppercase;color:var(--blue);white-space:nowrap;opacity:0;transition:opacity .3s;pointer-events:none}
-.rail-dot.active .rail-label{opacity:1}
-[dir="rtl"] .scroll-rail{right:auto;left:24px}
-/* rail-label keeps its logical inset-inline-end — flips side automatically in RTL */
-@media(max-width:900px){.scroll-rail{right:0;top:0;height:100dvh;width:3px;translate:0 0;animation:none}[dir="rtl"] .scroll-rail{left:0;right:auto}.rail-dot,.rail-label{display:none}}
+.rail-dot.active [dir="rtl"] .scroll-rail{left:auto;right:24px}
+@media(max-width:900px){.scroll-rail{left:0;top:0;height:100dvh;width:3px;translate:0 0;animation:none}[dir="rtl"] .scroll-rail{left:auto;right:0}.rail-dot{display:none}}

@@ -3,9 +3,9 @@ import { onLang, t } from './i18n';
 
 /**
  * نوار پیشرفت اسکرول — خط عمودی ثابت کنار صفحه که با اسکرول پر می‌شود؛
- * هر نقطه یک سکشن است و اسم سکشن فعلی کنار نقطه‌ی فعال می‌نشیند.
- * دسکتاپ: خط + نقطه + لیبل — موبایل: خط باریک لبه‌ی صفحه (لیبل‌ها مخفی).
- * RTL: نوار به سمت چپ می‌رود (CSS با [dir="rtl"]).
+ * هر نقطه یک سکشن است (بدون لیبل متنی — لیبل روی محتوا می‌افتد).
+ * دسکتاپ: خط + نقطه — موبایل: خط باریک لبه‌ی صفحه.
+ * LTR: سمت چپ — RTL (فارسی): قرینه، سمت راست.
  */
 const SECTIONS = [
   { id: 'services', key: 'rail.services' },
@@ -63,9 +63,7 @@ export default function ScrollRail() {
           behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
         })}
         aria-label={t(SECTIONS[i].key)}
-        aria-current={i === active ? 'true' : undefined}>
-        <span className="rail-label">{t(SECTIONS[i].key)}</span>
-      </button>
+        aria-current={i === active ? 'true' : undefined} />
     ))}
   </nav>;
 }

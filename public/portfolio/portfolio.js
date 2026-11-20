@@ -222,8 +222,6 @@ applyLanguage(T[document.documentElement.lang]?document.documentElement.lang:"en
     var button=document.createElement("button");
     button.className="rail-dot";button.type="button";
     button.setAttribute("aria-label",LABELS[lang][s[0]]);
-    var label=document.createElement("span");label.className="rail-label";label.textContent=LABELS[lang][s[0]];
-    button.appendChild(label);
     button.addEventListener("click",function(){
       var target=document.getElementById(s[0]);
       if(target)target.scrollIntoView({behavior:window.matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth"});

@@ -96,13 +96,10 @@ video::-webkit-media-controls-download-button,video::-webkit-media-controls-over
 
 /* ---- scroll progress rail: line fills with scroll, dots per section, active label;
    hairline edge-only under 900px; flips side in RTL ---- */
-.scroll-rail{position:fixed;right:24px;top:50%;translate:0 -50%;height:min(58vh,520px);width:2px;background:rgba(113,131,142,.4);z-index:80;border-radius:2px}
+.scroll-rail{position:fixed;left:24px;top:50%;translate:0 -50%;height:min(58vh,520px);width:2px;background:rgba(113,131,142,.4);z-index:80;border-radius:2px}
 .scroll-rail .rail-fill{position:absolute;left:0;top:0;width:100%;height:0;background:var(--blue);border-radius:2px}
 .scroll-rail .rail-dot{position:absolute;left:50%;translate:-50% -50%;width:9px;height:9px;border-radius:50%;background:var(--white);border:1.5px solid var(--muted);cursor:pointer;padding:0;transition:background .25s,border-color .25s,box-shadow .25s;z-index:2}
 .scroll-rail .rail-dot:hover{border-color:var(--blue)}
 .scroll-rail .rail-dot.active{background:var(--blue);border-color:var(--blue);box-shadow:0 0 10px rgba(35,100,245,.5)}
-.scroll-rail .rail-label{position:absolute;right:19px;top:50%;translate:0 -50%;font:700 10px/1 var(--sans);letter-spacing:.14em;text-transform:uppercase;color:var(--blue);white-space:nowrap;opacity:0;transition:opacity .3s;pointer-events:none}
-.scroll-rail .rail-dot.active .rail-label{opacity:1}
-html[dir="rtl"] .scroll-rail{right:auto;left:24px}
-html[dir="rtl"] .scroll-rail .rail-label{right:auto;left:19px}
-@media(max-width:900px){.scroll-rail{right:0;top:0;height:100dvh;width:3px;translate:0 0}.scroll-rail .rail-dot,.scroll-rail .rail-label{display:none}html[dir="rtl"] .scroll-rail{left:0;right:auto}}
+html[dir="rtl"] .scroll-rail{left:auto;right:24px}
+html[dir="rtl"] @media(max-width:900px){.scroll-rail{left:0;top:0;height:100dvh;width:3px;translate:0 0}.scroll-rail .rail-dot{display:none}html[dir="rtl"] .scroll-rail{left:auto;right:0}}
