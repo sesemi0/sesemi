@@ -9,6 +9,7 @@ import Motion, { Words } from './Motion';
 import { Icon, Ribbon } from './Visuals';
 import Seo from './Seo';
 import { AnalyticsConsent } from './analytics';
+import ScrollRail from './ScrollRail';
 import Privacy from './Privacy';
 import { watchTranslation } from './translate';
 import VortexHero from './VortexHero';
@@ -91,6 +92,7 @@ export default function App() {
   const service = services.find(s => path === `/services/${s.slug}`);
   return <div className={`app english cinematic ${light ? 'light' : ''}`} dir={getLang() === 'fa' ? 'rtl' : 'ltr'}>
     <Seo path={path} /><Motion /><StarfieldBackdrop />
+    {home && <ScrollRail />}
     <a className="skip-link" href="#main">{t('a11y.skip')}</a>
     <div className="site-arrival" aria-hidden="true"><span>SESEMI<span>.</span></span><i /></div>
     <header className="header"><div className="container nav-wrap">

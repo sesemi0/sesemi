@@ -104,6 +104,13 @@ const en: Dict = {
   'folio.h2': 'The maker, in person.',
   'folio.p': 'The portfolio of SESEMI’s founder — n8n and AI automations, custom websites and cinematic campaign films, told first-hand with selected projects and a working reel.',
   'folio.cta': 'Open the portfolio',
+  'rail.services': 'Services',
+  'rail.process': 'Process',
+  'rail.office': 'Office',
+  'rail.pricing': 'Pricing',
+  'rail.about': 'About',
+  'rail.portfolio': 'Portfolio',
+  'rail.contact': 'Contact',
 };
 
 const fa: Dict = {
@@ -179,6 +186,13 @@ const fa: Dict = {
   'folio.h2': 'خودِ سازنده، روایتِ اول‌شخص.',
   'folio.p': 'پورتفولیوی بنیان‌گذار سسِمی — اتوماسیون‌های n8n و AI، وب‌سایت‌های سفارشی و فیلم‌های تبلیغاتی سینمایی، با پروژه‌های انتخابی و ریل کاری.',
   'folio.cta': 'باز کردن پورتفولیو',
+  'rail.services': 'خدمات',
+  'rail.process': 'مسیر کار',
+  'rail.office': 'دفتر',
+  'rail.pricing': 'تعرفه‌ها',
+  'rail.about': 'دربارهٔ ما',
+  'rail.portfolio': 'پورتفولیو',
+  'rail.contact': 'ارتباط',
 };
 
 const hy: Dict = {
@@ -254,6 +268,13 @@ const hy: Dict = {
   'folio.h2': 'Ստեղծողը՝ անձամբ։',
   'folio.p': 'SESEMI-ի հիմնադիրի պորտֆոլիոն — n8n և AI ավտոմատացումներ, հատուկ կայքեր և կինեմատոգրաֆիական գովազդային ֆիլմեր, ընտրված նախագծերով և աշխատանքային ռիլով։',
   'folio.cta': 'Բացել պորտֆոլիոն',
+  'rail.services': 'Ծառայություններ',
+  'rail.process': 'Գործընթաց',
+  'rail.office': 'Գրասենյակ',
+  'rail.pricing': 'Գներ',
+  'rail.about': 'Մեր մասին',
+  'rail.portfolio': 'Պորտֆոլիո',
+  'rail.contact': 'Կապ',
 };
 
 const T: Record<Lang, Dict> = { en, fa, hy };

@@ -203,3 +203,56 @@ if("IntersectionObserver" in window&&!reducedMotion){
   stampTargets.forEach(function(element){stampObserver.observe(element);});
 }else{stampTargets.forEach(function(element){element.classList.add("is-stamped");});}
 applyLanguage(T[document.documentElement.lang]?document.documentElement.lang:"en");
+
+/* ---- scroll progress rail — fixed side line that fills as you scroll,
+   dots per section, active section label; hairline-only under 900px ---- */
+(function(){
+  var SECTIONS=[["top","Start"],["work","Automation"],["services","Services"],["studio","Studio"],["about","About"],["resume","Résumé"],["contact","Contact"]];
+  var LABELS={
+    en:{top:"Start",work:"Automation",services:"Services",studio:"Studio",about:"About",resume:"Résumé",contact:"Contact"},
+    fa:{top:"شروع",work:"اتوماسیون",services:"خدمات",studio:"هویت",about:"درباره",resume:"رزومه",contact:"تماس"},
+    hy:{top:"Սկիզբ",work:"Ավտոմատացում",services:"Ծառայություններ",studio:"Ինքնություն",about:"Մեր մասին",resume:"CV",contact:"Կապ"}
+  };
+  var lang=T[document.documentElement.lang]?document.documentElement.lang:"en";
+  var nav=document.createElement("nav");
+  nav.className="scroll-rail";nav.setAttribute("aria-label","Page scroll progress");
+  var fill=document.createElement("span");fill.className="rail-fill";nav.appendChild(fill);
+  var dots=[];
+  SECTIONS.forEach(function(s){
+    var button=document.createElement("button");
+    button.className="rail-dot";button.type="button";
+    button.setAttribute("aria-label",LABELS[lang][s[0]]);
+    var label=document.createElement("span");label.className="rail-label";label.textContent=LABELS[lang][s[0]];
+    button.appendChild(label);
+    button.addEventListener("click",function(){
+      var target=document.getElementById(s[0]);
+      if(target)target.scrollIntoView({behavior:window.matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth"});
+    });
+    dots.push({el:button,id:s[0]});nav.appendChild(button);
+  });
+  document.body.appendChild(nav);
+  var frame=0;
+  function measure(){
+    frame=0;
+    var total=document.documentElement.scrollHeight-window.innerHeight;
+    var y=window.scrollY||document.documentElement.scrollTop;
+    if(total<=200){nav.style.opacity="0";return;}
+    nav.style.opacity="";
+    fill.style.height=Math.min(100,Math.max(0,y/total*100))+"%";
+    var active=-1;
+    dots.forEach(function(d,i){
+      var el=document.getElementById(d.id);
+      if(!el){d.el.style.display="none";return;}
+      var top=el.getBoundingClientRect().top+y;
+      d.el.style.top=Math.min(100,Math.max(0,top/total*100))+"%";
+      if(top-window.innerHeight*0.45<=y)active=i;
+    });
+    // apply AFTER the final active is known — inside the first loop every
+    // earlier dot would momentarily equal the moving `active` and stick on
+    dots.forEach(function(d,i){ d.el.classList.toggle("active",i===active); });
+  }
+  function onScroll(){if(!frame)frame=requestAnimationFrame(measure);}
+  window.addEventListener("scroll",onScroll,{passive:true});
+  window.addEventListener("resize",onScroll);
+  measure();
+})();
