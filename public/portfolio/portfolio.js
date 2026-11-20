@@ -245,6 +245,22 @@ applyLanguage(T[document.documentElement.lang]?document.documentElement.lang:"en
 
   var nav=document.createElement("nav");
   nav.className="scroll-rail";nav.setAttribute("aria-label","Page scroll progress");
+  /* adaptive colors — the rail matches the section behind it: skin from the
+     section's background luminance, accent per section (hue shifts with you) */
+  var ACCENTS={top:"#c8f06c",work:"#4f7dff",services:"#2364f5",studio:"#fc765e",about:"#2364f5",resume:"#2364f5",contact:"#c8f06c"};
+  function backgroundLuminance(el){
+    var node=el;
+    while(node){
+      var bg=getComputedStyle(node).backgroundColor;
+      var m=bg.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)/);
+      if(m&&(m[4]===undefined||Number(m[4])>0.5)){
+        var c=[Number(m[1]),Number(m[2]),Number(m[3])].map(function(v){v=v/255;return v<=0.03928?v/12.92:Math.pow((v+0.055)/1.055,2.4);});
+        return 0.2126*c[0]+0.7152*c[1]+0.0722*c[2];
+      }
+      node=node.parentElement;
+    }
+    return 0;
+  }
   var fill=document.createElement("span");fill.className="rail-fill";nav.appendChild(fill);
   var dots=[];
   SECTIONS.forEach(function(s){
@@ -267,16 +283,26 @@ applyLanguage(T[document.documentElement.lang]?document.documentElement.lang:"en
     nav.style.opacity="";
     fill.style.height=Math.min(100,Math.max(0,y/total*100))+"%";
     var active=-1;
+    var underId="top";
+    var centerY=y+window.innerHeight*0.5;
     dots.forEach(function(d,i){
       var el=document.getElementById(d.id);
       if(!el){d.el.style.display="none";return;}
       var top=el.getBoundingClientRect().top+y;
       d.el.style.top=Math.min(100,Math.max(0,top/total*100))+"%";
       if(top-window.innerHeight*0.45<=y)active=i;
+      if(top<=centerY)underId=d.id;
     });
     // apply AFTER the final active is known — inside the first loop every
     // earlier dot would momentarily equal the moving `active` and stick on
     dots.forEach(function(d,i){ d.el.classList.toggle("active",i===active); });
+    // adaptive skin + per-section accent
+    var skin;
+    if(underId==="contact"){skin="blue";}
+    else{skin=backgroundLuminance(document.getElementById(underId))<0.35?"dark":"light";}
+    nav.dataset.skin=skin;
+    var accent=ACCENTS[underId];
+    if(accent)nav.style.setProperty("--rail-accent",accent);
   }
   function onScroll(){if(!frame)frame=requestAnimationFrame(measure);}
   window.addEventListener("scroll",onScroll,{passive:true});
