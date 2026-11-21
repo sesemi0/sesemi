@@ -144,6 +144,51 @@ export const onRequest = async (context: { request: Request; env: Env; params: {
       return json({ ok: true });
     }
 
+    if (path.join('/') === 'pay/info' && method === 'GET') {
+      // the wallet ADDRESS is public information (it receives funds); the
+      // owner sets it as a Cloudflare secret so it never lives in the repo
+      return json({ wallet: env.PAY_WALLET_ADDRESS || '', network: env.PAY_NETWORK || 'USDT · TRC20 (TRON)', configured: Boolean(env.PAY_WALLET_ADDRESS) }, 200, { 'Cache-Control': 'public, max-age=300' });
+    }
+
+    /* ============ public: crypto payment submission (TXID proof) ============ */
+    if (path.join('/') === 'pay' && method === 'POST') {
+      if (!rateLimit(`pay:${clientIp(request)}`, 6, 60 * 60 * 1000)) {
+        waitUntil(logSecurity(env, env.DB, { type: 'rate_limit', ip: clientIp(request), path: '/api/pay', detail: 'payment flood (6/h exceeded)' }, waitUntil));
+        return fail(429, 'درخواست‌های زیاد. کمی بعد دوباره تلاش کنید.');
+      }
+      const body = await readJson<Record<string, unknown>>(request);
+      if (!body) return fail(400, 'درخواست نامعتبر است.');
+      const name = cleanText(body.name, 100);
+      const email = cleanText(body.email, 150);
+      const service = cleanText(body.service, 120);
+      const amount = Math.max(0, Math.min(100_000, Number(body.amount) || 0));
+      const txid = cleanText(body.txid, 100).replace(/\s+/g, '');
+      const note = cleanText(body.note, 400);
+      if (!name || !EMAIL_RE.test(email)) return fail(400, 'نام و یک ایمیل معتبر لازم است.');
+      if (!service) return fail(400, 'خدمت انتخاب نشده است.');
+      if (!/^[A-Za-z0-9]{12,100}$/.test(txid)) return fail(400, 'TXID معتبر نیست — شناسهٔ تراکنش کامل روی زنجیره را بفرست.');
+      if (body.consent !== true) return fail(400, 'تأیید شرایط لازم است.');
+
+      const id = `P-${crypto.randomUUID().slice(0, 10)}`;
+      await env.DB.prepare(
+        `INSERT INTO payments (id, name, email, service, amount_usd, txid, note, status, created_at)
+         VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, 'pending', ?8)`,
+      ).bind(id, name, email, service, amount, txid, note, Date.now()).run();
+
+      if (env.TELEGRAM_BOT_TOKEN && env.TELEGRAM_CHAT_ID) {
+        waitUntil(fetch(`https://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}/sendMessage`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            chat_id: env.TELEGRAM_CHAT_ID,
+            text: `💰 پرداخت جدید در انتظار تأیید\n🧾 ${id}\n👤 ${name} (${email})\n🛠 ${service} — ${amount}$\n🔗 TXID: ${txid}${note ? `\n📝 ${note}` : ''}\n\nبررسی و تأیید در پنل → پرداخت‌ها`,
+          }),
+          signal: AbortSignal.timeout(15000),
+        }).catch(() => null));
+      }
+      return json({ ok: true, id });
+    }
+
     /* ============ public: consented analytics ============ */
     if (path.join('/') === 'track' && method === 'POST') {
       if (!rateLimit(`track:${clientIp(request)}`, 240, 60 * 60 * 1000)) return json({ ok: true });
@@ -474,6 +519,57 @@ export const onRequest = async (context: { request: Request; env: Env; params: {
     if (path.length === 2 && path[1] === 'security' && method === 'DELETE') {
       await env.DB.prepare(`DELETE FROM security_events WHERE at < ?1`).bind(Date.now() - 30 * 24 * 60 * 60 * 1000).run();
       return json({ ok: true });
+    }
+
+    /* ============ owner: payments (who paid what, when, on-chain proof) ============ */
+    if (path.length === 2 && path[1] === 'payments' && method === 'GET') {
+      const rows = await env.DB.prepare(
+        `SELECT id, name, email, service, amount_usd, txid, note, status, created_at, verified_at FROM payments ORDER BY created_at DESC LIMIT 200`,
+      ).all();
+      const summary = await env.DB.prepare(
+        `SELECT status, COUNT(*) AS n, SUM(amount_usd) AS usd FROM payments GROUP BY status`,
+      ).all<{ status: string; n: number; usd: number }>();
+      return json({
+        payments: rows.results ?? [],
+        summary: summary.results ?? [],
+        walletConfigured: Boolean(env.PAY_WALLET_ADDRESS),
+      });
+    }
+
+    if (path.length === 3 && path[1] === 'payments' && (method === 'PATCH' || method === 'DELETE')) {
+      const id = path[2];
+      const body = await readJson<Record<string, unknown>>(request);
+      const current = await env.DB.prepare(`SELECT * FROM payments WHERE id = ?1`).bind(id).first<{ id: string; name: string; email: string; service: string; amount_usd: number; txid: string; note: string; status: string; created_at: number }>();
+      if (!current) return fail(404, 'پرداخت یافت نشد.');
+
+      if (method === 'DELETE') {
+        await env.DB.prepare(`DELETE FROM payments WHERE id = ?1`).bind(id).run();
+        return json({ ok: true });
+      }
+
+      const status = body && 'status' in body ? String(body.status) : current.status;
+      if (!['pending', 'verified', 'rejected'].includes(status)) return fail(400, 'وضعیت نامعتبر است.');
+      const verifiedAt = status === 'verified' && current.status !== 'verified' ? Date.now() : 0;
+      await env.DB.prepare(`UPDATE payments SET status = ?1, verified_at = CASE WHEN ?1 = 'verified' AND verified_at = 0 THEN ?2 ELSE verified_at END WHERE id = ?3`)
+        .bind(status, Date.now(), id).run();
+
+      // verified → hand the order to the office: agent_outputs is the bridge the
+      // office app already reads (CORS-open GET), so agents can pick up the paid work
+      if (status === 'verified' && current.status !== 'verified') {
+        const brief = JSON.stringify({
+          goal: `سفارش پرداخت‌شدهٔ سایت: ${current.service} — مبلغ ${current.amount_usd}$ — برای ${current.name} (${current.email})${current.note ? ' — توضیح مشتری: ' + current.note : ''}`,
+          service: current.service, amount: current.amount_usd, email: current.email, paymentId: current.id,
+        });
+        await env.DB.prepare(
+          `INSERT INTO agent_outputs (mission_code, task_title, agent_name, agent_role, status, result, created_at)
+           VALUES (?1, ?2, 'owner', 'paid-order', 'done', ?3, ?4)`,
+        ).bind(`PAY-${current.id}`, current.service, brief, Date.now()).run();
+        waitUntil(logSecurity(env, env.DB, {
+          type: 'admin_login_success', severity: 'info', path: '/api/admin/payments',
+          detail: `payment ${current.id} verified → handed to office (${current.service}, ${current.amount_usd}$)`,
+        }, waitUntil));
+      }
+      return json({ ok: true, status, handedToOffice: status === 'verified' });
     }
 
     if (path.length === 2 && path[1] === 'password' && method === 'POST') {

@@ -34,6 +34,9 @@ export interface Env {
   /** Telegram bridge — set both to route site submissions to the owner's chat */
   TELEGRAM_BOT_TOKEN?: string;
   TELEGRAM_CHAT_ID?: string;
+  /** crypto checkout — the wallet the pricing checkout shows (never in the repo) */
+  PAY_WALLET_ADDRESS?: string;
+  PAY_NETWORK?: string;
   AI?: { run(model: string, input: unknown): Promise<{ response?: unknown }> };
 }
 

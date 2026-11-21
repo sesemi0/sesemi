@@ -503,3 +503,12 @@
   .security-row { grid-template-columns: 96px 130px 1fr; grid-auto-flow: row; row-gap: 2px }
   .sec-sev, .sec-path { display: none }
 }
+
+/* ---- payments view ---- */
+.pay-row-actions{display:flex;gap:6px;justify-content:flex-end}
+.pay-row-actions .button.mini,.pay-row-actions .ghost.mini{padding:5px 10px;font-size:9.5px;min-height:0}
+.pay-row-actions .ghost.mini.danger{color:#ff8a8a;border-color:#5a2424}
+.security-row.pay-verified{background:rgba(90,213,178,.07)}
+.security-row.pay-rejected{background:rgba(255,82,82,.06)}
+.security-row.pay-pending .sec-sev{color:#f5b56a}
+.security-row.pay-verified .sec-sev{color:#5ad5b2}

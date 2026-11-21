@@ -10,11 +10,12 @@ import './admin.css';
  * داده‌ها از بک‌اند کلادفلر (/api/admin) می‌آید؛ بدون نشست معتبر چیزی بارگذاری نمی‌شود.
  */
 
-type View = 'Overview' | 'Enquiries' | 'Projects' | 'Analytics' | 'Security' | 'Settings' | 'Connections';
+type View = 'Overview' | 'Enquiries' | 'Projects' | 'Payments' | 'Analytics' | 'Security' | 'Settings' | 'Connections';
 const navigation: [View, string, string][] = [
   ['Overview', 'design', 'نمای کلی'],
   ['Enquiries', 'mail', 'پیام‌ها'],
   ['Projects', 'brand', 'پروژه‌ها'],
+  ['Payments', 'code', 'پرداخت‌ها'],
   ['Analytics', 'ai', 'آمار'],
   ['Security', 'shield', 'امنیت'],
   ['Settings', 'edit', 'تنظیمات'],
@@ -25,6 +26,7 @@ const titles: Record<View, [string, string]> = {
   Overview: ['کمی شفافیت، خیلی امکان.', 'استودیو در یک نگاه.'],
   Enquiries: ['هر گفت‌وگو از همین‌جا شروع می‌شود.', 'پیام‌ها و ارتباط‌ها'],
   Projects: ['از یک بریف خوب تا کارِ بزرگ.', 'مسیر خلاقانهٔ پروژه‌ها.'],
+  Payments: ['هر پرداخت با مدرک زنجیره‌ای، همین‌جا.', 'کی، چه چیز، چه زمانی.'],
   Analytics: ['مسیر مخاطب را بفهم، نه فقط عددش را.', 'دید روشن‌تر از مخاطب‌ها.'],
   Security: ['هر تلاش ورود را می‌بینم، قبل از اینکه دیده شود.', 'نگهبانی سایت'],
   Settings: ['ورک‌اسپیس را مال خودت کن.', 'تنظیمات استودیو.'],
@@ -60,6 +62,9 @@ function Badge({ value }: { value: string }) {
 type SystemInfo = { ai: { enabled: boolean; provider: string; model: string }; mail: { enabled: boolean } };
 type SecurityEvent = { id: number; at: number; type: string; severity: string; ip: string; path: string; detail: string; user_agent: string };
 type SecurityData = { events: SecurityEvent[]; summary: { type: string; n: number }[]; twoFactor: boolean };
+type PaymentRow = { id: string; name: string; email: string; service: string; amount_usd: number; txid: string; note: string; status: string; created_at: number; verified_at: number };
+type PaymentsData = { payments: PaymentRow[]; summary: { status: string; n: number; usd: number }[]; walletConfigured: boolean };
+const PAY_STATUS_FA: Record<string, string> = { pending: 'در انتظار تأیید', verified: 'تأیید شد', rejected: 'رد شد' };
 const SECURITY_FA: Record<string, string> = {
   admin_login_fail: 'تلاش ناموفق ورود',
   admin_login_success: 'ورود مدیر (کد تلگرام)',
@@ -99,6 +104,7 @@ export default function Admin() {
   const [pwForm, setPwForm] = useState({ current: '', next: '', confirm: '' });
   const [pwBusy, setPwBusy] = useState(false);
   const [security, setSecurity] = useState<SecurityData | null>(null);
+  const [payments, setPayments] = useState<PaymentsData | null>(null);
   const drawerRef = useRef<HTMLElement>(null);
   const lastFocus = useRef<HTMLElement | null>(null);
 
@@ -120,6 +126,7 @@ export default function Admin() {
     if (mode !== 'live') return;
     adminRequest<SystemInfo>('/system').then(setSystem).catch(() => setSystem(null));
     adminRequest<SecurityData>('/security').then(setSecurity).catch(() => setSecurity(null));
+    adminRequest<PaymentsData>('/payments').then(setPayments).catch(() => setPayments(null));
   }, [mode]);
   useEffect(() => { if (toast) { const timer = setTimeout(() => setToast(''), 5000); return () => clearTimeout(timer); } }, [toast]);
   useEffect(() => {
@@ -228,6 +235,33 @@ export default function Admin() {
     catch (error) { setToast(error instanceof Error ? error.message : 'تست ممکن نشد.'); }
     finally { setBusy(false); }
   }
+  async function setPaymentStatus(id: string, status: 'verified' | 'rejected') {
+    setBusy(true);
+    try {
+      await adminRequest(`/payments/${encodeURIComponent(id)}`, { method: 'PATCH', body: JSON.stringify({ status }) }, csrf);
+      const fresh = await adminRequest<PaymentsData>('/payments');
+      setPayments(fresh);
+      setToast(status === 'verified' ? 'تأیید شد — سفارش به دفتر ایجنت‌ها سپرده شد 🎯' : 'پرداخت رد شد.');
+    } catch (error) { setToast(error instanceof Error ? error.message : 'تغییر وضعیت ممکن نشد.'); }
+    finally { setBusy(false); }
+  }
+  async function removePayment(id: string) {
+    setBusy(true);
+    try {
+      await adminRequest(`/payments/${encodeURIComponent(id)}`, { method: 'DELETE' }, csrf);
+      setPayments(p => p ? { ...p, payments: p.payments.filter(x => x.id !== id) } : p);
+      setToast('ردیف پرداخت حذف شد.');
+    } catch (error) { setToast(error instanceof Error ? error.message : 'حذف ممکن نشد.'); }
+    finally { setBusy(false); }
+  }
+  function exportPayments() {
+    if (!payments) return;
+    csvDownload([['ID', 'Name', 'Email', 'Service', 'USD', 'TXID', 'Status', 'Created', 'Note'],
+      ...payments.payments.map(x => [x.id, x.name, x.email, x.service, String(x.amount_usd), x.txid, x.status, new Date(x.created_at).toISOString(), x.note])],
+      'sesemi-payments.csv');
+    setToast('خروجی پرداخت‌ها آماده شد.');
+  }
+
   async function changePassword(event: React.FormEvent) {
     event.preventDefault();
     if (!adminBase || pwBusy) return;
@@ -410,6 +444,39 @@ export default function Admin() {
               {!security?.events.length && <div className="admin-empty"><Icon name="shield" size={30} /><h3>دفتر خالی است — هنوز.</h3><p>وقتی کسی تلاش کند وارد شود یا سایت را اسکن کند، همین‌جا ثبت می‌شود و به تلگرامت اطلاع می‌رود.</p></div>}
             </div>
             <p className="admin-footnote">هیچ IP ای در سطح مالک قابل ردیابی‌سازی شخصی نیست؛ این لاگ فقط برای تشخیص الگوی حمله نگه داشته می‌شود (۳۰ روز).</p>
+          </section>
+        </>}
+
+        {view === 'Payments' && <>
+          {!payments?.walletConfigured && <div className="demo-banner" style={{ marginBottom: 14 }}><span><Icon name="shield" size={15} /> آدرس کیف‌پول تنظیم نشده — Secret کلادفلر <b>PAY_WALLET_ADDRESS</b> را ست کن تا درگاه عمومی باز شود.</span></div>}
+          <div className="metric-grid">{[
+            ['در انتظار تأیید', faNumber(payments?.summary.find(x => x.status === 'pending')?.n ?? 0), 'مدرک زنجیره‌ای رسیده و چک نشده', 'mail'],
+            ['تأییدشده', faNumber(payments?.summary.find(x => x.status === 'verified')?.n ?? 0), `مجموع ${(payments?.summary.find(x => x.status === 'verified')?.usd ?? 0).toLocaleString('fa-IR')}$`, 'check'],
+            ['ردشده', faNumber(payments?.summary.find(x => x.status === 'rejected')?.n ?? 0), 'TXID نامعتبر یا تستی', 'shield'],
+            ['درآمد کل تأییدشده', `${(payments?.summary.filter(x => x.status === 'verified').reduce((a, x) => a + (x.usd ?? 0), 0) ?? 0).toLocaleString('fa-IR')}$`, 'جمع همهٔ پرداخت‌های تأییدشده', 'brand'],
+          ].map(([title, value, desc, icon]) => <div className="metric-card" key={title}><div><span>{title}</span><Icon name={icon} size={18} /></div><strong>{value}</strong><small>{desc}</small></div>)}</div>
+          <section className="admin-card">
+            <div className="admin-card-heading"><div><h2>دفترچهٔ پرداخت‌ها</h2><p>کی زده، چرا زده، چه زمانی — با TXID قابل چک روی زنجیره. تأیید = سفارش خودکار به دفتر ایجنت‌ها.</p></div>
+              <button className="text-button" onClick={exportPayments}>خروجی CSV ↓</button></div>
+            <div className="security-log" dir="ltr">
+              {(payments?.payments || []).map(x => <div className={`security-row pay-${x.status}`} key={x.id}>
+                <span className="sec-time">{faTime(x.created_at)}</span>
+                <span className="sec-badge">{x.service} · {x.amount_usd}$</span>
+                <span className="sec-sev">{PAY_STATUS_FA[x.status] || x.status}</span>
+                <span className="sec-ip">{x.name}</span>
+                <span className="sec-path">{x.email}</span>
+                <span className="sec-detail">TXID: {x.txid}{x.note ? ` · ${x.note}` : ''}</span>
+                <span className="pay-row-actions">
+                  {x.status === 'pending' && <>
+                    <button className="button mini" disabled={busy} onClick={() => void setPaymentStatus(x.id, 'verified')}>تأیید + دفتر</button>
+                    <button className="ghost mini" disabled={busy} onClick={() => void setPaymentStatus(x.id, 'rejected')}>رد</button>
+                  </>}
+                  {x.status !== 'pending' && <button className="ghost mini danger" disabled={busy} onClick={() => void removePayment(x.id)}>حذف</button>}
+                </span>
+              </div>)}
+              {!payments?.payments.length && <div className="admin-empty"><Icon name="code" size={30} /><h3>هنوز پرداختی ثبت نشده.</h3><p>اولین خرید با دکمه‌های «خرید» منوی قیمت سایت می‌آید و همین‌جا با TXID ظاهر می‌شود.</p></div>}
+            </div>
+            <p className="admin-footnote">تأیید هر پرداخت = یک ردیف در دفتر ایجنت‌ها (agent_outputs با کد PAY-*) — دفتر آن را به مأموریت واقعی تبدیل می‌کند و خروجی به «دفتر مدیر» برمی‌گردد.</p>
           </section>
         </>}
 

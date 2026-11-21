@@ -131,3 +131,18 @@ CREATE TABLE IF NOT EXISTS security_events (
   user_agent TEXT NOT NULL DEFAULT ''
 );
 CREATE INDEX IF NOT EXISTS idx_security_events_at ON security_events (at);
+
+-- 006 — crypto payments: submissions from the site pricing, verified by the owner
+CREATE TABLE IF NOT EXISTS payments (
+  id         TEXT PRIMARY KEY,            -- P-xxxxxxxx
+  name       TEXT NOT NULL,
+  email      TEXT NOT NULL,
+  service    TEXT NOT NULL,
+  amount_usd REAL NOT NULL DEFAULT 0,
+  txid       TEXT NOT NULL DEFAULT '',    -- on-chain transaction id
+  note       TEXT NOT NULL DEFAULT '',
+  status     TEXT NOT NULL DEFAULT 'pending', -- pending | verified | rejected
+  created_at INTEGER NOT NULL,
+  verified_at INTEGER NOT NULL DEFAULT 0
+);
+CREATE INDEX IF NOT EXISTS idx_payments_created ON payments (created_at);

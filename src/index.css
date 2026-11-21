@@ -56,3 +56,32 @@ html.translated-rtl ,html.lang-fa .about-section{direction:ltr}
 .rail-dot.active{background:var(--rail-accent);border-color:var(--rail-accent);box-shadow:var(--rail-glow)}
 [dir="rtl"] .scroll-rail{left:auto;right:24px}
 @media(max-width:900px){.scroll-rail{left:0;top:0;height:100dvh;width:3px;translate:0 0;animation:none}[dir="rtl"] .scroll-rail{left:auto;right:0}.rail-dot{display:none}}
+/* ---- crypto checkout modal ---- */
+.pay-scrim{position:fixed;inset:0;z-index:120;background:#04070fcc;backdrop-filter:blur(6px);display:grid;place-items:center;padding:18px;animation:pay-in .25s ease both}
+@keyframes pay-in{from{opacity:0}to{opacity:1}}
+.pay-modal{width:min(480px,100%);max-height:calc(100dvh - 36px);overflow-y:auto;background:linear-gradient(160deg,#0c1a2d,#091120);border:1px solid #2b4a6d;border-radius:16px;padding:24px 24px 20px;color:var(--fg,#e4edf8);animation:pay-pop .35s cubic-bezier(.2,.9,.3,1.2) both}
+@keyframes pay-pop{from{opacity:0;transform:translateY(22px) scale(.96)}to{opacity:1;transform:none}}
+.pay-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}.pay-head strong{font-size:17px;letter-spacing:-.3px}
+.pay-close{background:none;border:1px solid #283a51;border-radius:50%;width:30px;height:30px;color:#94b4cf;cursor:pointer}.pay-close:hover{color:var(--blue);border-color:var(--blue)}
+.pay-intent{display:flex;justify-content:space-between;align-items:center;background:#53b9fb0f;border:1px solid #283a51;border-radius:10px;padding:12px 15px;font-size:12px;margin-bottom:14px}.pay-amount{color:var(--blue);font-size:17px}
+.pay-step{font:8.5px monospace;letter-spacing:2px;text-transform:uppercase;color:var(--blue);margin:16px 0 8px}
+.pay-wallet-card{background:#071120;border:1px dashed #3d739b;border-radius:10px;padding:13px 14px}
+.pay-wallet-row{display:flex;align-items:center;gap:10px;font-size:11.5px;padding:5px 0}.pay-wallet-row span{color:var(--muted);min-width:74px}.pay-wallet-row code{overflow-wrap:anywhere;font-size:11px;color:#8cd7ff}
+.pay-copy{margin-inline-start:auto;background:#53b9fb14;color:var(--blue);border:1px solid #2b4a6d;border-radius:14px;padding:5px 11px;font-size:10px;cursor:pointer}.pay-copy:hover{background:#53b9fb2b}
+.pay-hint{font-size:10.5px;line-height:1.9;color:var(--muted);margin:8px 0 0}.pay-hint.warn{color:#f5b56a;border:1px solid #4a3a20;background:#f5b56a10;border-radius:8px;padding:10px 12px}
+.pay-field{display:flex;flex-direction:column;gap:6px;font-size:11px;color:var(--muted);margin-bottom:11px}
+.pay-field input,.pay-field textarea{background:var(--bg);border:1px solid var(--line);border-radius:9px;padding:11px 13px;color:var(--fg);font-size:12.5px;font-family:inherit}
+.pay-field input:focus,.pay-field textarea:focus{outline:none;border-color:var(--blue)}
+.pay-consent{display:flex;gap:9px;align-items:flex-start;font-size:10.5px;color:var(--muted);line-height:1.7;margin:6px 0 4px;cursor:pointer}
+.pay-error{color:#ff8a8a;font-size:11px;border:1px solid #5a2424;background:#ff525210;border-radius:8px;padding:9px 12px}
+.pay-submit{width:100%;justify-content:center;margin-top:10px}
+.pay-done{text-align:center;padding:26px 6px}.pay-done-icon{display:grid;place-items:center;width:58px;height:58px;margin:0 auto 16px;border-radius:50%;background:#5ad5b21c;color:#5ad5b2;border:1px solid #5ad5b255}.pay-done p{font-size:13px;line-height:2;color:var(--fg);margin-bottom:18px}
+/* buy buttons in the à-la-carte menu */
+.menu-row b{margin-inline-end:10px}
+.menu-buy{background:none;border:1px solid #2b4a6d;color:var(--blue);border-radius:16px;padding:6px 13px;font-size:10.5px;cursor:pointer;display:inline-flex;align-items:center;gap:5px;transition:background .25s,transform .25s}
+.menu-buy:hover{background:#53b9fb14;transform:translateY(-2px)}
+.light .pay-modal{background:#fff;border-color:var(--line);color:#102335}
+.light .pay-wallet-card{background:#f0f6fa;border-color:#9db9d2}
+.light .pay-intent{background:#53b9fb10;border-color:#bfd6e6}
+.light .pay-close{border-color:#bfd6e6;color:#5e718d}
+.light .menu-buy{border-color:#bfd6e6}

@@ -10,6 +10,7 @@ import { Icon, Ribbon } from './Visuals';
 import Seo from './Seo';
 import { AnalyticsConsent } from './analytics';
 import ScrollRail from './ScrollRail';
+import PayModal, { type PayIntent } from './PayModal';
 import Privacy from './Privacy';
 import { watchTranslation } from './translate';
 import VortexHero from './VortexHero';
@@ -37,6 +38,8 @@ function LangSwitch() {
 
 export default function App() {
   const [menu, setMenu] = useState(false);
+  const [payIntent, setPayIntent] = useState<PayIntent | null>(null);
+  const openPay = (service: string, amount: string) => setPayIntent({ service, amount });
   const [light, setLight] = useState(() => {
     try { return localStorage.getItem('sesemi-theme') === 'light'; } catch { return false; }
   });
@@ -171,7 +174,7 @@ export default function App() {
                 <li>{t('price.pro.f3')}</li>
                 <li>{t('price.pro.f4')}</li>
               </ul>
-              <a className="button" href="#contact">{t('price.pro.cta')}</a>
+              <button className="button" onClick={() => openPay('SESEMI Office Pro', '19')}>{t('pay.buy')} — $19</button>
             </div>
             <div className="pricing-card">
               <h3>Business</h3>
@@ -182,13 +185,13 @@ export default function App() {
                 <li>{t('price.biz.f3')}</li>
                 <li>{t('price.biz.f4')}</li>
               </ul>
-              <a className="button secondary" href="#contact">{t('price.biz.cta')}</a>
+              <button className="button secondary" onClick={() => openPay('SESEMI Office Business', '49')}>{t('pay.buy')} — $49</button>
             </div>
           </div>
           <div className="pricing-menu">
             <h3>{t('price.menu')}</h3>
-            {[['Landing page', 'from $290'], ['Brand identity', 'from $250'], ['AI advertising film', 'from $390'], ['UI/UX design', 'from $450'], ['Monthly content pack', '$120/mo'], ['AI workflows & automation', 'from $200']].map(([s, p]) =>
-              <div className="menu-row" key={s}><span>{s}</span><i /><b>{p}</b></div>)}
+            {[['Landing page', '290'], ['Brand identity', '250'], ['AI advertising film', '390'], ['UI/UX design', '450'], ['Monthly content pack', '120'], ['AI workflows & automation', '200']].map(([s, p]) =>
+              <div className="menu-row" key={s}><span>{s}</span><i /><b>${p}</b><button className="menu-buy" onClick={() => openPay(s, p)}>{t('pay.buy')} <Icon size={13} /></button></div>)}
           </div>
         </section>
         <section className="about-section container" id="about"><div className="about-art"><div className="about-grid" /><span className="about-top-label">THE MINDSET BEHIND THE WORK</span><div className="code-window"><div className="window-dots"><i /><i /><i /><span>sesemi / studio-dna.ts</span></div><pre><span className="code-purple">const</span> studio = {'{'}<br />  thinking: <span className="code-green">'brand-first'</span>,<br />  design: <span className="code-green">'with intention'</span>,<br />  technology: <span className="code-green">'a creative tool'</span>,<br />  partnership: <span className="code-green">'built on clarity'</span><br />{'}'};<br /><br /><span className="code-comment">// Thoughtful work. Real possibilities.</span><br /><span className="code-purple">export default</span> studio;</pre></div><div className="about-seal"><Icon name="design" size={27} /><span>Human ideas.<br /><strong>Extraordinary possibilities.</strong></span></div></div><div className="about-copy"><div className="eyebrow section-kicker"><span /> {t('about.kicker')}</div><h2>{t('about.h1')}<br /><span>{t('about.h2')}</span></h2><p>{t('about.p1')}</p><p>{t('about.p2')}</p><div className="values">{[1, 2, 3].map(n => <div key={n}><span><Icon name="check" size={17} /></span><div><h3>{t(`about.v${n}`)}</h3><p>{t(`about.v${n}d`)}</p></div></div>)}</div><a className="quiet-link about-cta" href="#contact">{t('about.cta')} <Icon size={15} /></a></div></section>
@@ -210,6 +213,7 @@ export default function App() {
       </>}
     </main>
     <Assistant /><AnalyticsConsent />
+    {payIntent && <PayModal intent={payIntent} onClose={() => setPayIntent(null)} />}
     <StellarFooter />
   </div>;
 }
