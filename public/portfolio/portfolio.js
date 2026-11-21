@@ -309,3 +309,66 @@ applyLanguage(T[document.documentElement.lang]?document.documentElement.lang:"en
   window.addEventListener("resize",onScroll);
   measure();
 })();
+
+/* ---- reel coverflow — the static nth-child tilt pattern is glued to card
+   INDEX, so once the track scrolls, tilted cards land in the middle and the
+   flat one drifts to the edge ("stuck crooked" look). Replaced by a live,
+   POSITION-driven coverflow: every card's transform is recomputed from its
+   real offset to the track's visual center on every scroll frame. ---- */
+(function(){
+  var track=document.getElementById("reel-track");
+  if(!track)return;
+  var cards=Array.prototype.slice.call(track.querySelectorAll(".reel-card"));
+  if(!cards.length)return;
+  var reduced=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var frame=0;
+  function clearAll(){
+    cards.forEach(function(card){card.style.transform="";card.style.opacity="";card.style.zIndex="";});
+  }
+  function update(){
+    frame=0;
+    if(reduced){clearAll();return;}
+    var box=track.getBoundingClientRect();
+    var center=box.left+box.width/2;
+    var half=Math.max(1,box.width/2);
+    cards.forEach(function(card){
+      var r=card.getBoundingClientRect();
+      var t=(r.left+r.width/2-center)/half;          // -1..1 cards from center
+      var dist=Math.min(1,Math.abs(t));
+      var hovered=false,focused=false;
+      try{hovered=card.matches(":hover");focused=card.matches(":focus-within");}catch(e){}
+      var angle,lift,scale,opacity,z;
+      if(hovered||focused){
+        angle=0;lift=-9;scale=1.05;opacity=1;z=200;  // hovered/focused card: flat and raised
+      }else{
+        angle=-Math.max(-1,Math.min(1,t))*11;         // tilt away from center (clamped)
+        lift=(1-dist)*-4;
+        scale=0.8+(1-dist)*0.22;
+        opacity=0.55+(1-dist)*0.45;
+        z=Math.round((1-dist)*100);
+      }
+      card.style.transform="perspective(1200px) rotateY("+angle.toFixed(2)+"deg) translateZ("+((1-dist)*26).toFixed(1)+"px) translateY("+lift.toFixed(1)+"px) scale("+scale.toFixed(3)+")";
+      card.style.opacity=opacity.toFixed(2);
+      card.style.zIndex=z+"";
+    });
+  }
+  function requestUpdate(){if(!frame)frame=requestAnimationFrame(update);}
+  // kill the CSS transform transition — JS recomputes every frame, a .32s
+  // transition would smear behind the scroll
+  cards.forEach(function(card){
+    card.style.transition="none";
+    card.style.willChange="transform,opacity";
+    card.addEventListener("mouseenter",requestUpdate);
+    card.addEventListener("mouseleave",requestUpdate);
+    card.addEventListener("focusin",requestUpdate);
+    card.addEventListener("focusout",requestUpdate);
+  });
+  track.addEventListener("scroll",requestUpdate,{passive:true});
+  window.addEventListener("resize",requestUpdate);
+  requestUpdate();
+  // widths settle once fonts/posters load — re-measure shortly after
+  window.addEventListener("load",requestUpdate);
+  if(document.fonts&&document.fonts.ready)document.fonts.ready.then(requestUpdate);
+  setTimeout(requestUpdate,400);
+  setTimeout(requestUpdate,1200);
+})();
