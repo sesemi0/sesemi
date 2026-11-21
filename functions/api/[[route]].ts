@@ -173,15 +173,17 @@ export const onRequest = async (context: { request: Request; env: Env; params: {
       const cx = 560 + ((hash >> 6) % 200);
       const cy = 140 + ((hash >> 9) % 160);
       const words = url.searchParams.get('t') || '';
-      const lines: string[] = [];
+      const raw: string[] = [];
       let line = '';
       for (const w of words.split(/\s+/)) {
-        if ((line + ' ' + w).trim().length > 34) { if (line) lines.push(line.trim()); if (lines.length === 2) break; line = w; }
+        if ((line + ' ' + w).trim().length > 34) { if (line) raw.push(line.trim()); line = w; }
         else line = (line + ' ' + w).trim();
       }
-      if (lines.length < 3 && line) lines.push(line.trim());
-      const titleSvg = lines.slice(0, 3).map((ln, i) =>
-        `<text x="64" y="${392 + i * 44}" font-family="Arial,sans-serif" font-size="34" font-weight="700" fill="#e9f1f8">${esc(ln).slice(0, 42)}</text>`).join('');
+      if (line) raw.push(line.trim());
+      const lines = raw.slice(0, 2);
+      if (raw.length > 2 && lines[1]) lines[1] = lines[1].slice(0, 31).trimEnd() + '…';
+      const titleSvg = lines.map((ln, i) =>
+        `<text x="64" y="${386 + i * 44}" font-family="Arial,sans-serif" font-size="33" font-weight="700" fill="#e9f1f8">${esc(ln)}</text>`).join('');
       const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="900" height="506" viewBox="0 0 900 506" role="img" aria-label="article art">
 <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${c0}"/><stop offset="1" stop-color="${c1}"/></linearGradient></defs>
 <rect width="900" height="506" fill="url(#g)"/>
