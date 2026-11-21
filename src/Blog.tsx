@@ -18,7 +18,7 @@ function formatStamp(iso: string): string {
 function NewsCard({ post }: { post: BlogPost }) {
   const [stage, setStage] = useState<'feed' | 'art' | 'grad'>(post.image_url ? 'feed' : 'art');
   const slug = post.source.toLowerCase().replace(/[^a-z]+/g, '-');
-  const artUrl = `/api/blog/art?id=${encodeURIComponent(post.id)}&t=${encodeURIComponent(post.title_en)}&s=${encodeURIComponent(post.source)}`;
+  const artUrl = `/api/blog/art?id=${encodeURIComponent(post.id)}&t=${encodeURIComponent(post.title_en)}&s=${encodeURIComponent(post.source)}&v=2`;
   const src = stage === 'feed' ? post.image_url : artUrl;
   return <a className="news-card" href={post.url} target="_blank" rel="noopener noreferrer">
     <span className={`news-media ${stage === 'grad' ? `news-media-fallback src-${slug}` : ''}`} aria-hidden="true">
