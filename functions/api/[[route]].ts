@@ -150,6 +150,54 @@ export const onRequest = async (context: { request: Request; env: Env; params: {
       return json({ wallet: env.PAY_WALLET_ADDRESS || '', network: env.PAY_NETWORK || 'USDT · TRC20 (TRON)', configured: Boolean(env.PAY_WALLET_ADDRESS) }, 200, { 'Cache-Control': 'public, max-age=300' });
     }
 
+    /* ============ public: generated article art — every post without a feed
+       image gets a deterministic, brand-styled SVG (no external requests,
+       immutable cache; the same id+title+source always draws the same art) === */
+    if (path.join('/') === 'blog/art' && method === 'GET') {
+      const url = new URL(request.url);
+      const esc = (value: string): string => value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;');
+      const id = esc(url.searchParams.get('id') || 'x').slice(0, 120);
+      const title = esc(url.searchParams.get('t') || '').slice(0, 160);
+      const source = esc(url.searchParams.get('s') || 'AI').slice(0, 30);
+      const palette = [
+        ['#0d1c31', '#123a5c', '#53b9fb'], ['#141026', '#2a1a4d', '#9b7fe0'],
+        ['#0a1f2e', '#0e3a4d', '#61e7ff'], ['#1a2408', '#2e3d10', '#c8f06c'],
+        ['#260f14', '#4d1a22', '#fc765e'], ['#0c1030', '#1a2360', '#7c9bff'],
+      ];
+      let hash = 0;
+      for (const ch of id) hash = (hash * 31 + ch.charCodeAt(0)) >>> 0;
+      const [c0, c1, accent] = palette[hash % palette.length];
+      // deterministic ring positions from the hash — no two posts look alike
+      const r1 = 120 + (hash % 90);
+      const r2 = 200 + ((hash >> 3) % 110);
+      const cx = 560 + ((hash >> 6) % 200);
+      const cy = 140 + ((hash >> 9) % 160);
+      const words = url.searchParams.get('t') || '';
+      const lines: string[] = [];
+      let line = '';
+      for (const w of words.split(/\s+/)) {
+        if ((line + ' ' + w).trim().length > 34) { if (line) lines.push(line.trim()); if (lines.length === 2) break; line = w; }
+        else line = (line + ' ' + w).trim();
+      }
+      if (lines.length < 3 && line) lines.push(line.trim());
+      const titleSvg = lines.slice(0, 3).map((ln, i) =>
+        `<text x="64" y="${392 + i * 44}" font-family="Arial,sans-serif" font-size="34" font-weight="700" fill="#e9f1f8">${esc(ln).slice(0, 42)}</text>`).join('');
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="900" height="506" viewBox="0 0 900 506" role="img" aria-label="article art">
+<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${c0}"/><stop offset="1" stop-color="${c1}"/></linearGradient></defs>
+<rect width="900" height="506" fill="url(#g)"/>
+<circle cx="${cx}" cy="${cy}" r="${r1}" fill="none" stroke="${accent}" stroke-opacity=".35"/>
+<circle cx="${cx}" cy="${cy}" r="${r2}" fill="none" stroke="${accent}" stroke-opacity=".18" stroke-dasharray="3 9"/>
+<circle cx="${cx + r1 * 0.71}" cy="${cy - r1 * 0.71}" r="5" fill="${accent}" opacity=".9"/>
+<circle cx="${cx - r2 * 0.6}" cy="${cy + r2 * 0.55}" r="3.5" fill="#ffffff" opacity=".5"/>
+<g transform="translate(56,64)"><rect x="-14" y="-14" width="28" height="28" transform="rotate(45)" fill="none" stroke="${accent}" stroke-width="1.6"/><rect x="-8" y="-8" width="16" height="16" transform="rotate(45)" fill="${accent}"/></g>
+<text x="836" y="58" text-anchor="end" font-family="monospace" font-size="13" letter-spacing="3" fill="${accent}">${source.toUpperCase()}</text>
+<line x1="56" y1="330" x2="844" y2="330" stroke="#ffffff" stroke-opacity=".14"/>
+${titleSvg}
+<text x="56" y="472" font-family="monospace" font-size="12" letter-spacing="2" fill="#8ea9c2">SESEMI · AI RADAR</text>
+</svg>`;
+      return new Response(svg, { status: 200, headers: { 'Content-Type': 'image/svg+xml; charset=utf-8', 'Cache-Control': 'public, max-age=31536000, immutable' } });
+    }
+
     /* ============ public: crypto payment submission (TXID proof) ============ */
     if (path.join('/') === 'pay' && method === 'POST') {
       if (!rateLimit(`pay:${clientIp(request)}`, 6, 60 * 60 * 1000)) {

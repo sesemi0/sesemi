@@ -12,16 +12,19 @@ function formatStamp(iso: string): string {
   return `${day} · ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
 }
 
-/** Every card carries art: the feed image when the publisher ships one,
- *  otherwise a deterministic branded gradient keyed to the source. */
+/** Every card carries art: the feed image when the publisher ships one and it
+ *  loads; otherwise the generated SVG art endpoint draws a unique, brand-styled
+ *  piece per article (server-deterministic, no external requests). */
 function NewsCard({ post }: { post: BlogPost }) {
-  const [imgBroken, setImgBroken] = useState(false);
+  const [stage, setStage] = useState<'feed' | 'art' | 'grad'>(post.image_url ? 'feed' : 'art');
   const slug = post.source.toLowerCase().replace(/[^a-z]+/g, '-');
-  const showImage = post.image_url && !imgBroken;
+  const artUrl = `/api/blog/art?id=${encodeURIComponent(post.id)}&t=${encodeURIComponent(post.title_en)}&s=${encodeURIComponent(post.source)}`;
+  const src = stage === 'feed' ? post.image_url : artUrl;
   return <a className="news-card" href={post.url} target="_blank" rel="noopener noreferrer">
-    <span className={`news-media ${showImage ? '' : `news-media-fallback src-${slug}`}`} aria-hidden="true">
-      {showImage && <img src={post.image_url} alt="" loading="lazy" referrerPolicy="no-referrer" onError={() => setImgBroken(true)} />}
-      {!showImage && <span className="news-media-glyph">{post.source.replace(/[^A-Za-z]/g, '').slice(0, 2).toUpperCase()}</span>}
+    <span className={`news-media ${stage === 'grad' ? `news-media-fallback src-${slug}` : ''}`} aria-hidden="true">
+      {stage !== 'grad' && <img src={src} alt="" loading="lazy" referrerPolicy="no-referrer"
+        onError={() => setStage(stage === 'feed' ? 'art' : 'grad')} />}
+      {stage === 'grad' && <span className="news-media-glyph">{post.source.replace(/[^A-Za-z]/g, '').slice(0, 2).toUpperCase()}</span>}
     </span>
     <div className="news-top"><span className="news-source">{post.source}</span><span className="news-date">{formatStamp(post.published_at)}</span></div>
     <h3 className="news-title">{post.title_en}</h3>
