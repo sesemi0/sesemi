@@ -67,7 +67,8 @@ CREATE TABLE IF NOT EXISTS blog_posts (
   title_fa     TEXT NOT NULL,
   summary_fa   TEXT NOT NULL DEFAULT '',
   published_at TEXT NOT NULL,
-  source       TEXT NOT NULL
+  source       TEXT NOT NULL,
+  image_url    TEXT NOT NULL DEFAULT '' -- article art from the feed; '' = branded fallback
 );
 CREATE INDEX IF NOT EXISTS blog_posts_published ON blog_posts(published_at);
 

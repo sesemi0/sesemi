@@ -7,8 +7,8 @@
  */
 import type { Env, D1Database } from './core';
 
-export interface NewsItem { id: string; url: string; title: string; description: string; source: string; publishedAt: string }
-export interface BlogPost { id: string; url: string; title_en: string; title_fa: string; summary_fa: string; published_at: string; source: string }
+export interface NewsItem { id: string; url: string; title: string; description: string; source: string; publishedAt: string; imageUrl: string }
+export interface BlogPost { id: string; url: string; title_en: string; title_fa: string; summary_fa: string; published_at: string; source: string; image_url: string }
 
 const FEEDS: { name: string; url: string }[] = [
   { name: 'TechCrunch AI', url: 'https://techcrunch.com/category/artificial-intelligence/feed/' },
@@ -63,6 +63,31 @@ function extractDate(block: string): string {
   return Number.isNaN(parsed) ? new Date().toISOString() : new Date(parsed).toISOString();
 }
 
+/** First plausible article image from the RSS block: media:content /
+ *  media:thumbnail / image enclosure / inline <img> in the description.
+ *  Only http(s) raster URLs survive — the browser CSP also gates them. */
+function extractImage(block: string): string {
+  const candidates: string[] = [];
+  const attrUrl = (tag: string): string => (tag.match(/\burl=["']([^"']+)["']/i) || [])[1] || '';
+  for (const tag of block.matchAll(/<media:content\b[^>]*>/gi)) {
+    const url = attrUrl(tag[0]);
+    if (/\.(jpe?g|png|webp|avif)(\?|$)/i.test(url) || /medium=["']image["']|type=["']image/i.test(tag[0])) candidates.push(url);
+  }
+  for (const tag of block.matchAll(/<media:thumbnail\b[^>]*>/gi)) candidates.push(attrUrl(tag[0]));
+  for (const tag of block.matchAll(/<enclosure\b[^>]*>/gi)) {
+    const url = attrUrl(tag[0]);
+    if (/type=["']image/i.test(tag[0]) || /\.(jpe?g|png|webp|avif)(\?|$)/i.test(url)) candidates.push(url);
+  }
+  for (const tag of block.matchAll(/<img\b[^>]*>/gi)) candidates.push((tag[0].match(/\bsrc=["']([^"']+)["']/i) || [])[1] || '');
+  for (const url of candidates) {
+    if (!/^https?:\/\//i.test(url)) continue;
+    if (/\.(svg|gif)(\?|$)/i.test(url)) continue; // icons/trackers, not article art
+    if (/1x1|spacer|pixel|logo|avatar|favicon/i.test(url)) continue;
+    return url.slice(0, 600);
+  }
+  return '';
+}
+
 async function fetchFeed(feed: { name: string; url: string }): Promise<NewsItem[]> {
   try {
     const response = await fetch(feed.url, {
@@ -84,7 +109,7 @@ async function fetchFeed(feed: { name: string; url: string }): Promise<NewsItem[
         || firstMatch(block, /<summary[^>]*>([\s\S]*?)<\/summary>/)
         || firstMatch(block, /<content:encoded[^>]*>([\s\S]*?)<\/content:encoded>/),
       ).slice(0, 500);
-      items.push({ id: url.split('#')[0], url, title: title.slice(0, 300), description, source: feed.name, publishedAt: extractDate(block) });
+      items.push({ id: url.split('#')[0], url, title: title.slice(0, 300), description, source: feed.name, publishedAt: extractDate(block), imageUrl: extractImage(block) });
     }
     return items;
   } catch { return []; }
@@ -111,10 +136,18 @@ export async function lastRefreshAt(db: D1Database): Promise<number> {
 }
 
 export async function listPosts(db: D1Database, limit = 24): Promise<BlogPost[]> {
-  const rows = await db.prepare(
-    `SELECT id, url, title_en, title_fa, summary_fa, published_at, source FROM blog_posts ORDER BY published_at DESC LIMIT ?1`,
-  ).bind(limit).all<BlogPost>();
-  return rows.results || [];
+  // image_url may be missing on stale databases — fall back to a query without it
+  try {
+    const rows = await db.prepare(
+      `SELECT id, url, title_en, title_fa, summary_fa, published_at, source, image_url FROM blog_posts ORDER BY published_at DESC LIMIT ?1`,
+    ).bind(limit).all<BlogPost>();
+    return rows.results || [];
+  } catch {
+    const rows = await db.prepare(
+      `SELECT id, url, title_en, title_fa, summary_fa, published_at, source FROM blog_posts ORDER BY published_at DESC LIMIT ?1`,
+    ).bind(limit).all<BlogPost>();
+    return (rows.results || []).map(row => ({ ...row, image_url: '' }));
+  }
 }
 
 export async function refreshBlog(env: Env, opts: { force?: boolean; max?: number } = {}): Promise<{ ok: true; added: number; total: number; skipped: boolean } | { ok: false; error: string }> {
@@ -143,9 +176,31 @@ export async function refreshBlog(env: Env, opts: { force?: boolean; max?: numbe
   // the site is English-only by design — stories are stored as published,
   // Persian fields stay empty (kept in the schema for future use)
   await Promise.all(fresh.map(async item => {
-    await db.prepare(
-      `INSERT OR IGNORE INTO blog_posts (id, url, title_en, title_fa, summary_fa, published_at, source) VALUES (?1, ?2, ?3, '', '', ?4, ?5)`,
-    ).bind(item.id, item.url, item.title, item.publishedAt, item.source).run();
+    // validate the feed image BEFORE storing: some publishers (e.g. The
+    // Guardian) sign their CDN URLs and reject hotlinking with 401 — those
+    // get no image and the card shows the branded fallback instead
+    let imageUrl = item.imageUrl;
+    if (imageUrl) {
+      try {
+        const head = await fetch(imageUrl, {
+          method: 'HEAD',
+          headers: { 'User-Agent': 'SESEMI-NewsBot/1.0 (+https://sesemi.pages.dev)' },
+          redirect: 'follow',
+          signal: AbortSignal.timeout(8000),
+        });
+        if (!head.ok) imageUrl = '';
+      } catch { imageUrl = ''; }
+    }
+    try {
+      await db.prepare(
+        `INSERT INTO blog_posts (id, url, title_en, title_fa, summary_fa, published_at, source, image_url) VALUES (?1, ?2, ?3, '', '', ?4, ?5, ?6)`,
+      ).bind(item.id, item.url, item.title, item.publishedAt, item.source, imageUrl).run();
+    } catch {
+      // stale database without the image_url column — insert without it
+      await db.prepare(
+        `INSERT OR IGNORE INTO blog_posts (id, url, title_en, title_fa, summary_fa, published_at, source) VALUES (?1, ?2, ?3, '', '', ?4, ?5)`,
+      ).bind(item.id, item.url, item.title, item.publishedAt, item.source).run();
+    }
   }));
 
   await db.prepare(`DELETE FROM blog_posts WHERE published_at < ?1`).bind(

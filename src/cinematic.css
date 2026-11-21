@@ -359,8 +359,20 @@
 /* ---- AI Radar (news blog) ---- */
 .news-section .section-heading{margin-bottom:33px}
 .news-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}
-.news-card{position:relative;display:flex;flex-direction:column;gap:10px;background:linear-gradient(140deg,#101c2c88,#0a1220);border:1px solid var(--line);border-radius:10px;padding:22px 22px 18px;color:var(--fg);transition:transform .25s,border-color .25s;overflow:hidden;text-align:left}
+.news-card{position:relative;display:flex;flex-direction:column;gap:10px;background:linear-gradient(140deg,#101c2c88,#0a1220);border:1px solid var(--line);border-radius:10px;padding:14px 22px 52px;color:var(--fg);transition:transform .25s,border-color .25s;overflow:hidden;text-align:left}
 .news-card:hover{transform:translateY(-5px);border-color:#3d739b}
+.news-media{display:block;aspect-ratio:16/9;margin:-14px -22px 6px;overflow:hidden;border-radius:9px 9px 0 0;background:#0b1526}
+.news-media img{width:100%;height:100%;object-fit:cover;transition:transform .5s}
+.news-card:hover .news-media img{transform:scale(1.04)}
+.news-media-fallback{display:grid;place-items:center;background:linear-gradient(135deg,#0d1c31,#10233d)}
+.news-media-fallback.src-techcrunch-ai{background:linear-gradient(135deg,#0a4a2a,#0d6b3d)}
+.news-media-fallback.src-the-verge-ai{background:linear-gradient(135deg,#4a1063,#6b1a8f)}
+.news-media-fallback.src-venturebeat-ai{background:linear-gradient(135deg,#3a1050,#5c1a75)}
+.news-media-fallback.src-ai-news{background:linear-gradient(135deg,#63310f,#8f4a1a)}
+.news-media-fallback.src-ars-technica-ai{background:linear-gradient(135deg,#0f2a63,#1a3f8f)}
+.news-media-fallback.src-mit-tech-review{background:linear-gradient(135deg,#5c0f0f,#8f1a1a)}
+.news-media-fallback.src-the-guardian-ai{background:linear-gradient(135deg,#053a5c,#0a5685)}
+.news-media-glyph{font:700 26px/1 'Space Grotesk Variable',sans-serif;letter-spacing:3px;color:rgba(255,255,255,.5)}
 .news-top{display:flex;justify-content:space-between;align-items:center;gap:12px}
 .news-source{font:8px monospace;letter-spacing:1.4px;text-transform:uppercase;color:var(--blue)}
 .news-date{font:9px monospace;color:#667994}
@@ -369,6 +381,10 @@
 
 .news-arrow{position:absolute;left:18px;bottom:16px;width:26px;height:26px;display:grid;place-items:center;border:1px solid #283a51;border-radius:50%;color:#94b4cf;transition:transform .3s,background .3s;rotate:180deg}
 .news-card:hover .news-arrow{background:#53b9fb1a;color:var(--blue);transform:translateX(-3px)}
+/* the card keeps a 52px bottom pad so the floating arrow never sits on the text */
+html.lang-fa .news-card{text-align:right}
+html.lang-fa .news-card .news-arrow{left:auto;right:18px;rotate:0deg}
+html.lang-fa .news-card:hover .news-arrow{transform:translateX(3px)}
 
 .news-empty{font-size:12px;color:var(--muted);line-height:2}
 .news-empty a{color:var(--blue)}
@@ -383,6 +399,9 @@
 .news-note{font-size:9px;line-height:2;color:#5a6d88;border-top:1px solid var(--line);margin-top:55px;padding-top:22px}
 .light .news-card{background:#fff}
 .light .news-card.featured,.light .blog-page .news-card:nth-child(odd){background:#f4f9fe}
+.light .news-media{background:#e7eef5}
+.light .news-media-fallback{background:linear-gradient(135deg,#dfe9f2,#cddced)}
+.light .news-media-glyph{color:rgba(16,37,53,.45)}
 
 .light .news-date,.light .news-note{color:#6c7f99}
 
@@ -390,7 +409,7 @@ html.translated-rtl .news-card{text-align:right}
 html.translated-rtl .news-card .news-arrow{rotate:0deg;left:auto;right:18px}
 @media(max-width:1150px){.blog-page .news-grid-page{gap:14px}}
 @media(max-width:850px){.news-grid,.blog-page .news-grid-page{grid-template-columns:repeat(2,1fr)}.news-title{font-size:15px}}
-@media(max-width:600px){.news-grid,.blog-page .news-grid-page{grid-template-columns:1fr}.news-card{padding:20px 18px 16px}}
+@media(max-width:600px){.news-grid,.blog-page .news-grid-page{grid-template-columns:1fr}.news-card{padding:12px 18px 50px}.news-media{margin:-12px -18px 6px}}
 
 /* ---- My Space (optional Google sign-in + visitor projects) ---- */
 .auth-chip{display:inline-flex;align-items:center;gap:7px;font-size:11px;font-weight:500;color:var(--fg);border:1px solid var(--line);border-radius:20px;padding:7px 13px;background:var(--surface);transition:border-color .2s,transform .2s}

@@ -3,7 +3,7 @@ import { t } from './i18n';
 import { Icon } from './Visuals';
 import { Words } from './Motion';
 
-export interface BlogPost { id: string; url: string; title_en: string; published_at: string; source: string }
+export interface BlogPost { id: string; url: string; title_en: string; published_at: string; source: string; image_url?: string }
 
 function formatStamp(iso: string): string {
   const date = new Date(iso);
@@ -12,8 +12,17 @@ function formatStamp(iso: string): string {
   return `${day} · ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
 }
 
+/** Every card carries art: the feed image when the publisher ships one,
+ *  otherwise a deterministic branded gradient keyed to the source. */
 function NewsCard({ post }: { post: BlogPost }) {
+  const [imgBroken, setImgBroken] = useState(false);
+  const slug = post.source.toLowerCase().replace(/[^a-z]+/g, '-');
+  const showImage = post.image_url && !imgBroken;
   return <a className="news-card" href={post.url} target="_blank" rel="noopener noreferrer">
+    <span className={`news-media ${showImage ? '' : `news-media-fallback src-${slug}`}`} aria-hidden="true">
+      {showImage && <img src={post.image_url} alt="" loading="lazy" referrerPolicy="no-referrer" onError={() => setImgBroken(true)} />}
+      {!showImage && <span className="news-media-glyph">{post.source.replace(/[^A-Za-z]/g, '').slice(0, 2).toUpperCase()}</span>}
+    </span>
     <div className="news-top"><span className="news-source">{post.source}</span><span className="news-date">{formatStamp(post.published_at)}</span></div>
     <h3 className="news-title">{post.title_en}</h3>
     <span className="news-arrow"><Icon size={15} /></span>
