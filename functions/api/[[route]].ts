@@ -302,14 +302,19 @@ ${titleSvg}
       }
     }
     /* ============ public: telegram bridge (site submissions → owner chat) ============ */
-    if (path.join('/') === 'agent-notify' && method === 'POST') {
+    if (path.join('/') === 'agent-notify') {
+      // the office app (sesemi-office.pages.dev) posts task results here —
+      // cross-origin with a JSON body needs a preflight + open CORS headers
+      const cors = { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': 'Content-Type', 'Access-Control-Allow-Methods': 'POST, OPTIONS' };
+      if (method === 'OPTIONS') return new Response(null, { status: 204, headers: cors });
+      if (method !== 'POST') return fail(405, 'روش نامعتبر است.');
       if (!rateLimit(`notify:${clientIp(request)}`, 20, 60 * 60 * 1000)) return fail(429, 'درخواست‌های زیاد. کمی بعد دوباره تلاش کنید.');
       const body = await readJson<Record<string, unknown>>(request);
-      if (!body) return fail(400, 'درخواست نامعتبر است.');
+      if (!body) return json({ error: 'درخواست نامعتبر است.' }, 400, cors);
       const text = cleanText(body.text, 1500);
-      if (!text) return fail(400, 'متن خالی است.');
+      if (!text) return json({ error: 'متن خالی است.' }, 400, cors);
       if (!env.TELEGRAM_BOT_TOKEN || !env.TELEGRAM_CHAT_ID) {
-        return json({ ok: true, delivered: false, reason: 'telegram_not_configured' });
+        return json({ ok: true, delivered: false, reason: 'telegram_not_configured' }, 200, cors);
       }
       const tg = await fetch(`https://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}/sendMessage`, {
         method: 'POST',
@@ -317,8 +322,8 @@ ${titleSvg}
         body: JSON.stringify({ chat_id: env.TELEGRAM_CHAT_ID, text: text.slice(0, 3500) }),
         signal: AbortSignal.timeout(15000),
       }).catch(() => null);
-      if (!tg || !tg.ok) return json({ ok: true, delivered: false, reason: 'telegram_error' });
-      return json({ ok: true, delivered: true });
+      if (!tg || !tg.ok) return json({ ok: true, delivered: false, reason: 'telegram_error' }, 200, cors);
+      return json({ ok: true, delivered: true }, 200, cors);
     }
 
     if (path.join('/') === 'ai/chat' && method === 'POST') {
