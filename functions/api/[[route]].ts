@@ -242,12 +242,14 @@ ${titleSvg}
     /* ============ public: office AI — runs the agents' tasks on the account's
        own Workers-AI allocation (no API key). Restricted to the office origin
        and rate-limited so nobody can burn the allocation from elsewhere. ===== */
-    if (path.join('/') === 'ai/office' && method === 'POST') {
+    if (path.join('/') === 'ai/office') {
       // cross-origin from the office app — JSON body means a preflight happens
-      // first; both the preflight AND every response must carry CORS headers
+      // first; the OPTIONS check MUST run before the POST gate, and every
+      // response carries CORS headers
       const officeOrigin = request.headers.get('Origin') || '';
       const cors = { 'Access-Control-Allow-Origin': officeOrigin || '*', 'Access-Control-Allow-Headers': 'Content-Type', 'Access-Control-Allow-Methods': 'POST, OPTIONS' };
       if (method === 'OPTIONS') return new Response(null, { status: 204, headers: cors });
+      if (method !== 'POST') return fail(405, 'روش نامعتبر است.');
       if (!/^https:\/\/(sesemi-office\.pages\.dev|localhost(?::\d+)?)$/.test(officeOrigin)) {
         return fail(403, 'این مسیر فقط برای دفتر سسِمی است.');
       }
