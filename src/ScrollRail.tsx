@@ -4,7 +4,8 @@ import { onLang, t } from './i18n';
 /**
  * نوار پیشرفت اسکرول — خط عمودی ثابت کنار صفحه که با اسکرول پر می‌شود؛
  * هر نقطه یک سکشن است (بدون لیبل متنی — لیبل روی محتوا می‌افتد).
- * دسکتاپ: خط + نقطه — موبایل: خط باریک لبه‌ی صفحه.
+ * دسکتاپ: خط + نقطه کنار صفحه — موبایل: نوار افقی باریک ۲px بالای صفحه
+ * (محتوای موبایل لبه‌به‌لبه است؛ هر خط عمودی روی عکس‌ها می‌افتد).
  * LTR: سمت چپ — RTL (فارسی): قرینه، سمت راست.
  */
 const SECTIONS = [
@@ -54,6 +55,14 @@ export default function ScrollRail() {
   const [dots, setDots] = useState<number[]>([]);
   const [skin, setSkin] = useState<'light' | 'dark'>('dark');
   const [accent, setAccent] = useState<string | undefined>(undefined);
+  // موبایل (همان نقطه‌شکست CSS): نوار افقی بالای صفحه — پر شدن با width
+  const [narrow, setNarrow] = useState(() => matchMedia('(max-width:900px)').matches);
+  useEffect(() => {
+    const mq = matchMedia('(max-width:900px)');
+    const onChange = (e: MediaQueryListEvent) => setNarrow(e.matches);
+    mq.addEventListener('change', onChange);
+    return () => mq.removeEventListener('change', onChange);
+  }, []);
   useEffect(() => onLang(() => bump(x => x + 1)), []);
   useEffect(() => {
     let frame = 0;
@@ -92,11 +101,12 @@ export default function ScrollRail() {
   }, []);
   if (!dots.length) return null;
   return <nav
-    className="scroll-rail"
+    className={`scroll-rail${narrow ? ' rail-topbar' : ''}`}
     data-skin={skin}
     style={accent ? ({ '--rail-accent': accent } as React.CSSProperties) : undefined}
     aria-label="Page scroll progress">
-    <span className="rail-fill" style={{ height: `${progress * 100}%` }} aria-hidden="true" />
+    {/* موبایل: پر شدن افقی با width — دسکتاپ: عمودی با height */}
+    <span className="rail-fill" style={narrow ? { width: `${progress * 100}%` } : { height: `${progress * 100}%` }} aria-hidden="true" />
     {dots.map((pct, i) => pct < 0 ? null : (
       <button key={SECTIONS[i].id}
         className={`rail-dot ${i === active ? 'active' : ''}`}

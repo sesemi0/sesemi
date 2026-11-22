@@ -55,7 +55,15 @@ html.translated-rtl ,html.lang-fa .about-section{direction:ltr}
 .rail-dot:hover{border-color:var(--rail-accent)}
 .rail-dot.active{background:var(--rail-accent);border-color:var(--rail-accent);box-shadow:var(--rail-glow)}
 [dir="rtl"] .scroll-rail{left:auto;right:24px}
-@media(max-width:900px){.scroll-rail{left:0;top:0;height:100dvh;width:3px;translate:0 0;animation:none}[dir="rtl"] .scroll-rail{left:auto;right:0}.rail-dot{display:none}}
+/* موبایل: محتوای لبه‌به‌لبه است و هر خط عمودی روی عکس‌ها می‌افتد؛ به‌جایش
+   نوار افقی ۲px بالای صفحه — پر شدن با width از ScrollRail.tsx، بدون نقطه */
+@media(max-width:900px){
+  .scroll-rail{left:0;right:0;top:env(safe-area-inset-top,0);bottom:auto;height:2px;width:100%;translate:0 0;animation:none;border-radius:0}
+  [dir="rtl"] .scroll-rail{left:0;right:0}
+  .rail-fill{top:0;bottom:auto;left:0;right:auto;height:100%}
+  [dir="rtl"] .rail-fill{left:auto;right:0}
+  .rail-dot{display:none}
+}
 /* ---- crypto checkout modal ---- */
 .pay-scrim{position:fixed;inset:0;z-index:120;background:#04070fcc;backdrop-filter:blur(6px);display:grid;place-items:center;padding:18px;animation:pay-in .25s ease both}
 @keyframes pay-in{from{opacity:0}to{opacity:1}}

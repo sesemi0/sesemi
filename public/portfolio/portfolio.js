@@ -205,7 +205,8 @@ if("IntersectionObserver" in window&&!reducedMotion){
 applyLanguage(T[document.documentElement.lang]?document.documentElement.lang:"en");
 
 /* ---- scroll progress rail — fixed side line that fills as you scroll,
-   dots per section, active section label; hairline-only under 900px ---- */
+   dots per section, active section label; under 900px a 2px horizontal
+   top bar (mobile content is edge-to-edge, a side rail would sit on it) ---- */
 (function(){
   var SECTIONS=[["top","Start"],["work","Automation"],["services","Services"],["studio","Studio"],["about","About"],["resume","Résumé"],["contact","Contact"]];
   var LABELS={
@@ -275,13 +276,19 @@ applyLanguage(T[document.documentElement.lang]?document.documentElement.lang:"en
   });
   document.body.appendChild(nav);
   var frame=0;
+  var narrow=window.matchMedia("(max-width:900px)");
+  /* on narrow screens the CSS turns the rail into a 2px horizontal top bar —
+     the fill must switch to width (and clear the stale height inline) */
+  narrow.addEventListener?narrow.addEventListener("change",onScroll):null;
   function measure(){
     frame=0;
     var total=document.documentElement.scrollHeight-window.innerHeight;
     var y=window.scrollY||document.documentElement.scrollTop;
     if(total<=200){nav.style.opacity="0";return;}
     nav.style.opacity="";
-    fill.style.height=Math.min(100,Math.max(0,y/total*100))+"%";
+    var pct=Math.min(100,Math.max(0,y/total*100))+"%";
+    if(narrow.matches){fill.style.width=pct;fill.style.height="";}
+    else{fill.style.height=pct;fill.style.width="";}
     var active=-1;
     var underId="top";
     var centerY=y+window.innerHeight*0.5;
