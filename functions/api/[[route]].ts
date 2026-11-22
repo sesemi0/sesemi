@@ -243,13 +243,17 @@ ${titleSvg}
        own Workers-AI allocation (no API key). Restricted to the office origin
        and rate-limited so nobody can burn the allocation from elsewhere. ===== */
     if (path.join('/') === 'ai/office' && method === 'POST') {
-      const origin = request.headers.get('Origin') || '';
-      if (!/^https:\/\/(sesemi-office\.pages\.dev|localhost(?::\d+)?)$/.test(origin)) {
+      // cross-origin from the office app — JSON body means a preflight happens
+      // first; both the preflight AND every response must carry CORS headers
+      const officeOrigin = request.headers.get('Origin') || '';
+      const cors = { 'Access-Control-Allow-Origin': officeOrigin || '*', 'Access-Control-Allow-Headers': 'Content-Type', 'Access-Control-Allow-Methods': 'POST, OPTIONS' };
+      if (method === 'OPTIONS') return new Response(null, { status: 204, headers: cors });
+      if (!/^https:\/\/(sesemi-office\.pages\.dev|localhost(?::\d+)?)$/.test(officeOrigin)) {
         return fail(403, 'این مسیر فقط برای دفتر سسِمی است.');
       }
       if (!rateLimit(`office-ai:${clientIp(request)}`, 40, 60 * 60 * 1000)) {
         waitUntil(logSecurity(env, env.DB, { type: 'rate_limit', ip: clientIp(request), path: '/api/ai/office', detail: 'office AI flood (40/h exceeded)' }, waitUntil));
-        return fail(429, 'سهمیهٔ هوش مصنوعی دفتر پر شد — کمی بعد دوباره تلاش کنید.');
+        return json({ error: 'سهمیهٔ هوش مصنوعی دفتر پر شد — کمی بعد دوباره تلاش کنید.' }, 429, cors);
       }
       const body = await readJson<{ messages?: unknown; maxTokens?: unknown }>(request);
       const raw = Array.isArray(body?.messages) ? body!.messages : [];
@@ -258,14 +262,14 @@ ${titleSvg}
         const role = m.role === 'system' ? 'system' : m.role === 'assistant' ? 'assistant' : 'user';
         return { role, content: cleanText(m.content, 12000) };
       }).filter(m => m.content) as { role: 'system' | 'user' | 'assistant'; content: string }[];
-      if (!messages.length) return fail(400, 'پیامی ارسال نشده است.');
+      if (!messages.length) return json({ error: 'پیامی ارسال نشده است.' }, 400, cors);
       const maxTokens = Math.max(256, Math.min(8192, Number(body?.maxTokens) || 2000));
       try {
         const reply = await runWorkersAi(env, messages, maxTokens);
-        return json({ ok: true, reply });
+        return json({ ok: true, reply }, 200, cors);
       } catch (error) {
         console.error('office AI failed:', error instanceof Error ? error.message : error);
-        return fail(502, 'ارتباط با هوش مصنوعی برقرار نشد — چند لحظه بعد «تلاش دوباره» بزن.');
+        return json({ error: 'ارتباط با هوش مصنوعی برقرار نشد — چند لحظه بعد «تلاش دوباره» بزن.' }, 502, cors);
       }
     }
 
