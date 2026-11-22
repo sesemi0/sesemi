@@ -13,7 +13,7 @@ import {
   sessionCookie, clearSessionCookie, safeEqual, bytesToB64Url,
   EMAIL_RE, USERNAME_RE, SLUG_RE, DATE_RE, cleanText,
 } from './_lib/core';
-import { sendEnquiryEmail, askAi, aiStatus } from './_lib/outbound';
+import { sendEnquiryEmail, askAi, aiStatus, runWorkersAi } from './_lib/outbound';
 import { refreshBlog, listPosts, lastRefreshAt } from './_lib/news';
 import {
   googleConfigured, readVisitor, createUserSession, destroyVisitorSession,
@@ -237,6 +237,36 @@ ${titleSvg}
         }).catch(() => null));
       }
       return json({ ok: true, id });
+    }
+
+    /* ============ public: office AI — runs the agents' tasks on the account's
+       own Workers-AI allocation (no API key). Restricted to the office origin
+       and rate-limited so nobody can burn the allocation from elsewhere. ===== */
+    if (path.join('/') === 'ai/office' && method === 'POST') {
+      const origin = request.headers.get('Origin') || '';
+      if (!/^https:\/\/(sesemi-office\.pages\.dev|localhost(?::\d+)?)$/.test(origin)) {
+        return fail(403, 'این مسیر فقط برای دفتر سسِمی است.');
+      }
+      if (!rateLimit(`office-ai:${clientIp(request)}`, 40, 60 * 60 * 1000)) {
+        waitUntil(logSecurity(env, env.DB, { type: 'rate_limit', ip: clientIp(request), path: '/api/ai/office', detail: 'office AI flood (40/h exceeded)' }, waitUntil));
+        return fail(429, 'سهمیهٔ هوش مصنوعی دفتر پر شد — کمی بعد دوباره تلاش کنید.');
+      }
+      const body = await readJson<{ messages?: unknown; maxTokens?: unknown }>(request);
+      const raw = Array.isArray(body?.messages) ? body!.messages : [];
+      const messages = raw.slice(-10).map(item => {
+        const m = item as { role?: unknown; content?: unknown };
+        const role = m.role === 'system' ? 'system' : m.role === 'assistant' ? 'assistant' : 'user';
+        return { role, content: cleanText(m.content, 12000) };
+      }).filter(m => m.content) as { role: 'system' | 'user' | 'assistant'; content: string }[];
+      if (!messages.length) return fail(400, 'پیامی ارسال نشده است.');
+      const maxTokens = Math.max(256, Math.min(8192, Number(body?.maxTokens) || 2000));
+      try {
+        const reply = await runWorkersAi(env, messages, maxTokens);
+        return json({ ok: true, reply });
+      } catch (error) {
+        console.error('office AI failed:', error instanceof Error ? error.message : error);
+        return fail(502, 'ارتباط با هوش مصنوعی برقرار نشد — چند لحظه بعد «تلاش دوباره» بزن.');
+      }
     }
 
     /* ============ public: consented analytics ============ */

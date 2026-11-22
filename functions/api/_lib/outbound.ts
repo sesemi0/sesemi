@@ -65,7 +65,7 @@ export function aiStatus(env: Env): AiStatus {
   return { enabled, provider: enabled ? provider : '', model: env.AI_MODEL || (enabled ? defaults[provider] : '') };
 }
 
-type ChatMessage = { role: 'user' | 'assistant'; content: string };
+type ChatMessage = { role: 'system' | 'user' | 'assistant'; content: string };
 
 async function callOpenAiCompatible(url: string, key: string, model: string, messages: ChatMessage[]): Promise<string> {
   const response = await fetch(url, {
@@ -97,6 +97,26 @@ async function callGemini(key: string, model: string, system: string, messages: 
   const reply = data.candidates?.[0]?.content?.parts?.map(part => part.text).filter((text): text is string => typeof text === 'string').join('');
   if (!reply || !reply.trim()) throw new Error('empty reply');
   return reply.trim();
+}
+
+/** Shared Workers-AI chain for server-side callers — the office AI endpoint
+ *  uses this so agent tasks run on the account's own allocation (no API key). */
+export async function runWorkersAi(env: Env, messages: ChatMessage[], maxTokens = 2000): Promise<string> {
+  if (!hasWorkersAi(env)) throw new Error('workers_ai_unavailable');
+  const chain = CF_MODEL_CHAIN;
+  let lastError = '';
+  for (const model of chain) {
+    try {
+      const result = await env.AI!.run(model, { messages, max_tokens: maxTokens }) as { response?: unknown };
+      const reply = typeof result?.response === 'string' ? result.response.trim() : '';
+      if (reply) return reply;
+      lastError = 'empty reply';
+    } catch (e) {
+      lastError = e instanceof Error ? e.message : String(e);
+      if (!/5035|deprecated|not available/i.test(lastError)) break;
+    }
+  }
+  throw new Error(lastError || 'all models failed');
 }
 
 export async function askAi(env: Env, db: D1Database, messages: ChatMessage[]): Promise<{ ok: true; reply: string } | { ok: false; error: string }> {
